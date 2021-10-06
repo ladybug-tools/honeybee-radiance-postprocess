@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee_radiance_postprocess.leed &#8212; honeybee-radiance-postprocess  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          honeybee-radiance-postprocess</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../cli/index.html#installation">Installation</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">honeybee_radiance_postprocess</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_radiance_postprocess.html#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance_postprocess.annualdaylight.html">honeybee_radiance_postprocess.annualdaylight module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance_postprocess.helper.html">honeybee_radiance_postprocess.helper module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance_postprocess.leed.html">honeybee_radiance_postprocess.leed module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance_postprocess.solartracking.html">honeybee_radiance_postprocess.solartracking module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_radiance_postprocess.html#module-honeybee_radiance_postprocess">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI Docs</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">honeybee_radiance_postprocess</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI Docs</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">honeybee_radiance_postprocess</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for honeybee_radiance_postprocess.leed</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Functions for post-processing LEED daylight outputs.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+
+<span class="kn">from</span> <span class="nn">honeybee.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">.helper</span> <span class="kn">import</span> <span class="n">_filter_by_pattern</span>
+
+
+<span class="k">def</span> <span class="nf">_process_input_folder</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">filter_pattern</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Process and input annual daylight results folder.&quot;&quot;&quot;</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;grids_info.json&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">info</span><span class="p">)</span> <span class="k">as</span> <span class="n">data_f</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_f</span><span class="p">)</span>
+    <span class="n">grids</span> <span class="o">=</span> <span class="n">_filter_by_pattern</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="n">filter_pattern</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">grids</span>
+
+
+<div class="viewcode-block" id="ill_pass_fail_from_folder"><a class="viewcode-back" href="../../honeybee_radiance_postprocess.leed.html#honeybee_radiance_postprocess.leed.ill_pass_fail_from_folder">[docs]</a><span class="k">def</span> <span class="nf">ill_pass_fail_from_folder</span><span class="p">(</span>
+        <span class="n">results_folder</span><span class="p">,</span> <span class="n">glare_control</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grids_filter</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute a list of LEED pass/fail values from a list of illuminance results.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        results_folder: Folder containing illuminance result (.res) files for</span>
+<span class="sd">            a single irradiance simulation.</span>
+<span class="sd">        glare_control: A boolean for whether the model has &quot;view-preserving automatic</span>
+<span class="sd">            (with manual override) glare-control devices,&quot; which means that illuminance</span>
+<span class="sd">            only needs to be above 300 lux and not between 300 and 3000 lux.</span>
+<span class="sd">        grids_filter: A pattern to filter the grids. By default all the grids will be</span>
+<span class="sd">            processed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of lists where each sub-list represents a sensor grid and contains</span>
+<span class="sd">        zero/one values for whether each sensor fails/passes the LEED illuminance</span>
+<span class="sd">        criteria.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pass_fail</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">grids</span> <span class="o">=</span> <span class="n">_process_input_folder</span><span class="p">(</span><span class="n">results_folder</span><span class="p">,</span> <span class="n">grids_filter</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">grid</span> <span class="ow">in</span> <span class="n">grids</span><span class="p">:</span>
+        <span class="n">res_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">results_folder</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.res&#39;</span> <span class="o">%</span> <span class="n">grid</span><span class="p">[</span><span class="s1">&#39;full_id&#39;</span><span class="p">])</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">res_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">inf</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">inf</span><span class="p">]</span>
+        <span class="n">grid_pf</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mi">300</span><span class="p">:</span>
+                <span class="n">pf</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">glare_control</span> <span class="ow">or</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="mi">3000</span> <span class="k">else</span> <span class="mi">0</span>
+                <span class="n">grid_pf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pf</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">grid_pf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">pass_fail</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grid_pf</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pass_fail</span></div>
+
+
+<span class="k">def</span> <span class="nf">_pass_fail_to_files</span><span class="p">(</span>
+        <span class="n">folder</span><span class="p">,</span> <span class="n">sub_folder</span><span class="p">,</span> <span class="n">pass_fail_comb</span><span class="p">,</span> <span class="n">pass_fail_9</span><span class="p">,</span> <span class="n">pass_fail_3</span><span class="p">,</span> <span class="n">filter_pattern</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write pass/fail matrices into files that can be loaded and visualized later.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        folder: Project folder for a LEED daylight illuminance simulation.</span>
+<span class="sd">        sub_folder: Relative path for a subfolder to write the pass/fail files for</span>
+<span class="sd">            each sensor grid.</span>
+<span class="sd">        pass_fail_comb: Matrix of ones/zeros for combined pass/failing.</span>
+<span class="sd">        pass_fail_9: Matrix of ones/zeros for 9AM pass/failing.</span>
+<span class="sd">        pass_fail_3:  Matrix of ones/zeros for 3PM pass/failing.</span>
+<span class="sd">        filter_pattern: Pattern used to filter the grids.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get the grids_info.json and determine which grids we are working with</span>
+    <span class="n">res_folder_9</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;9AM&#39;</span><span class="p">,</span> <span class="s1">&#39;results&#39;</span><span class="p">)</span>
+    <span class="n">info_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res_folder_9</span><span class="p">,</span> <span class="s1">&#39;grids_info.json&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">info_json</span><span class="p">)</span> <span class="k">as</span> <span class="n">data_f</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_f</span><span class="p">)</span>
+    <span class="n">grids</span> <span class="o">=</span> <span class="n">_filter_by_pattern</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="n">filter_pattern</span><span class="p">)</span>
+
+    <span class="c1"># create the directories into which the files will be written</span>
+    <span class="n">output_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">sub_folder</span><span class="p">)</span>
+    <span class="n">folder_comb</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="s1">&#39;combined&#39;</span><span class="p">)</span>
+    <span class="n">folder_9</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="s1">&#39;9AM&#39;</span><span class="p">)</span>
+    <span class="n">folder_3</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="s1">&#39;3PM&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sub_dir</span> <span class="ow">in</span> <span class="p">(</span><span class="n">folder_comb</span><span class="p">,</span> <span class="n">folder_9</span><span class="p">,</span> <span class="n">folder_3</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">info_json</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">,</span> <span class="s1">&#39;grids_info.json&#39;</span><span class="p">))</span>
+
+    <span class="c1"># loop through each grid and write the results into files</span>
+    <span class="k">for</span> <span class="n">g_d</span><span class="p">,</span> <span class="n">res_c</span><span class="p">,</span> <span class="n">res_9</span><span class="p">,</span> <span class="n">res_3</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">grids</span><span class="p">,</span> <span class="n">pass_fail_comb</span><span class="p">,</span> <span class="n">pass_fail_9</span><span class="p">,</span> <span class="n">pass_fail_3</span><span class="p">):</span>
+        <span class="n">g_file_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.res&#39;</span> <span class="o">%</span> <span class="n">g_d</span><span class="p">[</span><span class="s1">&#39;full_id&#39;</span><span class="p">]</span>
+        <span class="n">file_c</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_comb</span><span class="p">,</span> <span class="n">g_file_name</span><span class="p">)</span>
+        <span class="n">file_9</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_9</span><span class="p">,</span> <span class="n">g_file_name</span><span class="p">)</span>
+        <span class="n">file_3</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_3</span><span class="p">,</span> <span class="n">g_file_name</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_c</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fc</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_9</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f9</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_3</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f3</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">rc</span><span class="p">,</span> <span class="n">r9</span><span class="p">,</span> <span class="n">r3</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">res_c</span><span class="p">,</span> <span class="n">res_9</span><span class="p">,</span> <span class="n">res_3</span><span class="p">):</span>
+                <span class="n">fc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">f9</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">r9</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">f3</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">r3</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_sum_passing_area</span><span class="p">(</span><span class="n">pass_fails</span><span class="p">,</span> <span class="n">grid_areas</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the sum of passing area given aligned pass_fail and grid_area matrices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">area_passing</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">p_fails</span><span class="p">,</span> <span class="n">g_areas</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pass_fails</span><span class="p">,</span> <span class="n">grid_areas</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">pf</span><span class="p">,</span> <span class="n">ga</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">p_fails</span><span class="p">,</span> <span class="n">g_areas</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">pf</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">area_passing</span> <span class="o">+=</span> <span class="n">ga</span>
+    <span class="k">return</span> <span class="n">area_passing</span>
+
+
+<div class="viewcode-block" id="leed_illuminance_to_folder"><a class="viewcode-back" href="../../honeybee_radiance_postprocess.leed.html#honeybee_radiance_postprocess.leed.leed_illuminance_to_folder">[docs]</a><span class="k">def</span> <span class="nf">leed_illuminance_to_folder</span><span class="p">(</span>
+        <span class="n">folder</span><span class="p">,</span> <span class="n">glare_control</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grids_filter</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">sub_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Estimate LEED daylight credits from two point-in-time illuminance folders.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        folder: Project folder for a LEED illuminance simulation. It should contain</span>
+<span class="sd">            a HBJSON model and two sub-folders of complete point-in-time illuminance</span>
+<span class="sd">            simulations labeled &quot;9AM&quot; and &quot;3PM&quot;. These two sub-folders should each</span>
+<span class="sd">            have results folders that include a grids_info.json and .res files with</span>
+<span class="sd">            illuminance values for each sensor. If Meshes are found for the sensor</span>
+<span class="sd">            grids in the HBJSON file, they will be used to compute percentages</span>
+<span class="sd">            of occupied floor area that pass vs. fail. Otherwise, all sensors will</span>
+<span class="sd">            be assumed to represent an equal amount of floor area.</span>
+<span class="sd">        glare_control: A boolean for whether the model has &quot;view-preserving automatic</span>
+<span class="sd">            (with manual override) glare-control devices,&quot; which means that illuminance</span>
+<span class="sd">            only needs to be above 300 lux and not between 300 and 3000 lux.</span>
+<span class="sd">        grids_filter: A pattern to filter the grids. By default all the grids will be</span>
+<span class="sd">            processed.</span>
+<span class="sd">        sub_folder: Relative path for a subfolder to write the pass/fail files for</span>
+<span class="sd">            each sensor grid. If None, the files will not be written and only</span>
+<span class="sd">            the summary dictionary will be calculated.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dictionary with a summary of LEED credits in the format below. All</span>
+<span class="sd">        percentages are between 0 and 100 and the floor areas are in the units system</span>
+<span class="sd">        of the HBJSON model. If no sensor grid meshes were found in the HBJSON</span>
+<span class="sd">        model and no areas could be associated with each mesh face, the output</span>
+<span class="sd">        will not contain floor_area keys and each sensor will be assumed to</span>
+<span class="sd">        occupy a similar area.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        {</span>
+<span class="sd">            &quot;credits&quot;: 2,</span>
+<span class="sd">            &quot;percentage_passing&quot;: 76.2,</span>
+<span class="sd">            &quot;percentage_passing_9AM&quot;: 78.5,</span>
+<span class="sd">            &quot;percentage_passing_3PM&quot;: 82.4,</span>
+<span class="sd">            &quot;sensor_count_passing&quot;: 762,</span>
+<span class="sd">            &quot;sensor_count_passing_9AM&quot;: 785,</span>
+<span class="sd">            &quot;sensor_count_passing_3PM&quot;: 824,</span>
+<span class="sd">            &quot;total_sensor_count&quot;: 1000,</span>
+<span class="sd">            &quot;floor_area_passing&quot;: 762.0,</span>
+<span class="sd">            &quot;floor_area_passing_9AM&quot;: 785.0,</span>
+<span class="sd">            &quot;floor_area_passing_3PM&quot;: 824.0,</span>
+<span class="sd">            &quot;total_floor_area&quot;: 1000.0</span>
+<span class="sd">        }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># first load the results into pass/fail matrices of ones/zeros</span>
+    <span class="n">res_folder_9</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;9AM&#39;</span><span class="p">,</span> <span class="s1">&#39;results&#39;</span><span class="p">)</span>
+    <span class="n">res_folder_3</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;3PM&#39;</span><span class="p">,</span> <span class="s1">&#39;results&#39;</span><span class="p">)</span>
+    <span class="n">pass_fail_9</span> <span class="o">=</span> <span class="n">ill_pass_fail_from_folder</span><span class="p">(</span><span class="n">res_folder_9</span><span class="p">,</span> <span class="n">glare_control</span><span class="p">,</span> <span class="n">grids_filter</span><span class="p">)</span>
+    <span class="n">pass_fail_3</span> <span class="o">=</span> <span class="n">ill_pass_fail_from_folder</span><span class="p">(</span><span class="n">res_folder_3</span><span class="p">,</span> <span class="n">glare_control</span><span class="p">,</span> <span class="n">grids_filter</span><span class="p">)</span>
+
+    <span class="c1"># determine which sensors pass for both hours</span>
+    <span class="n">pass_fail_comb</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">p_fails9</span><span class="p">,</span> <span class="n">p_fails3</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pass_fail_9</span><span class="p">,</span> <span class="n">pass_fail_3</span><span class="p">):</span>
+        <span class="n">p_fails_comb</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pf9</span><span class="p">,</span> <span class="n">pf3</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">p_fails9</span><span class="p">,</span> <span class="n">p_fails3</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">pf9</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">pf3</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">p_fails_comb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">p_fails_comb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">pass_fail_comb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_fails_comb</span><span class="p">)</span>
+
+    <span class="c1"># write the pass/fail criteria into the sub-directory if specified</span>
+    <span class="k">if</span> <span class="n">sub_folder</span><span class="p">:</span>
+        <span class="n">_pass_fail_to_files</span><span class="p">(</span>
+            <span class="n">folder</span><span class="p">,</span> <span class="n">sub_folder</span><span class="p">,</span> <span class="n">pass_fail_comb</span><span class="p">,</span> <span class="n">pass_fail_9</span><span class="p">,</span> <span class="n">pass_fail_3</span><span class="p">,</span> <span class="n">grids_filter</span><span class="p">)</span>
+
+    <span class="c1"># setup the summary dictionary with the results</span>
+    <span class="n">summary_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;sensor_count_passing&#39;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">pf</span><span class="p">)</span> <span class="k">for</span> <span class="n">pf</span> <span class="ow">in</span> <span class="n">pass_fail_comb</span><span class="p">),</span>
+        <span class="s1">&#39;sensor_count_passing_9AM&#39;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">pf9</span><span class="p">)</span> <span class="k">for</span> <span class="n">pf9</span> <span class="ow">in</span> <span class="n">pass_fail_9</span><span class="p">),</span>
+        <span class="s1">&#39;sensor_count_passing_3PM&#39;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">pf3</span><span class="p">)</span> <span class="k">for</span> <span class="n">pf3</span> <span class="ow">in</span> <span class="n">pass_fail_3</span><span class="p">),</span>
+        <span class="s1">&#39;total_sensor_count&#39;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pf9</span><span class="p">)</span> <span class="k">for</span> <span class="n">pf9</span> <span class="ow">in</span> <span class="n">pass_fail_9</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c1"># next, check to see if there is a HBJSON with sensor grid meshes for areas</span>
+    <span class="n">grid_areas</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">base_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">base_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.hbjson&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">base_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.hbpkl&#39;</span><span class="p">):</span>
+            <span class="n">hb_model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">base_file</span><span class="p">))</span>
+            <span class="n">filt_grids</span> <span class="o">=</span> <span class="n">_filter_by_pattern</span><span class="p">(</span>
+                <span class="n">hb_model</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">radiance</span><span class="o">.</span><span class="n">sensor_grids</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="n">grids_filter</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">s_grid</span> <span class="ow">in</span> <span class="n">filt_grids</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">s_grid</span><span class="o">.</span><span class="n">mesh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">grid_areas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s_grid</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">face_areas</span><span class="p">)</span>
+
+    <span class="c1"># determine the percentage passing from either mesh areas or sensor counts</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid_areas</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">pass_fail_9</span><span class="p">):</span>  <span class="c1"># compute passing floor area for each grid</span>
+        <span class="n">area_pass_comb</span> <span class="o">=</span> <span class="n">_sum_passing_area</span><span class="p">(</span><span class="n">pass_fail_comb</span><span class="p">,</span> <span class="n">grid_areas</span><span class="p">)</span>
+        <span class="n">area_pass_9</span> <span class="o">=</span> <span class="n">_sum_passing_area</span><span class="p">(</span><span class="n">pass_fail_9</span><span class="p">,</span> <span class="n">grid_areas</span><span class="p">)</span>
+        <span class="n">area_pass_3</span> <span class="o">=</span> <span class="n">_sum_passing_area</span><span class="p">(</span><span class="n">pass_fail_3</span><span class="p">,</span> <span class="n">grid_areas</span><span class="p">)</span>
+        <span class="n">area_total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">sar</span><span class="p">)</span> <span class="k">for</span> <span class="n">sar</span> <span class="ow">in</span> <span class="n">grid_areas</span><span class="p">)</span>
+        <span class="n">summary_dict</span><span class="p">[</span><span class="s1">&#39;floor_area_passing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">area_pass_comb</span>
+        <span class="n">summary_dict</span><span class="p">[</span><span class="s1">&#39;floor_area_passing_9AM&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">area_pass_9</span>
+        <span class="n">summary_dict</span><span class="p">[</span><span class="s1">&#39;floor_area_passing_3PM&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">area_pass_3</span>
+        <span class="n">summary_dict</span><span class="p">[</span><span class="s1">&#39;total_floor_area&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">area_total</span>
+        <span class="n">pct_pass</span> <span class="o">=</span> <span class="p">(</span><span class="n">area_pass_comb</span> <span class="o">/</span> <span class="n">area_total</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+        <span class="n">pct_pass_9</span> <span class="o">=</span> <span class="p">(</span><span class="n">area_pass_9</span> <span class="o">/</span> <span class="n">area_total</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+        <span class="n">pct_pass_3</span> <span class="o">=</span> <span class="p">(</span><span class="n">area_pass_3</span> <span class="o">/</span> <span class="n">area_total</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">total_count</span> <span class="o">=</span> <span class="n">summary_dict</span><span class="p">[</span><span class="s1">&#39;total_sensor_count&#39;</span><span class="p">]</span>
+        <span class="n">pct_pass</span> <span class="o">=</span> <span class="p">(</span><span class="n">summary_dict</span><span class="p">[</span><span class="s1">&#39;sensor_count_passing&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">total_count</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+        <span class="n">pct_pass_9</span> <span class="o">=</span> <span class="p">(</span><span class="n">summary_dict</span><span class="p">[</span><span class="s1">&#39;sensor_count_passing_9AM&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">total_count</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+        <span class="n">pct_pass_3</span> <span class="o">=</span> <span class="p">(</span><span class="n">summary_dict</span><span class="p">[</span><span class="s1">&#39;sensor_count_passing_3PM&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">total_count</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+    <span class="c1"># lastly, estimate the number of LEED credits from the percentage passing</span>
+    <span class="n">summary_dict</span><span class="p">[</span><span class="s1">&#39;percentage_passing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pct_pass</span>
+    <span class="n">summary_dict</span><span class="p">[</span><span class="s1">&#39;percentage_passing_9AM&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pct_pass_9</span>
+    <span class="n">summary_dict</span><span class="p">[</span><span class="s1">&#39;percentage_passing_3PM&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pct_pass_3</span>
+    <span class="k">if</span> <span class="n">pct_pass</span> <span class="o">&gt;=</span> <span class="mi">90</span><span class="p">:</span>
+        <span class="n">summary_dict</span><span class="p">[</span><span class="s1">&#39;credits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="k">elif</span> <span class="n">pct_pass</span> <span class="o">&gt;=</span> <span class="mi">75</span><span class="p">:</span>
+        <span class="n">summary_dict</span><span class="p">[</span><span class="s1">&#39;credits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">elif</span> <span class="n">pct_pass</span> <span class="o">&gt;=</span> <span class="mi">55</span><span class="p">:</span>
+        <span class="n">summary_dict</span><span class="p">[</span><span class="s1">&#39;credits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">summary_dict</span><span class="p">[</span><span class="s1">&#39;credits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">summary_dict</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

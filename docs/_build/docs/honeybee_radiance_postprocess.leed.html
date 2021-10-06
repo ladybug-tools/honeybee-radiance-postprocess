@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>honeybee_radiance_postprocess.leed module &#8212; honeybee-radiance-postprocess  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="honeybee_radiance_postprocess.solartracking module" href="honeybee_radiance_postprocess.solartracking.html" />
+    <link rel="prev" title="honeybee_radiance_postprocess.helper module" href="honeybee_radiance_postprocess.helper.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          honeybee-radiance-postprocess</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="cli/index.html">CLI Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli/index.html#installation">Installation</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">honeybee_radiance_postprocess</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="honeybee_radiance_postprocess.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance_postprocess.annualdaylight.html">honeybee_radiance_postprocess.annualdaylight module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance_postprocess.helper.html">honeybee_radiance_postprocess.helper module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">honeybee_radiance_postprocess.leed module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance_postprocess.solartracking.html">honeybee_radiance_postprocess.solartracking module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.html#module-honeybee_radiance_postprocess">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="cli/index.html">CLI Docs</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">honeybee_radiance_postprocess</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="honeybee_radiance_postprocess.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance_postprocess.annualdaylight.html">honeybee_radiance_postprocess.annualdaylight module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance_postprocess.helper.html">honeybee_radiance_postprocess.helper module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">honeybee_radiance_postprocess.leed module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance_postprocess.solartracking.html">honeybee_radiance_postprocess.solartracking module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.html#module-honeybee_radiance_postprocess">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="honeybee_radiance_postprocess.helper.html" title="Previous Chapter: honeybee_radiance_postprocess.helper module"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; honeybee_radi...</span>
+    </a>
+  </li>
+  <li>
+    <a href="honeybee_radiance_postprocess.solartracking.html" title="Next Chapter: honeybee_radiance_postprocess.solartracking module"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">honeybee_radi... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="_sources/honeybee_radiance_postprocess.leed.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="cli/index.html">CLI Docs</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">honeybee_radiance_postprocess</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="honeybee_radiance_postprocess.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance_postprocess.annualdaylight.html">honeybee_radiance_postprocess.annualdaylight module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance_postprocess.helper.html">honeybee_radiance_postprocess.helper module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">honeybee_radiance_postprocess.leed module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance_postprocess.solartracking.html">honeybee_radiance_postprocess.solartracking module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.html#module-honeybee_radiance_postprocess">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <section id="module-honeybee_radiance_postprocess.leed">
+<span id="honeybee-radiance-postprocess-leed-module"></span><h1>honeybee_radiance_postprocess.leed module<a class="headerlink" href="#module-honeybee_radiance_postprocess.leed" title="Permalink to this headline">¶</a></h1>
+<p>Functions for post-processing LEED daylight outputs.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="honeybee_radiance_postprocess.leed.ill_pass_fail_from_folder">
+<span class="sig-prename descclassname"><span class="pre">honeybee_radiance_postprocess.leed.</span></span><span class="sig-name descname"><span class="pre">ill_pass_fail_from_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">glare_control</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grids_filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'*'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee_radiance_postprocess/leed.html#ill_pass_fail_from_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#honeybee_radiance_postprocess.leed.ill_pass_fail_from_folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a list of LEED pass/fail values from a list of illuminance results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>results_folder</strong> – Folder containing illuminance result (.res) files for
+a single irradiance simulation.</p></li>
+<li><p><strong>glare_control</strong> – A boolean for whether the model has “view-preserving automatic
+(with manual override) glare-control devices,” which means that illuminance
+only needs to be above 300 lux and not between 300 and 3000 lux.</p></li>
+<li><p><strong>grids_filter</strong> – A pattern to filter the grids. By default all the grids will be
+processed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of lists where each sub-list represents a sensor grid and contains
+zero/one values for whether each sensor fails/passes the LEED illuminance
+criteria.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="honeybee_radiance_postprocess.leed.leed_illuminance_to_folder">
+<span class="sig-prename descclassname"><span class="pre">honeybee_radiance_postprocess.leed.</span></span><span class="sig-name descname"><span class="pre">leed_illuminance_to_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">glare_control</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grids_filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'*'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee_radiance_postprocess/leed.html#leed_illuminance_to_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#honeybee_radiance_postprocess.leed.leed_illuminance_to_folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate LEED daylight credits from two point-in-time illuminance folders.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> – Project folder for a LEED illuminance simulation. It should contain
+a HBJSON model and two sub-folders of complete point-in-time illuminance
+simulations labeled “9AM” and “3PM”. These two sub-folders should each
+have results folders that include a grids_info.json and .res files with
+illuminance values for each sensor. If Meshes are found for the sensor
+grids in the HBJSON file, they will be used to compute percentages
+of occupied floor area that pass vs. fail. Otherwise, all sensors will
+be assumed to represent an equal amount of floor area.</p></li>
+<li><p><strong>glare_control</strong> – A boolean for whether the model has “view-preserving automatic
+(with manual override) glare-control devices,” which means that illuminance
+only needs to be above 300 lux and not between 300 and 3000 lux.</p></li>
+<li><p><strong>grids_filter</strong> – A pattern to filter the grids. By default all the grids will be
+processed.</p></li>
+<li><p><strong>sub_folder</strong> – Relative path for a subfolder to write the pass/fail files for
+each sensor grid. If None, the files will not be written and only
+the summary dictionary will be calculated.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary with a summary of LEED credits in the format below. All
+percentages are between 0 and 100 and the floor areas are in the units system
+of the HBJSON model. If no sensor grid meshes were found in the HBJSON
+model and no areas could be associated with each mesh face, the output
+will not contain floor_area keys and each sensor will be assumed to
+occupy a similar area.</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;credits&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;percentage_passing&quot;</span><span class="p">:</span> <span class="mf">76.2</span><span class="p">,</span>
+    <span class="s2">&quot;percentage_passing_9AM&quot;</span><span class="p">:</span> <span class="mf">78.5</span><span class="p">,</span>
+    <span class="s2">&quot;percentage_passing_3PM&quot;</span><span class="p">:</span> <span class="mf">82.4</span><span class="p">,</span>
+    <span class="s2">&quot;sensor_count_passing&quot;</span><span class="p">:</span> <span class="mi">762</span><span class="p">,</span>
+    <span class="s2">&quot;sensor_count_passing_9AM&quot;</span><span class="p">:</span> <span class="mi">785</span><span class="p">,</span>
+    <span class="s2">&quot;sensor_count_passing_3PM&quot;</span><span class="p">:</span> <span class="mi">824</span><span class="p">,</span>
+    <span class="s2">&quot;total_sensor_count&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="s2">&quot;floor_area_passing&quot;</span><span class="p">:</span> <span class="mf">762.0</span><span class="p">,</span>
+    <span class="s2">&quot;floor_area_passing_9AM&quot;</span><span class="p">:</span> <span class="mf">785.0</span><span class="p">,</span>
+    <span class="s2">&quot;floor_area_passing_3PM&quot;</span><span class="p">:</span> <span class="mf">824.0</span><span class="p">,</span>
+    <span class="s2">&quot;total_floor_area&quot;</span><span class="p">:</span> <span class="mf">1000.0</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
