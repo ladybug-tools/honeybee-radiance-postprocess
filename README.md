@@ -18,7 +18,7 @@ import honeybee_radiance_postprocess
 
 ```
 
-## [API Documentation](http://ladybug-tools.github.io/honeybee-radiance-postprocess/docs)
+## [API Documentation](https://www.ladybug.tools/honeybee-radiance-postprocess/)
 
 ## Local Development
 1. Clone this repo locally
