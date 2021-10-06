@@ -12,6 +12,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import sphinx_bootstrap_theme
 import os
 import sys
 import re
@@ -87,7 +88,6 @@ pygments_style = None
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-import sphinx_bootstrap_theme
 
 # html_theme = 'alabaster'
 html_theme = 'bootstrap'
@@ -472,10 +472,10 @@ def write_cli_files(ht_cli_data, lib_name, tool_name, doc_folder):
                            "{}\n".format("=" * len(file)),
                            "\n",
                            ".. click:: {}.cli.{}:{}\n".format(
-                                lib_name, file, ht_cli_data[file][0]),
-                           "   :prog: {} {}\n".format(
-                                tool_name, ht_cli_data[file][1]),
-                           "   :show-nested:\n"]
+                lib_name, file, ht_cli_data[file][0]),
+                "   :prog: {} {}\n".format(
+                tool_name, ht_cli_data[file][1]),
+                "   :show-nested:\n"]
             group_file = file
         else:
             # multiple commands in the 'main' group (explicitly named to
@@ -598,7 +598,8 @@ def update_doc_index(proj_folder, lib_name):
         with open(os.path.join(proj_folder, "index.rst"), 'w') as index_file:
             text = index_file.write(text_updated)
     else:
-        print("[CLI doc\\index]: index.rst update not possible - content format cannot be recognized.")
+        print(
+            "[CLI doc\\index]: index.rst update not possible - content format cannot be recognized.")
         return -1
 
     return 1

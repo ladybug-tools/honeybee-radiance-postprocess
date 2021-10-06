@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>postprocess &#8212; honeybee-radiance-postprocess  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          honeybee-radiance-postprocess</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">CLI Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index.html#installation">Installation</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">honeybee_radiance_postprocess</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.html#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.annualdaylight.html">honeybee_radiance_postprocess.annualdaylight module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.helper.html">honeybee_radiance_postprocess.helper module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.leed.html">honeybee_radiance_postprocess.leed module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.solartracking.html">honeybee_radiance_postprocess.solartracking module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.html#module-honeybee_radiance_postprocess">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">CLI Docs</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">honeybee_radiance_postprocess</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/cli/postprocess.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">CLI Docs</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">honeybee_radiance_postprocess</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <section id="postprocess">
+<h1>postprocess<a class="headerlink" href="#postprocess" title="Permalink to this headline">¶</a></h1>
+<section id="honeybee-radiance-postprocess-post-process">
+<h2>honeybee-radiance-postprocess post_process<a class="headerlink" href="#honeybee-radiance-postprocess-post-process" title="Permalink to this headline">¶</a></h2>
+<p>Commands to post-process Radiance results.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>honeybee-radiance-postprocess post_process <span class="o">[</span>OPTIONS<span class="o">]</span> COMMAND <span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="honeybee-radiance-postprocess-post-process-annual-daylight">
+<h3>annual-daylight<a class="headerlink" href="#honeybee-radiance-postprocess-post-process-annual-daylight" title="Permalink to this headline">¶</a></h3>
+<p>Compute annual metrics in a folder and write them in a subfolder.</p>
+<div class="line-block">
+<div class="line">This command generates 5 files for each input grid.</div>
+<div class="line-block">
+<div class="line">da/{grid-name}.da -&gt; Daylight Autonomy</div>
+<div class="line">cda/{grid-name}.cda -&gt; Continuos Daylight Autonomy</div>
+<div class="line">udi/{grid-name}.udi -&gt; Useful Daylight Illuminance</div>
+<div class="line">udi_lower/{grid-name}_upper.udi -&gt; Upper Useful Daylight Illuminance</div>
+<div class="line">udi_upper/{grid-name}_lower.udi -&gt; Lower Useful Daylight Illuminance</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line">Args:</div>
+<div class="line-block">
+<div class="line">folder: Results folder. This folder is an output folder of annual</div>
+<div class="line">daylight recipe. Folder should include grids_info.json and sun-up-hours.txt.</div>
+<div class="line">The command uses the list in grids_info.json to find the result files for each</div>
+<div class="line">sensor grid.</div>
+</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>honeybee-radiance-postprocess post_process annual-daylight 
+    <span class="o">[</span>OPTIONS<span class="o">]</span> FOLDER
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-sch">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-sch"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-schedule"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-schedule"></span><span class="sig-name descname"><span class="pre">-sch</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--schedule</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;schedule&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-sch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to an annual schedule file. Values should be 0-1 separated by new line. If not provided an 8-5 annual schedule will be created.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-t">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-t"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-threshold"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-threshold"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--threshold</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;threshold&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Threshold illuminance level for daylight autonomy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p>300</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-lt">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-lt"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-lower-threshold"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-lower-threshold"></span><span class="sig-name descname"><span class="pre">-lt</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--lower-threshold</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;lower_threshold&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-lt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimum threshold for useful daylight illuminance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p>100</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-ut">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-ut"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-upper-threshold"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-upper-threshold"></span><span class="sig-name descname"><span class="pre">-ut</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--upper-threshold</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;upper_threshold&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-ut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum threshold for useful daylight illuminance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p>3000</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-gf">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-gf"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-grids-filter"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-grids-filter"></span><span class="sig-name descname"><span class="pre">-gf</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--grids-filter</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;grids_filter&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-gf" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pattern to filter the grids.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><ul class="simple">
+<li></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-sf">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-sf"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-sub_folder"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-sub-folder"></span><span class="sig-name descname"><span class="pre">-sf</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--sub_folder</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;sub_folder&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-sf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional relative path for subfolder to write output metric files.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-arg-FOLDER">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-arg-folder"></span><span class="sig-name descname"><span class="pre">FOLDER</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-arg-FOLDER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="honeybee-radiance-postprocess-post-process-annual-irradiance">
+<h3>annual-irradiance<a class="headerlink" href="#honeybee-radiance-postprocess-post-process-annual-irradiance" title="Permalink to this headline">¶</a></h3>
+<p>Compute irradiance metrics in a folder and write them in a subfolder.</p>
+<div class="line-block">
+<div class="line">This command generates 3 files for each input grid.</div>
+<div class="line-block">
+<div class="line">average_irradiance/{grid-name}.res -&gt; Average Irradiance (W/m2)</div>
+<div class="line">peak_irradiance/{grid-name}.res -&gt; Peak Irradiance (W/m2)</div>
+<div class="line">cumulative_radiation/{grid-name}.res -&gt; Cumulative Radiation (kWh/m2)</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line">Args:</div>
+<div class="line-block">
+<div class="line">folder: Results folder from an annual irradiance recipe.</div>
+<div class="line">wea: The .wea file that was used in the annual irradiance simulation. This</div>
+<div class="line-block">
+<div class="line">will be used to determine the duration of the analysis for computing</div>
+<div class="line">cumulative radiation.</div>
+</div>
+</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>honeybee-radiance-postprocess post_process annual-irradiance 
+    <span class="o">[</span>OPTIONS<span class="o">]</span> FOLDER WEA
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-timestep">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-irradiance-timestep"></span><span class="sig-name descname"><span class="pre">--timestep</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;timestep&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-timestep" title="Permalink to this definition">¶</a></dt>
+<dd><p>The timestep of the Wea file, which is used to ensure the summed row of irradiance yields cumulative radiation over the time period of the Wea.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-sf">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-irradiance-sf"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-sub-folder"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-irradiance-sub-folder"></span><span class="sig-name descname"><span class="pre">-sf</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--sub-folder</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;sub_folder&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-sf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional relative path for subfolder to write output metric files.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-arg-FOLDER">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-irradiance-arg-folder"></span><span class="sig-name descname"><span class="pre">FOLDER</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-arg-FOLDER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-arg-WEA">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-annual-irradiance-arg-wea"></span><span class="sig-name descname"><span class="pre">WEA</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-arg-WEA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="honeybee-radiance-postprocess-post-process-average-row">
+<h3>average-row<a class="headerlink" href="#honeybee-radiance-postprocess-post-process-average-row" title="Permalink to this headline">¶</a></h3>
+<p>Postprocess a Radiance matrix and average the numbers in each row.</p>
+<div class="line-block">
+<div class="line">This command is useful for translating Radiance results to outputs like radiation</div>
+<div class="line">to average radiation. Input matrix must be in ASCII format. The header in the input</div>
+<div class="line">file will be ignored.</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>honeybee-radiance-postprocess post_process average-row <span class="o">[</span>OPTIONS<span class="o">]</span> INPUT_MATRIX
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-average-row-o">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-average-row-o"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-average-row-output"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-average-row-output"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-average-row-o" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional path to output file to output the name of the newly created matrix. By default the list will be printed out to stdout</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-average-row-arg-INPUT_MATRIX">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-average-row-arg-input-matrix"></span><span class="sig-name descname"><span class="pre">INPUT_MATRIX</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-average-row-arg-INPUT_MATRIX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="honeybee-radiance-postprocess-post-process-convert-to-binary">
+<h3>convert-to-binary<a class="headerlink" href="#honeybee-radiance-postprocess-post-process-convert-to-binary" title="Permalink to this headline">¶</a></h3>
+<p>Postprocess a Radiance matrix and convert it to 0-1 values.</p>
+<div class="line-block">
+<div class="line">This command is useful for translating Radiance results to outputs like sunlight</div>
+<div class="line">hours. Input matrix must be in ASCII format. The header in the input file will be</div>
+<div class="line">ignored.</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>honeybee-radiance-postprocess post_process convert-to-binary 
+    <span class="o">[</span>OPTIONS<span class="o">]</span> INPUT_MATRIX
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-o">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-convert-to-binary-o"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-output"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-convert-to-binary-output"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-o" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional path to output file to output the name of the newly created matrix. By default the list will be printed out to stdout</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-minimum">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-convert-to-binary-minimum"></span><span class="sig-name descname"><span class="pre">--minimum</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;minimum&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-minimum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimum range for values to be converted to 1.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-maximum">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-convert-to-binary-maximum"></span><span class="sig-name descname"><span class="pre">--maximum</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;maximum&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-maximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum range for values to be converted to 1.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-include-max">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-convert-to-binary-include-max"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-exclude-max"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-convert-to-binary-exclude-max"></span><span class="sig-name descname"><span class="pre">--include-max</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--exclude-max</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-include-max" title="Permalink to this definition">¶</a></dt>
+<dd><p>A flag to include the maximum threshold itself. By default the threshold value will be included.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-include-min">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-convert-to-binary-include-min"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-exclude-min"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-convert-to-binary-exclude-min"></span><span class="sig-name descname"><span class="pre">--include-min</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--exclude-min</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-include-min" title="Permalink to this definition">¶</a></dt>
+<dd><p>A flag to include the minimum threshold itself. By default the threshold value will be included.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-comply">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-convert-to-binary-comply"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-reverse"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-convert-to-binary-reverse"></span><span class="sig-name descname"><span class="pre">--comply</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reverse</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-comply" title="Permalink to this definition">¶</a></dt>
+<dd><p>A flag to reverse the selection logic. This is useful for cases that you want to all the values outside a certain range to be converted to 1. By default the input logic will be used as is.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-arg-INPUT_MATRIX">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-convert-to-binary-arg-input-matrix"></span><span class="sig-name descname"><span class="pre">INPUT_MATRIX</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-arg-INPUT_MATRIX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="honeybee-radiance-postprocess-post-process-count">
+<h3>count<a class="headerlink" href="#honeybee-radiance-postprocess-post-process-count" title="Permalink to this headline">¶</a></h3>
+<p>Count values in a row that meet a certain criteria.</p>
+<div class="line-block">
+<div class="line">This command is useful for post processing results like the number of sensors</div>
+<div class="line">which receive more than X lux at any timestep.</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>honeybee-radiance-postprocess post_process count <span class="o">[</span>OPTIONS<span class="o">]</span> INPUT_MATRIX
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-count-o">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-count-o"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-count-output"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-count-output"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-count-o" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional path to output file to output the name of the newly created matrix. By default the list will be printed out to stdout</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-count-minimum">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-count-minimum"></span><span class="sig-name descname"><span class="pre">--minimum</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;minimum&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-count-minimum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimum range for values to be converted to 1.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-count-maximum">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-count-maximum"></span><span class="sig-name descname"><span class="pre">--maximum</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;maximum&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-count-maximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum range for values to be converted to 1.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-count-include-max">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-count-include-max"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-count-exclude-max"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-count-exclude-max"></span><span class="sig-name descname"><span class="pre">--include-max</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--exclude-max</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-count-include-max" title="Permalink to this definition">¶</a></dt>
+<dd><p>A flag to include the maximum threshold itself. By default the threshold value will be included.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-count-include-min">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-count-include-min"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-count-exclude-min"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-count-exclude-min"></span><span class="sig-name descname"><span class="pre">--include-min</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--exclude-min</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-count-include-min" title="Permalink to this definition">¶</a></dt>
+<dd><p>A flag to include the minimum threshold itself. By default the threshold value will be included.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-count-comply">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-count-comply"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-count-reverse"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-count-reverse"></span><span class="sig-name descname"><span class="pre">--comply</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reverse</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-count-comply" title="Permalink to this definition">¶</a></dt>
+<dd><p>A flag to reverse the selection logic. This is useful for cases that you want to all the values outside a certain range to be converted to 1. By default the input logic will be used as is.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-count-arg-INPUT_MATRIX">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-count-arg-input-matrix"></span><span class="sig-name descname"><span class="pre">INPUT_MATRIX</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-count-arg-INPUT_MATRIX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="honeybee-radiance-postprocess-post-process-cumulative-radiation">
+<h3>cumulative-radiation<a class="headerlink" href="#honeybee-radiance-postprocess-post-process-cumulative-radiation" title="Permalink to this headline">¶</a></h3>
+<p>Postprocess average irradiance (W/m2) into cumulative radiation (kWh/m2).</p>
+<div class="line-block">
+<div class="line">Args:</div>
+<div class="line-block">
+<div class="line">average_irradiance: A single-column matrix of average irradiance values.</div>
+<div class="line-block">
+<div class="line">This input matrix must be in ASCII format.</div>
+</div>
+<div class="line">wea: The .wea file that was used in the irradiance simulation. This</div>
+<div class="line-block">
+<div class="line">will be used to determine the duration of the analysis for computing</div>
+<div class="line">cumulative radiation.</div>
+</div>
+</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>honeybee-radiance-postprocess post_process cumulative-radiation 
+    <span class="o">[</span>OPTIONS<span class="o">]</span> AVERAGE_IRRADIANCE WEA
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-timestep">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-cumulative-radiation-timestep"></span><span class="sig-name descname"><span class="pre">--timestep</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;timestep&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-timestep" title="Permalink to this definition">¶</a></dt>
+<dd><p>The timestep of the Wea file, which is used to to compute cumulative radiation over the time period of the Wea.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-o">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-cumulative-radiation-o"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-output"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-cumulative-radiation-output"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-o" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional path to output file to output the name of the newly created matrix. By default the list will be printed out to stdout</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-arg-AVERAGE_IRRADIANCE">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-cumulative-radiation-arg-average-irradiance"></span><span class="sig-name descname"><span class="pre">AVERAGE_IRRADIANCE</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-arg-AVERAGE_IRRADIANCE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-arg-WEA">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-cumulative-radiation-arg-wea"></span><span class="sig-name descname"><span class="pre">WEA</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-arg-WEA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="honeybee-radiance-postprocess-post-process-leed-illuminance">
+<h3>leed-illuminance<a class="headerlink" href="#honeybee-radiance-postprocess-post-process-leed-illuminance" title="Permalink to this headline">¶</a></h3>
+<p>Estimate LEED daylight credits from two point-in-time illuminance folders.</p>
+<div class="line-block">
+<div class="line">Args:</div>
+<div class="line-block">
+<div class="line">folder: Project folder for a LEED illuminance simulation. It should contain</div>
+<div class="line-block">
+<div class="line">a HBJSON model and two sub-folders of complete point-in-time illuminance</div>
+<div class="line">simulations labeled “9AM” and “3PM”. These two sub-folders should each</div>
+<div class="line">have results folders that include a grids_info.json and .res files with</div>
+<div class="line">illuminance values for each sensor. If Meshes are found for the sensor</div>
+<div class="line">grids in the HBJSON file, they will be used to compute percentages</div>
+<div class="line">of occupied floor area that pass vs. fail. Otherwise, all sensors will</div>
+<div class="line">be assumed to represent an equal amount of floor area.</div>
+</div>
+</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>honeybee-radiance-postprocess post_process leed-illuminance 
+    <span class="o">[</span>OPTIONS<span class="o">]</span> FOLDER
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-glare-control">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-leed-illuminance-glare-control"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-ngc"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-leed-illuminance-ngc"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-no-glare-control"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-leed-illuminance-no-glare-control"></span><span class="sig-name descname"><span class="pre">--glare-control</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">-ngc</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-glare-control</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-glare-control" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flag to note whether the model has “view-preserving automatic (with manual override) glare-control devices,” which means that illuminance only needs to be above 300 lux and not between 300 and 3000 lux.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p>True</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-gf">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-leed-illuminance-gf"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-grids-filter"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-leed-illuminance-grids-filter"></span><span class="sig-name descname"><span class="pre">-gf</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--grids-filter</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;grids_filter&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-gf" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pattern to filter the grids for just the regularly occupied spaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><ul class="simple">
+<li></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-sf">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-leed-illuminance-sf"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-sub-folder"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-leed-illuminance-sub-folder"></span><span class="sig-name descname"><span class="pre">-sf</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--sub-folder</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;sub_folder&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-sf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional relative path for a subfolder to write the pass/fail files for each sensor grid.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-output-file">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-leed-illuminance-output-file"></span><span class="sig-name descname"><span class="pre">--output-file</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_file&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-output-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional JSON file to output a summary of the number of LEED credits and the percentage of sensor area that meets the criteria. By default this will be printed out to stdout</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><ul class="simple">
+<li></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-arg-FOLDER">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-leed-illuminance-arg-folder"></span><span class="sig-name descname"><span class="pre">FOLDER</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-arg-FOLDER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="honeybee-radiance-postprocess-post-process-solar-tracking">
+<h3>solar-tracking<a class="headerlink" href="#honeybee-radiance-postprocess-post-process-solar-tracking" title="Permalink to this headline">¶</a></h3>
+<p>Postprocess a list of result folders to account for dynamic solar tracking.</p>
+<div class="line-block">
+<div class="line">This function essentially takes .ill files for each state of a dynamic tracking</div>
+<div class="line">system and produces a single .ill file that models the tracking behavior.</div>
+</div>
+<div class="line-block">
+<div class="line">Args:</div>
+<div class="line-block">
+<div class="line">folder: Results folder containing sub-folders that each represent a state</div>
+<div class="line-block">
+<div class="line">of the dynamic solar tracking system. Each sub-folder should contain .ill</div>
+<div class="line">files for that state and the names of these .ill files should be the</div>
+<div class="line">same across all sub-folders.</div>
+</div>
+<div class="line">sun_up_hours: The .txt file containing the sun-up hours that were simulated.</div>
+<div class="line">wea: The .wea file that was used in the simulation. This will be used to</div>
+<div class="line-block">
+<div class="line">determine the solar positions.</div>
+</div>
+</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>honeybee-radiance-postprocess post_process solar-tracking <span class="o">[</span>OPTIONS<span class="o">]</span> FOLDER
+                                                          SUN_UP_HOURS WEA
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-north">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-solar-tracking-north"></span><span class="sig-name descname"><span class="pre">--north</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;north&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-north" title="Permalink to this definition">¶</a></dt>
+<dd><p>Angle to north (0-360). 90 is west and 270 is east</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p>0</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-t">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-solar-tracking-t"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-tracking-increment"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-solar-tracking-tracking-increment"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--tracking-increment</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tracking_increment&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>An integer for the increment angle of each state in degrees. (Default: 5).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-sf">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-solar-tracking-sf"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-sub-folder"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-solar-tracking-sub-folder"></span><span class="sig-name descname"><span class="pre">-sf</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--sub-folder</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;sub_folder&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-sf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional relative path for subfolder to write output .ill files of the dynamic tracking system.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-arg-FOLDER">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-solar-tracking-arg-folder"></span><span class="sig-name descname"><span class="pre">FOLDER</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-arg-FOLDER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-arg-SUN_UP_HOURS">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-solar-tracking-arg-sun-up-hours"></span><span class="sig-name descname"><span class="pre">SUN_UP_HOURS</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-arg-SUN_UP_HOURS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-arg-WEA">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-solar-tracking-arg-wea"></span><span class="sig-name descname"><span class="pre">WEA</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-arg-WEA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="honeybee-radiance-postprocess-post-process-sum-row">
+<h3>sum-row<a class="headerlink" href="#honeybee-radiance-postprocess-post-process-sum-row" title="Permalink to this headline">¶</a></h3>
+<p>Postprocess a Radiance matrix and add all the numbers in each row.</p>
+<div class="line-block">
+<div class="line">This command is useful for translating Radiance results to outputs like radiation</div>
+<div class="line">to total radiation. Input matrix must be in ASCII format. The header in the input</div>
+<div class="line">file will be ignored.</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>honeybee-radiance-postprocess post_process sum-row <span class="o">[</span>OPTIONS<span class="o">]</span> INPUT_MATRIX
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-sum-row-divisor">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-sum-row-divisor"></span><span class="sig-name descname"><span class="pre">--divisor</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;divisor&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-sum-row-divisor" title="Permalink to this definition">¶</a></dt>
+<dd><p>An optional number, that the summed row will be divided by. For example, this can be a timestep, which can be used to ensure that a summed row of irradiance yields cumulative radiation over the entire time period of the matrix.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-sum-row-o">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-sum-row-o"></span><span id="cmdoption-honeybee-radiance-postprocess-post_process-sum-row-output"></span><span id="cmdoption-honeybee-radiance-postprocess-post-process-sum-row-output"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-sum-row-o" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional path to output file to output the name of the newly created matrix. By default the list will be printed out to stdout</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-honeybee-radiance-postprocess-post_process-sum-row-arg-INPUT_MATRIX">
+<span id="cmdoption-honeybee-radiance-postprocess-post-process-sum-row-arg-input-matrix"></span><span class="sig-name descname"><span class="pre">INPUT_MATRIX</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-post_process-sum-row-arg-INPUT_MATRIX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index &#8212; honeybee-radiance-postprocess  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          honeybee-radiance-postprocess</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="cli/index.html">CLI Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli/index.html#installation">Installation</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">honeybee_radiance_postprocess</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.html#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance_postprocess.annualdaylight.html">honeybee_radiance_postprocess.annualdaylight module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance_postprocess.helper.html">honeybee_radiance_postprocess.helper module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance_postprocess.leed.html">honeybee_radiance_postprocess.leed module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance_postprocess.solartracking.html">honeybee_radiance_postprocess.solartracking module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.html#module-honeybee_radiance_postprocess">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="cli/index.html">CLI Docs</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">honeybee_radiance_postprocess</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="cli/index.html">CLI Docs</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">honeybee_radiance_postprocess</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#Symbols"><strong>Symbols</strong></a>
+ | <a href="#A"><strong>A</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#W"><strong>W</strong></a>
+ 
+</div>
+<h2 id="Symbols">Symbols</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    --comply
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-comply">honeybee-radiance-postprocess-post_process-convert-to-binary command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-comply">honeybee-radiance-postprocess-post_process-count command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --divisor &lt;divisor&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-sum-row-divisor">honeybee-radiance-postprocess-post_process-sum-row command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --exclude-max
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-include-max">honeybee-radiance-postprocess-post_process-convert-to-binary command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-include-max">honeybee-radiance-postprocess-post_process-count command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --exclude-min
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-include-min">honeybee-radiance-postprocess-post_process-convert-to-binary command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-include-min">honeybee-radiance-postprocess-post_process-count command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --glare-control
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-glare-control">honeybee-radiance-postprocess-post_process-leed-illuminance command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --grids-filter &lt;grids_filter&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-gf">honeybee-radiance-postprocess-post_process-annual-daylight command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-gf">honeybee-radiance-postprocess-post_process-leed-illuminance command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --include-max
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-include-max">honeybee-radiance-postprocess-post_process-convert-to-binary command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-include-max">honeybee-radiance-postprocess-post_process-count command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --include-min
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-include-min">honeybee-radiance-postprocess-post_process-convert-to-binary command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-include-min">honeybee-radiance-postprocess-post_process-count command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --lower-threshold &lt;lower_threshold&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-lt">honeybee-radiance-postprocess-post_process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --maximum &lt;maximum&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-maximum">honeybee-radiance-postprocess-post_process-convert-to-binary command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-maximum">honeybee-radiance-postprocess-post_process-count command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --minimum &lt;minimum&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-minimum">honeybee-radiance-postprocess-post_process-convert-to-binary command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-minimum">honeybee-radiance-postprocess-post_process-count command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --no-glare-control
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-glare-control">honeybee-radiance-postprocess-post_process-leed-illuminance command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --north &lt;north&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-north">honeybee-radiance-postprocess-post_process-solar-tracking command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --output &lt;output&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-average-row-o">honeybee-radiance-postprocess-post_process-average-row command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-o">honeybee-radiance-postprocess-post_process-convert-to-binary command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-o">honeybee-radiance-postprocess-post_process-count command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-o">honeybee-radiance-postprocess-post_process-cumulative-radiation command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-sum-row-o">honeybee-radiance-postprocess-post_process-sum-row command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --output-file &lt;output_file&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-output-file">honeybee-radiance-postprocess-post_process-leed-illuminance command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --reverse
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-comply">honeybee-radiance-postprocess-post_process-convert-to-binary command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-comply">honeybee-radiance-postprocess-post_process-count command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    --schedule &lt;schedule&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-sch">honeybee-radiance-postprocess-post_process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --sub-folder &lt;sub_folder&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-sf">honeybee-radiance-postprocess-post_process-annual-irradiance command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-sf">honeybee-radiance-postprocess-post_process-leed-illuminance command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-sf">honeybee-radiance-postprocess-post_process-solar-tracking command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --sub_folder &lt;sub_folder&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-sf">honeybee-radiance-postprocess-post_process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --threshold &lt;threshold&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-t">honeybee-radiance-postprocess-post_process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --timestep &lt;timestep&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-timestep">honeybee-radiance-postprocess-post_process-annual-irradiance command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-timestep">honeybee-radiance-postprocess-post_process-cumulative-radiation command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --tracking-increment &lt;tracking_increment&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-t">honeybee-radiance-postprocess-post_process-solar-tracking command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --upper-threshold &lt;upper_threshold&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-ut">honeybee-radiance-postprocess-post_process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -gf
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-gf">honeybee-radiance-postprocess-post_process-annual-daylight command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-gf">honeybee-radiance-postprocess-post_process-leed-illuminance command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -lt
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-lt">honeybee-radiance-postprocess-post_process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -ngc
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-glare-control">honeybee-radiance-postprocess-post_process-leed-illuminance command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -o
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-average-row-o">honeybee-radiance-postprocess-post_process-average-row command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-o">honeybee-radiance-postprocess-post_process-convert-to-binary command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-o">honeybee-radiance-postprocess-post_process-count command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-o">honeybee-radiance-postprocess-post_process-cumulative-radiation command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-sum-row-o">honeybee-radiance-postprocess-post_process-sum-row command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -sch
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-sch">honeybee-radiance-postprocess-post_process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -sf
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-sf">honeybee-radiance-postprocess-post_process-annual-daylight command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-sf">honeybee-radiance-postprocess-post_process-annual-irradiance command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-sf">honeybee-radiance-postprocess-post_process-leed-illuminance command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-sf">honeybee-radiance-postprocess-post_process-solar-tracking command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -t
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-t">honeybee-radiance-postprocess-post_process-annual-daylight command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-t">honeybee-radiance-postprocess-post_process-solar-tracking command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -ut
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-ut">honeybee-radiance-postprocess-post_process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    AVERAGE_IRRADIANCE
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-arg-AVERAGE_IRRADIANCE">honeybee-radiance-postprocess-post_process-cumulative-radiation command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.annualdaylight.html#honeybee_radiance_postprocess.annualdaylight.filter_schedule_by_hours">filter_schedule_by_hours() (in module honeybee_radiance_postprocess.annualdaylight)</a>
+</li>
+      <li>
+    FOLDER
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-arg-FOLDER">honeybee-radiance-postprocess-post_process-annual-daylight command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-arg-FOLDER">honeybee-radiance-postprocess-post_process-annual-irradiance command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-arg-FOLDER">honeybee-radiance-postprocess-post_process-leed-illuminance command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-arg-FOLDER">honeybee-radiance-postprocess-post_process-solar-tracking command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.annualdaylight.html#honeybee_radiance_postprocess.annualdaylight.generate_default_schedule">generate_default_schedule() (in module honeybee_radiance_postprocess.annualdaylight)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    honeybee-radiance-postprocess-post_process-annual-daylight command line option
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-gf">--grids-filter &lt;grids_filter&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-lt">--lower-threshold &lt;lower_threshold&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-sch">--schedule &lt;schedule&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-sf">--sub_folder &lt;sub_folder&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-t">--threshold &lt;threshold&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-ut">--upper-threshold &lt;upper_threshold&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-gf">-gf</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-lt">-lt</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-sch">-sch</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-sf">-sf</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-t">-t</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-ut">-ut</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-daylight-arg-FOLDER">FOLDER</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee-radiance-postprocess-post_process-annual-irradiance command line option
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-sf">--sub-folder &lt;sub_folder&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-timestep">--timestep &lt;timestep&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-sf">-sf</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-arg-FOLDER">FOLDER</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-arg-WEA">WEA</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee-radiance-postprocess-post_process-average-row command line option
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-average-row-o">--output &lt;output&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-average-row-o">-o</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-average-row-arg-INPUT_MATRIX">INPUT_MATRIX</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee-radiance-postprocess-post_process-convert-to-binary command line option
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-comply">--comply</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-include-max">--exclude-max</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-include-min">--exclude-min</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-include-max">--include-max</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-include-min">--include-min</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-maximum">--maximum &lt;maximum&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-minimum">--minimum &lt;minimum&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-o">--output &lt;output&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-comply">--reverse</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-o">-o</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-arg-INPUT_MATRIX">INPUT_MATRIX</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee-radiance-postprocess-post_process-count command line option
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-comply">--comply</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-include-max">--exclude-max</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-include-min">--exclude-min</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-include-max">--include-max</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-include-min">--include-min</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-maximum">--maximum &lt;maximum&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-minimum">--minimum &lt;minimum&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-o">--output &lt;output&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-comply">--reverse</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-o">-o</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-arg-INPUT_MATRIX">INPUT_MATRIX</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    honeybee-radiance-postprocess-post_process-cumulative-radiation command line option
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-o">--output &lt;output&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-timestep">--timestep &lt;timestep&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-o">-o</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-arg-AVERAGE_IRRADIANCE">AVERAGE_IRRADIANCE</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-arg-WEA">WEA</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee-radiance-postprocess-post_process-leed-illuminance command line option
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-glare-control">--glare-control</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-gf">--grids-filter &lt;grids_filter&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-glare-control">--no-glare-control</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-output-file">--output-file &lt;output_file&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-sf">--sub-folder &lt;sub_folder&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-gf">-gf</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-glare-control">-ngc</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-sf">-sf</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-leed-illuminance-arg-FOLDER">FOLDER</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee-radiance-postprocess-post_process-solar-tracking command line option
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-north">--north &lt;north&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-sf">--sub-folder &lt;sub_folder&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-t">--tracking-increment &lt;tracking_increment&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-sf">-sf</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-t">-t</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-arg-FOLDER">FOLDER</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-arg-SUN_UP_HOURS">SUN_UP_HOURS</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-arg-WEA">WEA</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee-radiance-postprocess-post_process-sum-row command line option
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-sum-row-divisor">--divisor &lt;divisor&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-sum-row-o">--output &lt;output&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-sum-row-o">-o</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-sum-row-arg-INPUT_MATRIX">INPUT_MATRIX</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.html#module-honeybee_radiance_postprocess">module</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess.annualdaylight
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.annualdaylight.html#module-honeybee_radiance_postprocess.annualdaylight">module</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess.helper
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.helper.html#module-honeybee_radiance_postprocess.helper">module</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess.leed
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.leed.html#module-honeybee_radiance_postprocess.leed">module</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess.solartracking
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.solartracking.html#module-honeybee_radiance_postprocess.solartracking">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.leed.html#honeybee_radiance_postprocess.leed.ill_pass_fail_from_folder">ill_pass_fail_from_folder() (in module honeybee_radiance_postprocess.leed)</a>
+</li>
+      <li>
+    INPUT_MATRIX
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-average-row-arg-INPUT_MATRIX">honeybee-radiance-postprocess-post_process-average-row command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-convert-to-binary-arg-INPUT_MATRIX">honeybee-radiance-postprocess-post_process-convert-to-binary command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-count-arg-INPUT_MATRIX">honeybee-radiance-postprocess-post_process-count command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-sum-row-arg-INPUT_MATRIX">honeybee-radiance-postprocess-post_process-sum-row command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.leed.html#honeybee_radiance_postprocess.leed.leed_illuminance_to_folder">leed_illuminance_to_folder() (in module honeybee_radiance_postprocess.leed)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.annualdaylight.html#honeybee_radiance_postprocess.annualdaylight.metrics">metrics() (in module honeybee_radiance_postprocess.annualdaylight)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.annualdaylight.html#honeybee_radiance_postprocess.annualdaylight.metrics_from_folder">metrics_from_folder() (in module honeybee_radiance_postprocess.annualdaylight)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.annualdaylight.html#honeybee_radiance_postprocess.annualdaylight.metrics_to_files">metrics_to_files() (in module honeybee_radiance_postprocess.annualdaylight)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.annualdaylight.html#honeybee_radiance_postprocess.annualdaylight.metrics_to_folder">metrics_to_folder() (in module honeybee_radiance_postprocess.annualdaylight)</a>
+</li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.html#module-honeybee_radiance_postprocess">honeybee_radiance_postprocess</a>
+</li>
+        <li><a href="honeybee_radiance_postprocess.annualdaylight.html#module-honeybee_radiance_postprocess.annualdaylight">honeybee_radiance_postprocess.annualdaylight</a>
+</li>
+        <li><a href="honeybee_radiance_postprocess.helper.html#module-honeybee_radiance_postprocess.helper">honeybee_radiance_postprocess.helper</a>
+</li>
+        <li><a href="honeybee_radiance_postprocess.leed.html#module-honeybee_radiance_postprocess.leed">honeybee_radiance_postprocess.leed</a>
+</li>
+        <li><a href="honeybee_radiance_postprocess.solartracking.html#module-honeybee_radiance_postprocess.solartracking">honeybee_radiance_postprocess.solartracking</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.solartracking.html#honeybee_radiance_postprocess.solartracking.post_process_solar_tracking">post_process_solar_tracking() (in module honeybee_radiance_postprocess.solartracking)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    SUN_UP_HOURS
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-arg-SUN_UP_HOURS">honeybee-radiance-postprocess-post_process-solar-tracking command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    WEA
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-annual-irradiance-arg-WEA">honeybee-radiance-postprocess-post_process-annual-irradiance command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-cumulative-radiation-arg-WEA">honeybee-radiance-postprocess-post_process-cumulative-radiation command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post_process-solar-tracking-arg-WEA">honeybee-radiance-postprocess-post_process-solar-tracking command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
