@@ -29,9 +29,8 @@ honeybee-radiance-postprocess
 
 .. toctree::
    :maxdepth: 4
-   :caption: Contents:
 
-.. include:: modules.rst
+   modules
 
 
 Indices and tables
