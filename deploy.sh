@@ -18,14 +18,12 @@ twine upload dist/* -u $PYPI_USERNAME -p $PYPI_PASSWORD
 
 echo "Docker Deployment..."
 echo "Login to Docker"
-echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+echo "${DOCKER_PASSWORD:?}" | docker login -u "${DOCKER_USERNAME:?}" --password-stdin 
+  && curl -L "https://github.com/LBNL-ETA/Radiance/releases/download/947ea88a/Radiance_947ea88a_Linux.zip" --output radiance.zip
+  && unzip -p radiance.zip | tar xz
+  && mv radiance-*-Linux radiance
 
-curl -L "https://github.com/LBNL-ETA/Radiance/releases/download/947ea88a/Radiance_947ea88a_Linux.zip" --output radiance.zip
-unzip -p radiance.zip | tar xz
-mv radiance-*-Linux radiance
-
-docker build . -t $CONTAINER_NAME:$NEXT_RELEASE_VERSION
-docker tag $CONTAINER_NAME:$NEXT_RELEASE_VERSION $CONTAINER_NAME:latest
-
-docker push $CONTAINER_NAME:latest
-docker push $CONTAINER_NAME:$NEXT_RELEASE_VERSION
+  && docker build -t $CONTAINER_NAME:$NEXT_RELEASE_VERSION --target main . \
+  && docker tag $CONTAINER_NAME:$NEXT_RELEASE_VERSION $CONTAINER_NAME:latest \
+  && docker push $CONTAINER_NAME:latest \
+  && docker push $CONTAINER_NAME:$NEXT_RELEASE_VERSION
