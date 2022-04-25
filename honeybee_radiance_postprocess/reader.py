@@ -13,3 +13,4 @@ def read_feather(filepath, pandas_dataframe=True):
         data = table.to_numpy().transpose()
     
     return data
+
