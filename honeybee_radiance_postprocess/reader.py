@@ -1,38 +1,47 @@
 """Post-processing reader functions."""
 
 import numpy as np
+import pandas as pd
 import pyarrow.feather as feather
 
 from .util import binary_mtx_dimension
 
 
-def feather_to_numpy(filepath, pandas_dataframe=False):
+def feather_to_array(filepath: str) -> np.ndarray:
     """Read a feather file a NumPy array.
     
     Args:
         filepath: Path to a feather file.
-        pandas_dataframe: A boolean to note if feather should read the file as Pandas
-            DataFrame. The function will still return a NumPy array, i.e., only reading
-            of the file is affected by this option. The Pandas DataFram will be converted
-            to NumPy.
     
     Returns:
         A NumPy array.
     """
-    if not pandas_dataframe:
-        # read file to PyArrow table
-        table = feather.read_table(filepath)
-        np_arrays = [arr.to_numpy() for arr in table]
-        data = np.array(np_arrays)
-    else:
-        # read file to Pandas DataFrame
-        dataframe = feather.read_feather(filepath)
-        data = dataframe.to_numpy().transpose()
+    # read file to PyArrow table
+    table = feather.read_table(filepath)
+    np_arrays = [arr.to_numpy() for arr in table]
+    array = np.array(np_arrays)
     
-    return data
+    return array
 
 
-def binary_to_numpy(binary_file, nrows=None, ncols=None, ncomp=None):
+def feather_to_dataframe(filepath: str) -> pd.DataFrame:
+    """Read a feather file a NumPy array.
+    
+    Args:
+        filepath: Path to a feather file.
+    
+    Returns:
+        A Pandas DataFrame.
+    """
+    # read file to Pandas DataFrame
+    dataframe = feather.read_feather(filepath)
+    
+    return dataframe
+
+
+def binary_to_array(
+        binary_file: str, nrows: int = None, ncols: int = None, ncomp: int = None
+        ) -> np.ndarray:
     """Read a binary Radiance file as a NumPy array.
     
     Args:
@@ -54,8 +63,8 @@ def binary_to_numpy(binary_file, nrows=None, ncols=None, ncomp=None):
                 reader.readline()
             
             if ncomp != 1:
-                data = np.fromfile(reader, dtype=np.float32).reshape(nrows, ncols, ncomp)
+                array = np.fromfile(reader, dtype=np.float32).reshape(nrows, ncols, ncomp)
             else:
-                data = np.fromfile(reader, dtype=np.float32).reshape(nrows, ncols)
+                array = np.fromfile(reader, dtype=np.float32).reshape(nrows, ncols)
 
-    return data
+    return array
