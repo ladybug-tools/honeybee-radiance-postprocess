@@ -1,9 +1,9 @@
 """Post-processing utility functions."""
 
-import pyarrow as pa
+from typing import Tuple
 
 
-def binary_mtx_dimension(filepath):
+def binary_mtx_dimension(filepath: str) -> Tuple[int, int, int, int]:
     """Return binary Radiance matrix dimensions if exist.
 
     This function returns NROWS, NCOLS, NCOMP and number of header lines including the
@@ -49,23 +49,3 @@ def binary_mtx_dimension(filepath):
         return nrows, ncols, ncomp, len(header_lines) + 1
     finally:
         inf.close()
-
-
-def numpy_to_pyarrow_table(array):
-    """Convert a NumPy array to a PyArrow table.
-    
-    This functions uses the from arrays method to create a PyArrow table from a NumPy
-    array.
-    TODO: Possibly add names as input to this function.
-
-    Args:
-        array: NumPy array.
-    
-    Returns:
-        A PyArrow table.
-    """
-    pa_arrays = [pa.array(row) for row in array]
-    names = [str(i) for i in range(len(pa_arrays))]
-    pa_table = pa.Table.from_arrays(pa_arrays, names=names)
-
-    return pa_table
