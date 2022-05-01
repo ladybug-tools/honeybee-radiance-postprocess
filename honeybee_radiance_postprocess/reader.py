@@ -8,7 +8,7 @@ from .util import binary_mtx_dimension
 
 
 def feather_to_array(filepath: str) -> np.ndarray:
-    """Read a feather file a NumPy array.
+    """Read a feather file as a NumPy array.
     
     Args:
         filepath: Path to a feather file.
@@ -25,7 +25,7 @@ def feather_to_array(filepath: str) -> np.ndarray:
 
 
 def feather_to_dataframe(filepath: str) -> pd.DataFrame:
-    """Read a feather file a NumPy array.
+    """Read a feather file as a Pandas dataframe.
     
     Args:
         filepath: Path to a feather file.
@@ -42,7 +42,7 @@ def feather_to_dataframe(filepath: str) -> pd.DataFrame:
 def binary_to_array(
         binary_file: str, nrows: int = None, ncols: int = None, ncomp: int = None
         ) -> np.ndarray:
-    """Read a binary Radiance file as a NumPy array.
+    """Read a Radiance binary file as a NumPy array.
     
     Args:
         binary_file: Path to binary Radiance file.
