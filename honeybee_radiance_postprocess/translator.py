@@ -5,7 +5,6 @@ import pyarrow as pa
 import pyarrow.feather as feather
 import os
 
-from .translator import array_to_table
 from .reader import binary_to_array
 
 
