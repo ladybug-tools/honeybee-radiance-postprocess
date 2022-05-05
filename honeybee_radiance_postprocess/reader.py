@@ -7,17 +7,23 @@ import pyarrow.feather as feather
 from .util import binary_mtx_dimension
 
 
-def feather_to_array(filepath: str) -> np.ndarray:
+def feather_to_array(
+        filepath: str, memory_map: bool = True, use_threads: bool = True) -> np.ndarray:
     """Read a feather file as a NumPy array.
+
+    This function will read the feather file as a PyArrow table and convert it to a NumPy
+    array.
     
     Args:
         filepath: Path to a feather file.
+        memory_map: Use memory mapping when opening file on disk.
+        use_threads: Whether to parallelize reading using multiple threads.
     
     Returns:
         A NumPy array.
     """
     # read file to PyArrow table
-    table = feather.read_table(filepath)
+    table = feather.read_table(filepath, memory_map=memory_map, use_threads=use_threads)
     np_arrays = [arr.to_numpy() for arr in table]
     array = np.array(np_arrays)
     
