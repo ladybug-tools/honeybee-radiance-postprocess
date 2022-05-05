@@ -44,7 +44,8 @@ def binary_to_feather(
     return feather_file
 
 
-def array_to_feather(array: np.ndarray, filename: str, output_folder: str = '.') -> str:
+def array_to_feather(array: np.ndarray, filename: str, output_folder: str = '.',
+        column_name: str = 'sensor') -> str:
     """Write a NumPy array to a feather file.
 
     The NumPy array will be converted to a PyArrow table which will be written to the
@@ -54,11 +55,13 @@ def array_to_feather(array: np.ndarray, filename: str, output_folder: str = '.')
         array: A NumPy array.
         filename: Name of the feather file.
         output_folder: Optional output folder.
+        column_name: A name to add before the column count. If the input is empty the
+            column names will simply be the column count.
     
     Returns:
         Path to the feather file.
     """
-    pa_table = array_to_table(array)
+    pa_table = array_to_table(array, column_name=column_name)
 
     feather_file = os.path.join(output_folder, filename + '.feather')
     # write Table to feather
@@ -67,7 +70,7 @@ def array_to_feather(array: np.ndarray, filename: str, output_folder: str = '.')
     return feather_file
 
 
-def array_to_table(array: np.ndarray) -> pa.Table:
+def array_to_table(array: np.ndarray, column_name: str = 'sensor') -> pa.Table:
     """Convert a NumPy array to a PyArrow table.
     
     This functions uses the from arrays method to create a PyArrow table from a NumPy
@@ -76,12 +79,16 @@ def array_to_table(array: np.ndarray) -> pa.Table:
 
     Args:
         array: NumPy array.
+        column_name: A name to add before the column count. If the input is empty the
+            column names will simply be the column count.
     
     Returns:
         A PyArrow table.
     """
+    if column_name:
+        column_name = column_name + '_'
     pa_arrays = [pa.array(row) for row in array]
-    names = [str(i) for i in range(len(pa_arrays))]
+    names = ['%s%s' % (column_name, i) for i in range(len(pa_arrays))]
     table = pa.Table.from_arrays(pa_arrays, names=names)
 
     return table
