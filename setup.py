@@ -18,6 +18,9 @@ setuptools.setup(
     url="https://github.com/ladybug-tools/honeybee-radiance-postprocess",
     packages=setuptools.find_packages(exclude=["tests*"]),
     install_requires=requirements,
+    entry_points={
+        "console_scripts": ["honeybee-radiance-postprocess = honeybee_radiance_postprocess.cli:radiance"]
+    },
     classifiers=[
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.6",
