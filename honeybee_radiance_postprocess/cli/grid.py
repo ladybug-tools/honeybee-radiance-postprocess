@@ -52,13 +52,14 @@ def merge_grid_folder(input_folder, output_folder, extension, dist_info):
 
 
 def restore_original_distribution(
-        input_folder, output_folder, extension='pts', dist_info=None):
+        input_folder, output_folder, extension='npy', dist_info=None):
     """Restructure files to the original distribution based on the distribution info.
+
     Args:
         input_folder: Path to input folder.
         output_folder: Path to the new restructured folder
-        extension: Extension of the files to collect data from. Default is ``pts`` for
-            sensor files. Another common extension is ``ill`` for the results of daylight
+        extension: Extension of the files to collect data from. Default is ``npy`` for
+            NumPy files. Another common extension is ``ill`` for the results of daylight
             studies.
         dist_info: Path to dist_info.json file. If None, the function will try to load
             ``_redist_info.json`` file from inside the input_folder. (Default: None).
