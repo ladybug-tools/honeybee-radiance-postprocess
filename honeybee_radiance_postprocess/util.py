@@ -1,5 +1,6 @@
 """Post-processing utility functions."""
 
+import numpy as np
 from typing import Tuple
 
 
@@ -49,3 +50,14 @@ def binary_mtx_dimension(filepath: str) -> Tuple[int, int, int, int]:
         return nrows, ncols, ncomp, len(header_lines) + 1
     finally:
         inf.close()
+
+
+def check_array_dim(array: np.ndarray, dim: int):
+    """Check NumPy array dimension.
+    
+    Args:
+        array: A NumPy array.
+        dim: The dimension to check against.
+    """
+    assert array.ndim == dim, \
+        'Expected {}-dimensional array. Dimension of array is {}'.format(dim, array.ndim)
