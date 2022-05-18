@@ -99,7 +99,7 @@ def cda_array1d(
 
 
 def udi_array2d(array: np.ndarray, total_occ: int = None, min_t: float = 100,
-        max_t: float = 3000) -> np.ndarray:
+                max_t: float = 3000) -> np.ndarray:
     """Calculate useful daylight illuminance for a 2D NumPy array.
     
     Args:
@@ -124,7 +124,7 @@ def udi_array2d(array: np.ndarray, total_occ: int = None, min_t: float = 100,
 
 
 def udi_array1d(array: np.ndarray, total_occ: int = None, min_t: float = 100,
-        max_t: float = 3000) -> np.float64:
+                max_t: float = 3000) -> np.float64:
     """Calculate useful daylight illuminance for a 1D NumPy array.
     
     Args:
@@ -145,8 +145,8 @@ def udi_array1d(array: np.ndarray, total_occ: int = None, min_t: float = 100,
     return np.float64(((array >= min_t) & (array <= max_t)).sum() / total_occ * 100)
 
 
-def udi_lower_array2d(
-        array: np.ndarray, total_occ: int = None, min_t: float = 100) -> np.ndarray:
+def udi_lower_array2d(array: np.ndarray, total_occ: int = None, min_t: float = 100,
+                      sun_down_occ_hours: int = 0) -> np.ndarray:
     """Calculate lower than useful daylight illuminance for a 2D NumPy array.
     
     Args:
@@ -165,13 +165,15 @@ def udi_lower_array2d(
         total_occ = array.shape[1]
 
     udi = np.apply_along_axis(
-            udi_lower_array1d, 1, array, total_occ=total_occ, min_t=min_t)
+            udi_lower_array1d, 1, array, total_occ=total_occ, min_t=min_t,
+            sun_down_occ_hours=sun_down_occ_hours)
 
     return udi
 
 
 def udi_lower_array1d(
-        array: np.ndarray, total_occ: int = None, min_t: float = 100) -> np.float64:
+        array: np.ndarray, total_occ: int = None, min_t: float = 100,
+        sun_down_occ_hours: int = 0) -> np.float64:
     """Calculate lower than useful daylight illuminance for a 1D NumPy array.
     
     Args:
@@ -188,7 +190,7 @@ def udi_lower_array1d(
         # set total_occ to number of columns in array
         total_occ = array.size
 
-    return np.float64((array < min_t).sum() / total_occ * 100)
+    return np.float64(((array < min_t).sum() + sun_down_occ_hours) / total_occ * 100)
 
 
 def udi_upper_array2d(
