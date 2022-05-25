@@ -11,12 +11,14 @@ from honeybee_radiance_postprocess.annualdaylight import occupancy_filter
 
 
 class _ResultsFolder(object):
-    __slots__ = ('_folder', '_grids_info', '_sun_up_hours', '_light_path')
+    __slots__ = (
+        '_folder', '_grids_info', '_sun_up_hours', '_light_path', '_default_states')
 
     def __init__(self, folder):
         self._folder = pathlib.Path(folder).as_posix()
         self._grids_info, self._sun_up_hours = _process_input_folder(self.folder, '*')
         self._light_path = self._load_light_path()
+        self._default_states = self._load_default_states()
 
     @property
     def folder(self):
@@ -37,7 +39,11 @@ class _ResultsFolder(object):
     @property
     def light_path(self):
         return self._light_path
-    
+
+    @property
+    def default_states(self):
+        return self._default_states
+
     def _load_light_path(self):
         grids_info = self.grids_info
         lp = []
@@ -51,7 +57,16 @@ class _ResultsFolder(object):
                     lp.insert(0, light_path)
                 else:
                     lp.append(light_path)
+            if not light_paths and 'static_apertures' not in lp:
+                lp.insert(0, light_path)
+
         return lp
+
+    def _load_default_states(self):
+        default_states = {}
+        for light_path in self.light_path:
+            default_states[light_path] = 0
+        return default_states
 
 
 class Results(_ResultsFolder):
@@ -96,13 +111,14 @@ class Results(_ResultsFolder):
         else:
             grids_info = self.grids_info
        
-        light_path_states = self.get_light_path_states(states=states)
+        light_path_states = self.states(states=states)
 
-        self.calculate_function(da_array2d, grids_info, light_path_states, folder=folder, 
-                                sub_folder=sub_folder, exists=exists, 
-                                file_extension=file_extension, threshold=threshold)
+        output_files = self.calculate_function(
+            da_array2d, grids_info, light_path_states, folder=folder, 
+            sub_folder=sub_folder, exists=exists, file_extension=file_extension,
+            threshold=threshold)
 
-        return 'a'
+        return output_files
 
     def continous_daylight_autonomy(
         self, threshold=300, states=None, grids_filter='*', folder='metrics',
@@ -113,13 +129,14 @@ class Results(_ResultsFolder):
         else:
             grids_info = self.grids_info        
 
-        light_path_states = self.get_light_path_states(states=states)
+        light_path_states = self.states(states=states)
 
-        self.calculate_function(cda_array2d, grids_info, light_path_states, folder=folder, 
-                                sub_folder=sub_folder, exists=exists, 
-                                file_extension=file_extension, threshold=threshold)
+        output_files = self.calculate_function(
+            cda_array2d, grids_info, light_path_states, folder=folder, 
+            sub_folder=sub_folder, exists=exists, file_extension=file_extension,
+            threshold=threshold)
 
-        return 'a'
+        return output_files
 
     def useful_daylight_illuminance(
         self, min_t=100, max_t=3000, states=None, grids_filter='*', folder='metrics',
@@ -130,13 +147,14 @@ class Results(_ResultsFolder):
         else:
             grids_info = self.grids_info
 
-        light_path_states = self.get_light_path_states(states=states)
+        light_path_states = self.states(states=states)
 
-        self.calculate_function(udi_array2d, grids_info, light_path_states,
-                                folder=folder, sub_folder=sub_folder, exists=exists, 
-                                file_extension=file_extension, min_t=min_t, max_t=max_t)
+        output_files = self.calculate_function(
+            udi_array2d, grids_info, light_path_states, folder=folder,
+            sub_folder=sub_folder, exists=exists, file_extension=file_extension,
+            min_t=min_t, max_t=max_t)
 
-        return 'a'
+        return output_files
 
     def useful_daylight_illuminance_lower(
         self, min_t=100, states=None, grids_filter='*', folder='metrics',
@@ -147,14 +165,14 @@ class Results(_ResultsFolder):
         else:
             grids_info = self.grids_info
 
-        light_path_states = self.get_light_path_states(states=states)
+        light_path_states = self.states(states=states)
 
-        self.calculate_function(udi_lower_array2d, grids_info, light_path_states,
-                                folder=folder, sub_folder=sub_folder, exists=exists, 
-                                file_extension=file_extension, min_t=min_t,
-                                sun_down_occ_hours=self.sun_down_occ_hours)
+        output_files = self.calculate_function(
+            udi_lower_array2d, grids_info, light_path_states, folder=folder,
+            sub_folder=sub_folder, exists=exists, file_extension=file_extension,
+            min_t=min_t, sun_down_occ_hours=self.sun_down_occ_hours)
 
-        return 'a'
+        return output_files
 
     def useful_daylight_illuminance_upper(
         self, max_t=3000, states=None, grids_filter='*', folder='metrics',
@@ -165,31 +183,56 @@ class Results(_ResultsFolder):
         else:
             grids_info = self.grids_info
 
-        light_path_states = self.get_light_path_states(states=states)
+        light_path_states = self.states(states=states)
 
-        self.calculate_function(udi_upper_array2d, grids_info, light_path_states,
-                                folder=folder, sub_folder=sub_folder, exists=exists, 
-                                file_extension=file_extension, max_t=max_t)
+        output_files = self.calculate_function(
+            udi_upper_array2d, grids_info, light_path_states, folder=folder,
+            sub_folder=sub_folder, exists=exists, file_extension=file_extension,
+            max_t=max_t)
 
-        return 'a'
+        return output_files
+
+    def annual_metrics(
+        self, threshold=300, min_t=100, max_t=3000, states=None, grids_filter='*',
+        folder='metrics', exists=True):
+
+        da_files = self.daylight_autonomy(
+            threshold=threshold, states=states, grids_filter=grids_filter, folder=folder,
+            exists=exists)
+        cda_files = self.continous_daylight_autonomy(
+            threshold=threshold, states=states, grids_filter=grids_filter, folder=folder,
+            exists=exists)
+        udi_files = self.useful_daylight_illuminance(
+            min_t=min_t, max_t=max_t, states=states, grids_filter=grids_filter,
+            folder=folder, exists=exists)
+        udi_lower_files = self.useful_daylight_illuminance_lower(
+            min_t=min_t, states=states, grids_filter=grids_filter, folder=folder,
+            exists=exists)
+        udi_upper_files = self.useful_daylight_illuminance_upper(
+            max_t=max_t, states=states, grids_filter=grids_filter, folder=folder,
+            exists=exists)
+        
+        return da_files, cda_files, udi_files, udi_lower_files, udi_upper_files
 
     def calculate_function(
         self, function, grids_info, light_path_states, folder='metrics',
         sub_folder='unnamed', file_extension='txt', exists=True, **kwargs):
 
+        output_files = []
         for grid_info in grids_info:
             grid_id = grid_info['identifier']
-            arrays, states = self.grid_arrays_and_states(grid_info, light_path_states)
+            files, states = self.grid_files_and_states(grid_info, light_path_states)
 
             file = pathlib.Path(
                 self.folder, folder, sub_folder, 
                 '%s..%s.%s' % (grid_id, '_'.join(map(str, states)), file_extension))
             file.parent.mkdir(parents=True, exist_ok=True)
 
+            output_files.append(file)
             if file.exists() and exists:
                 continue
-            if arrays:
-                array = sum(arrays)
+            if files:
+                array = sum(Results.load_numpy_arrays(files))
                 array_filter = np.apply_along_axis(
                     occupancy_filter, 1, array, mask=self.occupancy_mask)
                 results = function(array_filter, total_occ=self.total_occ, **kwargs)
@@ -198,11 +241,25 @@ class Results(_ResultsFolder):
                 # all states for the grid are -1
                 results = np.zeros(grid_info['count'])
                 np.savetxt(file, results, fmt='%.2f')
-            print(results[:5])
 
-    def grid_arrays_and_states(self, grid_info, light_path_states):
-        """Get all arrays for the given grid as well as a list of states for the grid."""
-        arrays = []
+        return output_files
+
+    @staticmethod
+    def load_numpy_arrays(files):
+        """Load a list of NumPy files to a list of NumPy arrays.
+
+        Args:
+            files: A list of NumPy files.
+        
+        Returns:
+            A list of NumPy arrays.
+        """
+        arrays = [np.load(file) for file in files]
+        return arrays
+
+    def grid_files_and_states(self, grid_info, light_path_states):
+        """Get NumPy files for a given grid as well as a list of states for the grid."""
+        files = []
         states = []
         grid_id = grid_info['identifier']
         light_paths = grid_info['light_path']
@@ -213,9 +270,12 @@ class Results(_ResultsFolder):
                 if light_path_states[light_path] == 0:
                     states.append(light_path_states[light_path])
                     npy_file = os.path.join(self.folder, light_path, '%s.npy' % grid_id)
-                    arrays.append(np.load(npy_file))
-                else:
+                    files.append(npy_file)
+                elif light_path_states[light_path] == -1:
                     states.append(-1)
+                else:
+                    raise ValueError('State of static apertures must be either 0 for on '
+                        'or -1 for off. Received state \'%s\'' % light_path_states[light_path])
             else:
                 state = light_path_states[light_path]
                 states.append(state)
@@ -225,18 +285,44 @@ class Results(_ResultsFolder):
                 if not os.path.isdir(state_folder):
                     raise ValueError('Folder of state %s for light path %s does not exist.' % (state, light_path))
                 npy_file = os.path.join(state_folder, '%s.npy' % grid_id)
-                arrays.append(np.load(npy_file))
+                files.append(npy_file)
         
-        return arrays, states
+        return files, states
 
-    def get_light_path_states(self, states=None):
-        light_path_states = {}
+    def states(self, states=None):
+        """Creates a dictionary of states for each light path including a state for
+        static results.
+        
+        This method uses the default_states and overwrites the values in that
+        dictionary by the values provided in the 'states' input. If some light paths are
+        not given in the 'states' input, the default values of 0 will be used.
+
+        Example of 'states' input:
+        {
+            'static_apertures': 0,
+            'Room_1_South': 1,
+            'Room_2_North': -1
+        }
+
+        Args:
+            states: A dictionary of states. If no input is given the method will return
+                the same dictionary that can be accessed by the default_states property.
+
+        
+        Returns:
+            A dictionary of states.
+        """
         if states:
-            for lp, state in zip(self.light_path, states):
-                light_path_states[lp] = state
+            assert isinstance(states, dict), 'Expected dictionary ...'
+            light_path_states = self.default_states
+            for lp, state in states.items():
+                if lp in self.default_states:
+                    light_path_states[lp] = state
+                else:
+                    raise ValueError('States dictionary has an invalid key \'%s\'. '
+                        'Valid keys are [%s].' % (lp, ', '.join(self.light_path)))
         else:
-            for lp in self.light_path:
-                light_path_states[lp] = 0
+            light_path_states = self.default_states
         
         return light_path_states
 
