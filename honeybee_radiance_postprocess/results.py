@@ -8,15 +8,17 @@ from honeybee_radiance.postprocess.annual import (_process_input_folder,
 from honeybee_radiance_postprocess.metrics import (da_array2d, cda_array2d, udi_array2d,
     udi_lower_array2d, udi_upper_array2d)
 from honeybee_radiance_postprocess.annualdaylight import occupancy_filter
+from ladybug.dt import DateTime
 
 
 class _ResultsFolder(object):
     __slots__ = (
-        '_folder', '_grids_info', '_sun_up_hours', '_light_path', '_default_states')
+        '_folder', '_grids_info', '_sun_up_hours', '_datetimes', '_light_path', '_default_states')
 
     def __init__(self, folder):
         self._folder = pathlib.Path(folder).as_posix()
         self._grids_info, self._sun_up_hours = _process_input_folder(self.folder, '*')
+        self._datetimes = [DateTime.from_hoy(hoy) for hoy in list(map(int, self.sun_up_hours))]
         self._light_path = self._load_light_path()
         self._default_states = self._load_default_states()
 
@@ -27,14 +29,14 @@ class _ResultsFolder(object):
     @property
     def grids_info(self):
         return self._grids_info
-
-    @grids_info.setter
-    def grids_info(self, grids_info):
-        self._grids_info = grids_info
     
     @property
     def sun_up_hours(self):
         return self._sun_up_hours
+
+    @property
+    def datetimes(self):
+        return self._datetimes
 
     @property
     def light_path(self):
@@ -106,10 +108,7 @@ class Results(_ResultsFolder):
         self, threshold=300, states=None, grids_filter='*', folder='metrics',
         sub_folder='da', file_extension='da', exists=True):
 
-        if grids_filter != '*':
-            grids_info, _ = _process_input_folder(self.folder, grids_filter)
-        else:
-            grids_info = self.grids_info
+        grids_info = self._filter_grids(grids_filter=grids_filter)
        
         light_path_states = self.states(states=states)
 
@@ -124,10 +123,7 @@ class Results(_ResultsFolder):
         self, threshold=300, states=None, grids_filter='*', folder='metrics',
         sub_folder='cda', file_extension='cda', exists=True):
 
-        if grids_filter != '*':
-            grids_info, _ = _process_input_folder(self.folder, grids_filter)
-        else:
-            grids_info = self.grids_info        
+        grids_info = self._filter_grids(grids_filter=grids_filter)        
 
         light_path_states = self.states(states=states)
 
@@ -142,10 +138,7 @@ class Results(_ResultsFolder):
         self, min_t=100, max_t=3000, states=None, grids_filter='*', folder='metrics',
         sub_folder='udi', file_extension='udi', exists=True):
 
-        if grids_filter != '*':
-            grids_info, _ = _process_input_folder(self.folder, grids_filter)
-        else:
-            grids_info = self.grids_info
+        grids_info = self._filter_grids(grids_filter=grids_filter)
 
         light_path_states = self.states(states=states)
 
@@ -178,10 +171,7 @@ class Results(_ResultsFolder):
         self, max_t=3000, states=None, grids_filter='*', folder='metrics',
         sub_folder='udi_upper', file_extension='udi', exists=True):
 
-        if grids_filter != '*':
-            grids_info, _ = _process_input_folder(self.folder, grids_filter)
-        else:
-            grids_info = self.grids_info
+        grids_info = self._filter_grids(grids_filter=grids_filter)
 
         light_path_states = self.states(states=states)
 
@@ -244,6 +234,36 @@ class Results(_ResultsFolder):
 
         return output_files
 
+    def point_in_time_values(self, datetime, states=None, grids_filter='*'):
+
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+
+        light_path_states = self.states(states=states)
+
+        try:
+            assert isinstance(datetime, int)
+            dt = DateTime.from_hoy(datetime)
+        except:
+            assert isinstance(datetime, DateTime)
+            dt = datetime
+
+        index = self._index_from_datetime(dt)
+
+        grids_values = []
+        for grid_info in grids_info:
+            files, states = self.grid_files_and_states(grid_info, light_path_states)
+
+            if files:
+                if index:
+                    array = sum(Results.load_numpy_arrays(files))
+                    grids_values.append(np.take(array, index, axis=1))                    
+                else:
+                    grids_values.append(np.zeros(grid_info['count']))
+            else:
+                grids_values.append(np.zeros(grid_info['count']))
+
+        return grids_values
+
     @staticmethod
     def load_numpy_arrays(files):
         """Load a list of NumPy files to a list of NumPy arrays.
@@ -295,7 +315,7 @@ class Results(_ResultsFolder):
         
         This method uses the default_states and overwrites the values in that
         dictionary by the values provided in the 'states' input. If some light paths are
-        not given in the 'states' input, the default values of 0 will be used.
+        not provided in the 'states' input, the default values of 0 will be used.
 
         Example of 'states' input:
         {
@@ -332,4 +352,30 @@ class Results(_ResultsFolder):
         self._occupancy_mask = np.array(self.occ_pattern)
     
     def _update_grids(self, filter_pattern):
-        self.grids_info, self._sun_up_hours = _process_input_folder(self.folder, filter_pattern)
+        self._grids_info, self._sun_up_hours = _process_input_folder(self.folder, filter_pattern)
+
+    def _filter_grids(self, grids_filter='*'):
+        if grids_filter != '*':
+            grids_info, _ = _process_input_folder(self.folder, grids_filter)
+        else:
+            grids_info = self.grids_info
+        
+        return grids_info
+
+    def _index_from_datetime(self, datetime):
+        """Returns the index of the input datetime in the list of datetimes from the
+        datetimes property.
+
+        If the DateTime is not in the list, the function will return None.
+        
+        Args:
+            datetime: A DateTime 
+        """
+        assert isinstance(datetime, DateTime), \
+            'Expected Ladybug DateTime input but received %s' % type(datetime)
+        try:
+            index = self.datetimes.index(datetime)
+        except:
+            index = None
+
+        return index

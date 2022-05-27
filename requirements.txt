@@ -1,3 +1,4 @@
+ladybug-core==0.39.55
 honeybee-radiance>=1.63.19
 click>=7.1.2
 pyarrow>=7.0.0
