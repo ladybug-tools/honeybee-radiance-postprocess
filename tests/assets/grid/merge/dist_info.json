@@ -1,0 +1,17 @@
+[
+  {
+    "identifier": "TestRoom_1",
+    "dist_info": [
+      {
+        "identifier": 0,
+        "st_ln": 0,
+        "end_ln": 207
+      },
+      {
+        "identifier": 1,
+        "st_ln": 0,
+        "end_ln": 207
+      }
+    ]
+  }
+]
