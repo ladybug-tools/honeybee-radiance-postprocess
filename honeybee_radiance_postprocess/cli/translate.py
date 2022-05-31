@@ -4,6 +4,8 @@ import sys
 import logging
 import numpy as np
 
+from ..reader import binary_to_array
+
 _logger = logging.getLogger(__name__)
 
 
@@ -31,7 +33,7 @@ def npy_to_txt(
         ):
     """Convert a npy file to text file.
 
-    This function reads a NumPy array from a npy file and saves it as readable file. The
+    This command reads a NumPy array from a npy file and saves it as readable file. The
     converted file is tab separated.
 
     \b
@@ -61,7 +63,7 @@ def txt_to_npy(
         ):
     """Convert a text file to npy file.
 
-    This function reads a space or tab separated text file saves it as a NumPy file. As
+    This command reads a space or tab separated text file saves it as a NumPy file. As
     an example the input file could be the annual illuminance values.
 
     \b
@@ -74,6 +76,35 @@ def txt_to_npy(
 
     except Exception:
         _logger.exception('Converting text file to npy file failed.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@translate.command('binary-to-npy')
+@click.argument(
+    'mtx-file', type=click.Path(exists=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--name', '-n', help='Output file name.', default='output', show_default=True
+)
+def binary_to_npy(
+    mtx_file, name
+        ):
+    """Convert a binary Radiance file to a npy file.
+
+    This command reads a binary Radiance matrix file and saves it as a NumPy file.
+
+    \b
+    Args:
+        mtx-file: Path to binary Radiance file.
+    """
+    try:
+        array = binary_to_array(mtx_file)
+        np.save(name, array)
+
+    except Exception:
+        _logger.exception('Converting binary Radiance file to npy file failed.')
         sys.exit(1)
     else:
         sys.exit(0)
