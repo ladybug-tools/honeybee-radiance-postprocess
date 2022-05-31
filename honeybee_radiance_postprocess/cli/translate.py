@@ -86,10 +86,14 @@ def txt_to_npy(
     'mtx-file', type=click.Path(exists=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
+    '--conversion', help='Conversion as a string. This option is useful to post-process '
+    'the results from 3 RGB components into one as part of this command.'
+)
+@click.option(
     '--name', '-n', help='Output file name.', default='output', show_default=True
 )
 def binary_to_npy(
-    mtx_file, name
+    mtx_file, conversion, name
         ):
     """Convert a binary Radiance file to a npy file.
 
@@ -101,6 +105,10 @@ def binary_to_npy(
     """
     try:
         array = binary_to_array(mtx_file)
+        if conversion:
+            conversion = list(map(float, conversion.split(' ')))
+            conversion = np.array(conversion, dtype=np.float32)
+            array = np.dot(array, conversion)
         np.save(name, array)
 
     except Exception:
