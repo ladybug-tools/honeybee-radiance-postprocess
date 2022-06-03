@@ -61,3 +61,14 @@ def check_array_dim(array: np.ndarray, dim: int):
     """
     assert array.ndim == dim, \
         'Expected {}-dimensional array. Dimension of array is {}'.format(dim, array.ndim)
+
+
+def occupancy_filter(array, mask):
+    """Convert a list of ones and zeros to a NumPy masking array.
+    
+    Args:
+        mask: List of ones and zeros.
+    
+    Returns:
+        A NumPy array of booleans."""
+    return array[mask.astype(bool)]

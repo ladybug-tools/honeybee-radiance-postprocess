@@ -8,8 +8,9 @@ import numpy as np
 
 from honeybee_radiance.postprocess.annual import filter_schedule_by_hours, \
     _process_input_folder
-from honeybee_radiance_postprocess.metrics import da_array2d, cda_array2d, udi_array2d, \
+from .metrics import da_array2d, cda_array2d, udi_array2d, \
     udi_lower_array2d, udi_upper_array2d
+from .util import occupancy_filter
 
 
 def metrics_to_files(ill_file, occ_pattern, output_folder, threshold=300,
@@ -82,12 +83,6 @@ def metrics_to_files(ill_file, occ_pattern, output_folder, threshold=300,
     np.savetxt(udi_upper, udi_upperr, fmt='%.2f')
 
     return da, cda, udi_lower, udi, udi_upper
-
-
-# this function should probably be moved to util since I imagine that it will be used by
-# more than annualdaylight.py
-def occupancy_filter(array, mask):
-    return array[mask.astype(bool)]
 
 
 # TODO - support a list of schedules/schedule folder to match the input grids
