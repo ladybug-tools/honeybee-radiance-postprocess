@@ -1,55 +1,66 @@
-import pathlib
-import json
-import os
 import numpy as np
+from pathlib import Path
 
 from honeybee_radiance.postprocess.annual import (_process_input_folder,
     filter_schedule_by_hours, generate_default_schedule)
-from honeybee_radiance_postprocess.metrics import (da_array2d, cda_array2d, udi_array2d,
-    udi_lower_array2d, udi_upper_array2d)
-from honeybee_radiance_postprocess.annualdaylight import occupancy_filter
-from ladybug.dt import DateTime
+from .util import occupancy_filter
 
 
 class _ResultsFolder(object):
-    __slots__ = (
-        '_folder', '_grids_info', '_sun_up_hours', '_datetimes', '_light_path', '_default_states')
+    """Base class for ResultsFolder.
+
+    This class includes properties that are independent of the results.
+    
+    Args:
+        folder: Path to results folder.
+    
+    Properties:
+        * folder
+        * grids_info
+        * sun_up_hours
+        * light_paths
+        * default_states
+    
+    """
+    __slots__ = ('_folder', '_grids_info', '_sun_up_hours', '_light_paths',
+                 '_default_states')
 
     def __init__(self, folder):
-        self._folder = pathlib.Path(folder).as_posix()
+        """Initialize ResultsFolder."""
+        self._folder = Path(folder).absolute().as_posix()
         self._grids_info, self._sun_up_hours = _process_input_folder(self.folder, '*')
-        self._datetimes = [DateTime.from_hoy(hoy) for hoy in list(map(int, self.sun_up_hours))]
-        self._light_path = self._load_light_path()
+        self._light_paths = self._load_light_paths()
         self._default_states = self._load_default_states()
 
     @property
     def folder(self):
+        """Return full path to results folder."""
         return self._folder
 
     @property
     def grids_info(self):
+        """Return grids information as list of dictionaries for each grid."""
         return self._grids_info
     
     @property
     def sun_up_hours(self):
+        """Return sun up hours."""
         return self._sun_up_hours
 
     @property
-    def datetimes(self):
-        return self._datetimes
-
-    @property
-    def light_path(self):
-        return self._light_path
+    def light_paths(self):
+        """Return the identifiers of the light paths."""
+        return self._light_paths
 
     @property
     def default_states(self):
+        """Return default states as a dictionary."""
         return self._default_states
 
-    def _load_light_path(self):
-        grids_info = self.grids_info
+    def _load_light_paths(self):
+        """Find all light paths in grids_info."""
         lp = []
-        for grid_info in grids_info:
+        for grid_info in self.grids_info:
             light_paths = grid_info['light_path']
             for light_path in light_paths:
                 light_path = light_path[0]
@@ -60,301 +71,110 @@ class _ResultsFolder(object):
                 else:
                     lp.append(light_path)
             if not light_paths and 'static_apertures' not in lp:
-                lp.insert(0, light_path)
+                lp.insert(0, 'static_apertures')
 
         return lp
 
     def _load_default_states(self):
+        """Set default state to 0 for all light paths."""
         default_states = {}
-        for light_path in self.light_path:
+        for light_path in self.light_paths:
             default_states[light_path] = 0
         return default_states
 
+    def __repr__(self):
+        return '%s: %s' % (self.__class__.__name__, self.folder)
+
 
 class Results(_ResultsFolder):
-
-    __slots__ = ('_schedule', '_occ_pattern', '_total_occ', '_sun_down_occ_hours', '_occupancy_mask')
+    """Results class.
     
-    def __init__(self, folder, schedule=None):
+    Args:
+        folder: Path to results folder.
+        schedule: 8760 values as a list. Values must be either 0 or 1. Values of 1
+            indicates occupied hours. If not schedule is provided a default schedule
+            will be used. (Default: None).
+        load_arrays: Set to True to load all NumPy arrays. If False the arrays will be
+            loaded only once they are needed. In both cases the loaded array(s) will be
+            stored in a dictionary under the arrays property. (Default: False).
+
+    Properties:
+        * schedule
+        * occ_pattern
+        * total_occ
+        * sun_down_occ_hours
+        * occ_mask
+        * arrays
+        * valid_states
+    """
+    __slots__ = ('_schedule', '_occ_pattern', '_total_occ', '_sun_down_occ_hours',
+                 '_occ_mask', '_arrays', '_valid_states')
+    
+    def __init__(self, folder, schedule=None, load_arrays=False):
+        """Initialize Results."""
         _ResultsFolder.__init__(self, folder)
         self.schedule = schedule
+        self._arrays = self._load_arrays() if load_arrays else dict()
+        self._valid_states = self._get_valid_states()
     
     @property
     def schedule(self):
+        """Return schedule."""
         return self._schedule
 
     @schedule.setter
     def schedule(self, schedule):
-        self._schedule = schedule or generate_default_schedule()
-        self._update_schedule(self.sun_up_hours, self.schedule)
+        self._schedule = schedule if schedule else generate_default_schedule()
+        self._update_occ()
 
     @property
     def occ_pattern(self):
+        """Return a filtered version of the annual schedule that only includes the
+        sun-up-hours."""
         return self._occ_pattern
 
     @property
     def total_occ(self):
+        """Return an integer for the total occupied hours of the schedule."""
         return self._total_occ
 
     @property
     def sun_down_occ_hours(self):
+        """Return an integer for the number of occupied hours where the sun is down and
+        there's no possibility of being daylit or expereincing glare."""
         return self._sun_down_occ_hours
     
     @property
-    def occupancy_mask(self):
-        return self._occupancy_mask
+    def occ_mask(self):
+        """Return an occupancy mask as a NumPy array that can be used to mask the
+        results."""
+        return self._occ_mask
 
-    def daylight_autonomy(
-        self, threshold=300, states=None, grids_filter='*', folder='metrics',
-        sub_folder='da', file_extension='da', exists=True):
+    @property
+    def arrays(self):
+        """Return a dictionary of all the NumPy arrays that have been loaded."""
+        return self._arrays
 
-        grids_info = self._filter_grids(grids_filter=grids_filter)
-       
-        light_path_states = self.states(states=states)
+    @arrays.setter
+    def arrays(self, value):
+        self._arrays = value
 
-        output_files = self.calculate_function(
-            da_array2d, grids_info, light_path_states, folder=folder, 
-            sub_folder=sub_folder, exists=exists, file_extension=file_extension,
-            threshold=threshold)
+    @property
+    def valid_states(self):
+        """Return a dictionary with valid states. Each light path is represented by a
+        key-value pair where the light path identifier is the key and the value is a list
+        of valid states, e.g., [0, 1, 2, ...]."""
+        return self._valid_states
 
-        return output_files
-
-    def continous_daylight_autonomy(
-        self, threshold=300, states=None, grids_filter='*', folder='metrics',
-        sub_folder='cda', file_extension='cda', exists=True):
-
-        grids_info = self._filter_grids(grids_filter=grids_filter)        
-
-        light_path_states = self.states(states=states)
-
-        output_files = self.calculate_function(
-            cda_array2d, grids_info, light_path_states, folder=folder, 
-            sub_folder=sub_folder, exists=exists, file_extension=file_extension,
-            threshold=threshold)
-
-        return output_files
-
-    def useful_daylight_illuminance(
-        self, min_t=100, max_t=3000, states=None, grids_filter='*', folder='metrics',
-        sub_folder='udi', file_extension='udi', exists=True):
-
-        grids_info = self._filter_grids(grids_filter=grids_filter)
-
-        light_path_states = self.states(states=states)
-
-        output_files = self.calculate_function(
-            udi_array2d, grids_info, light_path_states, folder=folder,
-            sub_folder=sub_folder, exists=exists, file_extension=file_extension,
-            min_t=min_t, max_t=max_t)
-
-        return output_files
-
-    def useful_daylight_illuminance_lower(
-        self, min_t=100, states=None, grids_filter='*', folder='metrics',
-        sub_folder='udi_lower', file_extension='udi', exists=True):
-
-        if grids_filter != '*':
-            grids_info, _ = _process_input_folder(self.folder, grids_filter)
-        else:
-            grids_info = self.grids_info
-
-        light_path_states = self.states(states=states)
-
-        output_files = self.calculate_function(
-            udi_lower_array2d, grids_info, light_path_states, folder=folder,
-            sub_folder=sub_folder, exists=exists, file_extension=file_extension,
-            min_t=min_t, sun_down_occ_hours=self.sun_down_occ_hours)
-
-        return output_files
-
-    def useful_daylight_illuminance_upper(
-        self, max_t=3000, states=None, grids_filter='*', folder='metrics',
-        sub_folder='udi_upper', file_extension='udi', exists=True):
-
-        grids_info = self._filter_grids(grids_filter=grids_filter)
-
-        light_path_states = self.states(states=states)
-
-        output_files = self.calculate_function(
-            udi_upper_array2d, grids_info, light_path_states, folder=folder,
-            sub_folder=sub_folder, exists=exists, file_extension=file_extension,
-            max_t=max_t)
-
-        return output_files
-
-    def annual_metrics(
-        self, threshold=300, min_t=100, max_t=3000, states=None, grids_filter='*',
-        folder='metrics', exists=True):
-
-        da_files = self.daylight_autonomy(
-            threshold=threshold, states=states, grids_filter=grids_filter, folder=folder,
-            exists=exists)
-        cda_files = self.continous_daylight_autonomy(
-            threshold=threshold, states=states, grids_filter=grids_filter, folder=folder,
-            exists=exists)
-        udi_files = self.useful_daylight_illuminance(
-            min_t=min_t, max_t=max_t, states=states, grids_filter=grids_filter,
-            folder=folder, exists=exists)
-        udi_lower_files = self.useful_daylight_illuminance_lower(
-            min_t=min_t, states=states, grids_filter=grids_filter, folder=folder,
-            exists=exists)
-        udi_upper_files = self.useful_daylight_illuminance_upper(
-            max_t=max_t, states=states, grids_filter=grids_filter, folder=folder,
-            exists=exists)
-        
-        return da_files, cda_files, udi_files, udi_lower_files, udi_upper_files
-
-    def calculate_function(
-        self, function, grids_info, light_path_states, folder='metrics',
-        sub_folder='unnamed', file_extension='txt', exists=True, **kwargs):
-
-        output_files = []
-        for grid_info in grids_info:
-            grid_id = grid_info['identifier']
-            files, states = self.grid_files_and_states(grid_info, light_path_states)
-
-            file = pathlib.Path(
-                self.folder, folder, sub_folder, 
-                '%s..%s.%s' % (grid_id, '_'.join(map(str, states)), file_extension))
-            file.parent.mkdir(parents=True, exist_ok=True)
-
-            output_files.append(file)
-            if file.exists() and exists:
-                continue
-            if files:
-                array = sum(Results.load_numpy_arrays(files))
-                array_filter = np.apply_along_axis(
-                    occupancy_filter, 1, array, mask=self.occupancy_mask)
-                results = function(array_filter, total_occ=self.total_occ, **kwargs)
-                np.savetxt(file, results, fmt='%.2f')
-            else:
-                # all states for the grid are -1
-                results = np.zeros(grid_info['count'])
-                np.savetxt(file, results, fmt='%.2f')
-
-        return output_files
-
-    def point_in_time_values(self, datetime, states=None, grids_filter='*'):
-
-        grids_info = self._filter_grids(grids_filter=grids_filter)
-
-        light_path_states = self.states(states=states)
-
-        try:
-            assert isinstance(datetime, int)
-            dt = DateTime.from_hoy(datetime)
-        except:
-            assert isinstance(datetime, DateTime)
-            dt = datetime
-
-        index = self._index_from_datetime(dt)
-
-        grids_values = []
-        for grid_info in grids_info:
-            files, states = self.grid_files_and_states(grid_info, light_path_states)
-
-            if files:
-                if index:
-                    array = sum(Results.load_numpy_arrays(files))
-                    grids_values.append(np.take(array, index, axis=1))                    
-                else:
-                    grids_values.append(np.zeros(grid_info['count']))
-            else:
-                grids_values.append(np.zeros(grid_info['count']))
-
-        return grids_values
-
-    @staticmethod
-    def load_numpy_arrays(files):
-        """Load a list of NumPy files to a list of NumPy arrays.
-
-        Args:
-            files: A list of NumPy files.
-        
-        Returns:
-            A list of NumPy arrays.
-        """
-        arrays = [np.load(file) for file in files]
-        return arrays
-
-    def grid_files_and_states(self, grid_info, light_path_states):
-        """Get NumPy files for a given grid as well as a list of states for the grid."""
-        files = []
-        states = []
-        grid_id = grid_info['identifier']
-        light_paths = grid_info['light_path']
-        for light_path in light_paths:
-            light_path = light_path[0]
-
-            if light_path == 'static_apertures':
-                if light_path_states[light_path] == 0:
-                    states.append(light_path_states[light_path])
-                    npy_file = os.path.join(self.folder, light_path, '%s.npy' % grid_id)
-                    files.append(npy_file)
-                elif light_path_states[light_path] == -1:
-                    states.append(-1)
-                else:
-                    raise ValueError('State of static apertures must be either 0 for on '
-                        'or -1 for off. Received state \'%s\'' % light_path_states[light_path])
-            else:
-                state = light_path_states[light_path]
-                states.append(state)
-                if state == -1:
-                    continue
-                state_folder = os.path.join(self.folder, '%s_%s' % (state, light_path))
-                if not os.path.isdir(state_folder):
-                    raise ValueError('Folder of state %s for light path %s does not exist.' % (state, light_path))
-                npy_file = os.path.join(state_folder, '%s.npy' % grid_id)
-                files.append(npy_file)
-        
-        return files, states
-
-    def states(self, states=None):
-        """Creates a dictionary of states for each light path including a state for
-        static results.
-        
-        This method uses the default_states and overwrites the values in that
-        dictionary by the values provided in the 'states' input. If some light paths are
-        not provided in the 'states' input, the default values of 0 will be used.
-
-        Example of 'states' input:
-        {
-            'static_apertures': 0,
-            'Room_1_South': 1,
-            'Room_2_North': -1
-        }
-
-        Args:
-            states: A dictionary of states. If no input is given the method will return
-                the same dictionary that can be accessed by the default_states property.
-
-        
-        Returns:
-            A dictionary of states.
-        """
-        if states:
-            assert isinstance(states, dict), 'Expected dictionary ...'
-            light_path_states = self.default_states
-            for lp, state in states.items():
-                if lp in self.default_states:
-                    light_path_states[lp] = state
-                else:
-                    raise ValueError('States dictionary has an invalid key \'%s\'. '
-                        'Valid keys are [%s].' % (lp, ', '.join(self.light_path)))
-        else:
-            light_path_states = self.default_states
-        
-        return light_path_states
-
-    def _update_schedule(self, sun_up_hours, schedule):
+    def _update_occ(self):
+        """Set properties related to occupancy."""
+        sun_up_hours, schedule = [self.sun_up_hours, self.schedule]
         self._occ_pattern, self._total_occ, self._sun_down_occ_hours = \
             filter_schedule_by_hours(sun_up_hours=sun_up_hours, schedule=schedule)
-        self._occupancy_mask = np.array(self.occ_pattern)
-    
-    def _update_grids(self, filter_pattern):
-        self._grids_info, self._sun_up_hours = _process_input_folder(self.folder, filter_pattern)
+        self._occ_mask = np.array(self.occ_pattern)
 
     def _filter_grids(self, grids_filter='*'):
+        """Return grids information."""
         if grids_filter != '*':
             grids_info, _ = _process_input_folder(self.folder, grids_filter)
         else:
@@ -362,20 +182,56 @@ class Results(_ResultsFolder):
         
         return grids_info
 
-    def _index_from_datetime(self, datetime):
-        """Returns the index of the input datetime in the list of datetimes from the
-        datetimes property.
+    def _load_arrays(self):
+        """Load all the NumPy arrays in the results folder."""
+        arrays = dict()
+        grids_info = self.grids_info
 
-        If the DateTime is not in the list, the function will return None.
+        for grid_info in grids_info:
+            grid_id = grid_info['identifier']
+            light_paths = grid_info['light_path']
+            arrays[grid_id] = dict()
+            for light_path in light_paths:
+                light_path = light_path[0]
+                arrays[grid_id][light_path] = dict()
+                light_path_folder = Path(self.folder, light_path)
+                for state_folder in Path(light_path_folder).iterdir():
+                    state = state_folder.name
+                    arrays[grid_id][light_path][state] = dict()
+                    for type_folder in Path(state_folder).iterdir():
+                        type = type_folder.name
+                        file = Path(type_folder, grid_id + '.npy')
+                        array = np.load(file)
+                        arrays[grid_id][light_path][state][type] = array
+
+        return arrays
+
+    def _get_valid_states(self):
+        """Returns a dictionary with valid states for each light path.
         
-        Args:
-            datetime: A DateTime 
-        """
-        assert isinstance(datetime, DateTime), \
-            'Expected Ladybug DateTime input but received %s' % type(datetime)
-        try:
-            index = self.datetimes.index(datetime)
-        except:
-            index = None
+        For each light path there will be a key (identifier of the light path) and its
+        value will be a list of valid states as integers.
 
-        return index
+        Example of output format:
+        {
+            'static_apertures': [0],
+            'Room1_North': [0, 1],
+            'Room1_South': [0, 1],
+            'Room2_North1': [0, 1],
+            'Room2_North2': [0, 1]
+        }
+        """
+        arrays = dict()
+
+        for light_path in self.light_paths:
+            if light_path == 'static_apertures':
+                arrays[light_path] = [0]
+                continue
+            light_path_folder = Path(self.folder, light_path)
+            for state_folder in Path(light_path_folder).iterdir():
+                if light_path in arrays:
+                    arrays[light_path].append(int(state_folder.stem.split('_')[0]))
+                else:
+                    arrays[light_path] = [int(state_folder.stem.split('_')[0])]
+
+        return arrays
