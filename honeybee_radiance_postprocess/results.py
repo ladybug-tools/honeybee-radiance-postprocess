@@ -213,7 +213,7 @@ class Results(_ResultsFolder):
                               extension=extension)
         array = np.load(file)
 
-        array_dict = {grid_id: {light_path: {state: {type: array}}}}
+        array_dict = {grid_id: {light_path: {state_identifier: {type: array}}}}
         arrays = merge_dicts(array_dict, self.arrays)
         self.arrays = arrays
 
