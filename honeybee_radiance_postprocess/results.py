@@ -172,14 +172,27 @@ class Results(_ResultsFolder):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
+        res = []
         for grid_info in grids_info:
-            grid_id = grid_info['identifier']
-            array = self.array_from_states(grid_info, states=states, type='total')
-            array_filter = np.apply_along_axis(
-                occupancy_filter, 1, array, mask=self.occ_mask)
-            results = da_array2d(
-                array_filter, total_occ=self.total_occ, threshold=threshold)
-            # do something here...
+            array = self._array_from_states(grid_info, states=states, type='total')
+            if np.any(array):
+                array_filter = np.apply_along_axis(
+                    occupancy_filter, 1, array, mask=self.occ_mask)
+                results = da_array2d(
+                    array_filter, total_occ=self.total_occ, threshold=threshold)
+            else:
+                results = np.zeros(grid_info['count'])
+            res.append(results)
+        return res
+
+    def _get_array(self, grid_id: str, light_path: str, state: int = 0,
+                   type: str = 'total', extension: str = '.npy'):
+        state_identifier = self._state_identifier(light_path, state=state)
+        try:
+            array = self.arrays[grid_id][light_path][state_identifier][type]
+        except:
+            array = self._load_array(grid_id, light_path, state=state, type=type)
+        return array
 
     def _load_array(self, grid_id: str, light_path: str, state: int = 0,
                     type: str = 'total', extension: str = '.npy'):
@@ -225,27 +238,27 @@ class Results(_ResultsFolder):
         Args:
             light_path: Light path identifier.
             state: Integer of the state. E.g., 0 for the default state. State integer
-                must be minimum 0. -1 for off cannot return a state identifier.
+                must be minimum 0, or in case of -1 it will return None.
         
         Returns:
             State identifier. For static apertures the identifier is
             '__static_apertures__', and for other light paths it is the light path
             identifier preceded by the state integer, e.g., '0_light_path'.
         """
-        if state < 0:
-            raise ValueError('State integer must be minimum 0. Received %s' % state)
         # TODO: Figure out if there is a better way to handle the states.
         # I.e., state integer <--> state identifier.
-        if light_path == 'static_apertures':
-            state_identifer = '__static_apertures__'
-        elif light_path in self.light_paths:
-            state_identifer = str(state) + '_' + light_path
+        valid_states = self.valid_states[light_path]
+        if state in valid_states:
+            if light_path == 'static_apertures':
+                state_identifer = '__static_apertures__'
+            else:
+                state_identifer = str(state) + '_' + light_path
+            return state_identifer
+        elif state == -1:
+            return None
         else:
-            raise ValueError(
-                'Light path is not valid. Valid light paths are any of %s. Received %s.'
-                % (self.light_paths, light_path))
-        
-        return state_identifer
+            raise ValueError('State of %s must be any of %s for on or -1 for off. '
+                'Received state %s.' % (light_path, valid_states, state))
 
     def _get_file(self, grid_id: str, light_path: str, state_identifier: str,
                   type: str = 'total', extension: str = '.npy'):
@@ -270,99 +283,52 @@ class Results(_ResultsFolder):
                         grid_id + extension)
         
         return file
-
-    def array_from_states(
-        self, grid_info: str, states: list = None, type: str = 'total'):
+ 
+    def _array_from_states(
+        self, grid_info, states: dict = None, type: str = 'total'):
         """Create an array for a given grid by the states settings.
         
         Args:
             grid_info: Grid information of the grid.
-            states: A list of states. Either a list of one combination of settings or a
-                list of 8760 combinations for each hour.
+            states: A dictionary of states. Light paths as keys and lists of 8760 values
+                for each key. The values should be integers matching the states or -1 for
+                off.
             type: Which type of result to create an array for. E.g., 'total' for total
                 illuminance or 'direct' for direct illuminance.
         
         Returns:
-            A NumPy arrray based on the states settings.
+            A NumPy array based on the states settings.
         """
         grid_id = grid_info['identifier']
-        light_paths = grid_info['light_path']
-        arrays = []
-        if not states:
-            states = [self.default_states]
-        if len(states) == 1:
-            st = states[0]
-            for light_path in light_paths:
-                light_path = light_path[0]
-                try:
-                    state = st[light_path]
-                except:
-                    state = 0
-                if light_path == 'static_apertures':
-                    if state == 0:
-                        try:
-                            array = self.arrays[grid_id][light_path]['__static_apertures__'][type]
-                        except:
-                            array = self._load_array(grid_id, light_path, state, type)
-                        arrays.append(array)
-                    elif state == -1:
-                        pass
-                    else:
-                        raise ValueError('State of static apertures must be either 0 for on '
-                        'or -1 for off. Received state %s.' % state)
-                else:
-                    if state in self.valid_states[light_path]:
-                        try:
-                            array = self.arrays[grid_id][light_path][str(state) + '_' + light_path][type]
-                        except:
-                            array = self._load_array(grid_id, light_path, state, type)
-                        arrays.append(array)
-                    elif state == -1:
-                        pass
-                    else:
-                        raise ValueError('State of %s must be any of %s for on '
-                        'or -1 for off. Received state %s.' % (light_path, self.valid_states[light_path], state))
-            if arrays:
-                array = sum(arrays)
-            else:
-                array = []
+        grid_count = grid_info['count']
+        light_paths = [lp[0] for lp in grid_info['light_path']]
 
-        elif len(states) == 8760:
-            states = np.array(states)[list(map(int, self.sun_up_hours))].tolist()
-            for n, st in enumerate(states):
-                st_arrays = []
-                for light_path in light_paths:
-                    light_path = light_path[0]
-                    try:
-                        state = st[light_path]
-                    except:
-                        state = 0
-                    if light_path == 'static_apertures':
-                        if state == 0:
-                            try:
-                                array = self.arrays[grid_id][light_path]['__static_apertures__'][type]
-                            except:
-                                array = self._load_array(grid_id, light_path, state, type)
-                            st_arrays.append(np.take(array, n, axis=1))
-                        elif state == -1:
-                            st_arrays.append(np.zeros(grid_info['count']))
-                        else:
-                            raise ValueError('State of static apertures must be either 0 for on '
-                            'or -1 for off. Received state %s.' % state)
-                    else:
-                        if state in self.valid_states[light_path]:
-                            try:
-                                array = self.arrays[grid_id][light_path][str(state) + '_' + light_path][type]
-                            except:
-                                array = self._load_array(grid_id, light_path, state, type)
-                            st_arrays.append(np.take(array, n, axis=1))
-                        elif state == -1:
-                            st_arrays.append(np.zeros(grid_info['count']))
-                        else:
-                            raise ValueError('State of %s must be any of %s for on '
-                            'or -1 for off. Received state %s.' % (light_path, self.valid_states[light_path], state))
-                arrays.append(sum(st_arrays))
-            array = np.asarray(arrays).transpose()
+        arrays = []
+        if states:
+            grid_states = {lp: states[lp] for lp in light_paths if lp in states}
+            for light_path, lp_states in grid_states.items():
+                light_path_array = np.zeros((grid_count, len(self.sun_up_hours)))
+                states_array = np.array(lp_states)[list(map(int, self.sun_up_hours))]
+                states = states_array.tolist()
+                for state in set(states):
+                    valid_states = self.valid_states[light_path]
+                    if state in valid_states:
+                        array = self._get_array(
+                            grid_id, light_path, state=state, type=type)
+                    conds = [states_array == state, states_array != state]
+                    light_path_array = np.select(conds, [array, light_path_array])
+                arrays.append(light_path_array)
+            array = sum(arrays)
+        else:
+            # default states
+            # TODO: add functionality for static states
+            for light_path in light_paths:
+                array = self._get_array(grid_id, light_path, state=0, type=type)
+                arrays.append(array)
+            array = sum(arrays)
+
+        if not np.any(array):
+            array = np.array([])
 
         return array
 
