@@ -3,7 +3,8 @@ from pathlib import Path
 
 from honeybee_radiance.postprocess.annual import (_process_input_folder,
     filter_schedule_by_hours, generate_default_schedule)
-from honeybee_radiance_postprocess.metrics import da_array2d
+from honeybee_radiance_postprocess.metrics import (da_array2d, cda_array2d, udi_array2d,
+    udi_lower_array2d, udi_upper_array2d)
 from .util import occupancy_filter
 
 
@@ -172,7 +173,7 @@ class Results(_ResultsFolder):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
-        res = []
+        da = []
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, type='total')
             if np.any(array):
@@ -182,11 +183,125 @@ class Results(_ResultsFolder):
                     array_filter, total_occ=self.total_occ, threshold=threshold)
             else:
                 results = np.zeros(grid_info['count'])
-            res.append(results)
-        return res
+            da.append(results)
+
+        return da
+
+    def continous_daylight_autonomy(
+        self, threshold: float = 300, states: list = None, grids_filter: str = '*'):
+
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+
+        cda = []
+        for grid_info in grids_info:
+            array = self._array_from_states(grid_info, states=states, type='total')
+            if np.any(array):
+                array_filter = np.apply_along_axis(
+                    occupancy_filter, 1, array, mask=self.occ_mask)
+                results = cda_array2d(
+                    array_filter, total_occ=self.total_occ, threshold=threshold)
+            else:
+                results = np.zeros(grid_info['count'])
+            cda.append(results)
+
+        return cda
+
+    def useful_daylight_illuminance(
+        self, min_t: float = 100, max_t: float = 3000, states: list = None,
+        grids_filter: str = '*'):
+
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+
+        udi = []
+        for grid_info in grids_info:
+            array = self._array_from_states(grid_info, states=states, type='total')
+            if np.any(array):
+                array_filter = np.apply_along_axis(
+                    occupancy_filter, 1, array, mask=self.occ_mask)
+                results = udi_array2d(
+                    array_filter, total_occ=self.total_occ, min_t=min_t, max_t=max_t)
+            else:
+                results = np.zeros(grid_info['count'])
+            udi.append(results)
+
+        return udi
+
+    def useful_daylight_illuminance_lower(
+        self, min_t: float = 100, states: list = None, grids_filter: str = '*'):
+
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+        sun_down_occ_hours = self.sun_down_occ_hours
+
+        udi_lower = []
+        for grid_info in grids_info:
+            array = self._array_from_states(grid_info, states=states, type='total')
+            if np.any(array):
+                array_filter = np.apply_along_axis(
+                    occupancy_filter, 1, array, mask=self.occ_mask)
+                results = udi_lower_array2d(array_filter, total_occ=self.total_occ,
+                    min_t=min_t, sun_down_occ_hours=sun_down_occ_hours)
+            else:
+                results = np.zeros(grid_info['count'])
+            udi_lower.append(results)
+
+        return udi_lower
+
+    def useful_daylight_illuminance_upper(
+        self, max_t: float = 3000, states: list = None, grids_filter: str = '*'):
+
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+
+        udi_upper = []
+        for grid_info in grids_info:
+            array = self._array_from_states(grid_info, states=states, type='total')
+            if np.any(array):
+                array_filter = np.apply_along_axis(
+                    occupancy_filter, 1, array, mask=self.occ_mask)
+                results = udi_upper_array2d(
+                    array_filter, total_occ=self.total_occ, max_t=max_t)
+            else:
+                results = np.zeros(grid_info['count'])
+            udi_upper.append(results)
+
+        return udi_upper
+
+    def annual_metrics(
+        self, threshold: float = 300, min_t: float = 100, max_t: float = 3000,
+        states: list = None, grids_filter: str = '*'):
+
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+        sun_down_occ_hours = self.sun_down_occ_hours
+
+        da = cda = udi = udi_lower = udi_upper = []
+        for grid_info in grids_info:
+            array = self._array_from_states(grid_info, states=states, type='total')
+            if np.any(array):
+                array_filter = np.apply_along_axis(
+                    occupancy_filter, 1, array, mask=self.occ_mask)
+                da_results = da_array2d(
+                    array_filter, total_occ=self.total_occ, threshold=threshold)
+                cda_results = cda_array2d(
+                    array_filter, total_occ=self.total_occ, threshold=threshold)
+                udi_results = udi_array2d(
+                    array_filter, total_occ=self.total_occ, min_t=min_t, max_t=max_t)
+                udi_lower_results = udi_lower_array2d(
+                    array_filter, total_occ=self.total_occ, min_t=min_t,
+                    sun_down_occ_hours=sun_down_occ_hours)
+                udi_upper_results = udi_upper_array2d(
+                    array_filter, total_occ=self.total_occ, max_t=max_t)
+            else:
+                da_results = cda_results = udi_results, udi_lower_results = \
+                    udi_upper_results = np.zeros(grid_info['count'])
+            da.append(da_results)
+            cda.append(cda_results)
+            udi.append(udi_results)
+            udi_lower.append(udi_lower_results)
+            udi_upper.append(udi_upper_results)
+
+        return da, cda, udi, udi_lower, udi_upper
 
     def _get_array(self, grid_id: str, light_path: str, state: int = 0,
-                   type: str = 'total', extension: str = '.npy'):
+                   type: str = 'total', extension: str = '.npy') -> np.ndarray:
         state_identifier = self._state_identifier(light_path, state=state)
         try:
             array = self.arrays[grid_id][light_path][state_identifier][type]
@@ -195,7 +310,7 @@ class Results(_ResultsFolder):
         return array
 
     def _load_array(self, grid_id: str, light_path: str, state: int = 0,
-                    type: str = 'total', extension: str = '.npy'):
+                    type: str = 'total', extension: str = '.npy') -> np.ndarray:
         """Load a NumPy file to an array.
         
         This method will also update the arrays property value.
@@ -232,7 +347,7 @@ class Results(_ResultsFolder):
 
         return array
 
-    def _state_identifier(self, light_path: str, state: int = 0):
+    def _state_identifier(self, light_path: str, state: int = 0) -> str:
         """Get the state identifier from a light path and state integer.
         
         Args:
@@ -261,7 +376,7 @@ class Results(_ResultsFolder):
                 'Received state %s.' % (light_path, valid_states, state))
 
     def _get_file(self, grid_id: str, light_path: str, state_identifier: str,
-                  type: str = 'total', extension: str = '.npy'):
+                  type: str = 'total', extension: str = '.npy') -> Path:
         """Return the path of a results file.
         
         Args:
@@ -285,7 +400,7 @@ class Results(_ResultsFolder):
         return file
  
     def _array_from_states(
-        self, grid_info, states: dict = None, type: str = 'total'):
+        self, grid_info, states: dict = None, type: str = 'total') -> np.ndarray:
         """Create an array for a given grid by the states settings.
         
         Args:
@@ -372,7 +487,7 @@ class Results(_ResultsFolder):
 
         return arrays
 
-    def _get_valid_states(self):
+    def _get_valid_states(self) -> dict:
         """Returns a dictionary with valid states for each light path.
         
         For each light path there will be a key (identifier of the light path) and its
