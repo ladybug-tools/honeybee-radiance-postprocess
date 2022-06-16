@@ -1,5 +1,6 @@
 import numpy as np
 from pathlib import Path
+from itertools import islice, cycle
 
 from honeybee_radiance.postprocess.annual import (_process_input_folder,
     filter_schedule_by_hours, generate_default_schedule)
@@ -81,7 +82,7 @@ class _ResultsFolder(object):
         """Set default state to 0 for all light paths."""
         default_states = {}
         for light_path in self.light_paths:
-            default_states[light_path] = 0
+            default_states[light_path] = [0]
         return default_states
 
     def __repr__(self):
@@ -398,6 +399,48 @@ class Results(_ResultsFolder):
                         grid_id + extension)
         
         return file
+
+    @staticmethod
+    def _static_states(states: dict):
+        if all(len(values) == 1 for values in states.values()):
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def _dynamic_states(states: dict):
+        if any(len(values) != 1 for values in states.values()):
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def _validate_dynamic_states(states: dict):
+        if all(len(values) == 8760 for values in states.values()):
+            return states
+        for light_path, values in states.items():
+            if len(values) < 8670:
+                states[light_path] = list(islice(cycle(values), 8760))
+            elif len(values) > 8760:
+                raise ValueError(
+                    'The light path %s has %s values in its states schedule. Maximum '
+                    'allowed number of values is 8760.' % (light_path, len(values))
+                    )
+        return states
+
+    @staticmethod
+    def _validate_states(states: dict):
+        if all(isinstance(v, int) for values in states.values() for v in values):
+            return states
+        for light_path, values in states.items():
+            try:
+                states[light_path] = list(map(int, values))
+            except ValueError as e:
+                raise ValueError(
+                    'Failed to convert states schedule for light path %s to '
+                    'integers: %s.' % (light_path, str(e))
+                    )
+        return states
  
     def _array_from_states(
         self, grid_info, states: dict = None, type: str = 'total') -> np.ndarray:
@@ -417,29 +460,37 @@ class Results(_ResultsFolder):
         grid_id = grid_info['identifier']
         grid_count = grid_info['count']
         light_paths = [lp[0] for lp in grid_info['light_path']]
+        # get states that are relevant for the grid
+        if states:
+            states = {lp: states[lp] for lp in light_paths if lp in states}
+            states = Results._validate_states(states)
+        else:
+            states = self.default_states
+            states = {lp: states[lp] for lp in light_paths if lp in states}
 
         arrays = []
-        if states:
-            grid_states = {lp: states[lp] for lp in light_paths if lp in states}
-            for light_path, lp_states in grid_states.items():
+        if Results._static_states(states):
+            for light_path, state in states.items():
+                state = state[0]
+                if state == -1:
+                    continue
+                array = self._get_array(grid_id, light_path, state=state, type=type)
+                arrays.append(array)
+            array = sum(arrays)
+        else:
+            states = Results._validate_dynamic_states(states)
+            for light_path, lp_states in states.items():
+                # create default 0 array
                 light_path_array = np.zeros((grid_count, len(self.sun_up_hours)))
+                # slice states to match sun up hours
                 states_array = np.array(lp_states)[list(map(int, self.sun_up_hours))]
-                states = states_array.tolist()
-                for state in set(states):
-                    valid_states = self.valid_states[light_path]
-                    if state in valid_states:
-                        array = self._get_array(
-                            grid_id, light_path, state=state, type=type)
+                for state in set(states_array.tolist()):
+                    if state == -1:
+                        continue
+                    array = self._get_array(grid_id, light_path, state=state, type=type)
                     conds = [states_array == state, states_array != state]
                     light_path_array = np.select(conds, [array, light_path_array])
                 arrays.append(light_path_array)
-            array = sum(arrays)
-        else:
-            # default states
-            # TODO: add functionality for static states
-            for light_path in light_paths:
-                array = self._get_array(grid_id, light_path, state=0, type=type)
-                arrays.append(array)
             array = sum(arrays)
 
         if not np.any(array):
