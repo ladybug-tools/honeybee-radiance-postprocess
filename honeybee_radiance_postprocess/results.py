@@ -13,17 +13,17 @@ class _ResultsFolder(object):
     """Base class for ResultsFolder.
 
     This class includes properties that are independent of the results.
-    
+
     Args:
         folder: Path to results folder.
-    
+
     Properties:
         * folder
         * grids_info
         * sun_up_hours
         * light_paths
         * default_states
-    
+
     """
     __slots__ = ('_folder', '_grids_info', '_sun_up_hours', '_light_paths',
                  '_default_states')
@@ -44,7 +44,7 @@ class _ResultsFolder(object):
     def grids_info(self):
         """Return grids information as list of dictionaries for each grid."""
         return self._grids_info
-    
+
     @property
     def sun_up_hours(self):
         """Return sun up hours."""
@@ -91,7 +91,7 @@ class _ResultsFolder(object):
 
 class Results(_ResultsFolder):
     """Results class.
-    
+
     Args:
         folder: Path to results folder.
         schedule: 8760 values as a list. Values must be either 0 or 1. Values of 1
@@ -112,14 +112,14 @@ class Results(_ResultsFolder):
     """
     __slots__ = ('_schedule', '_occ_pattern', '_total_occ', '_sun_down_occ_hours',
                  '_occ_mask', '_arrays', '_valid_states')
-    
+
     def __init__(self, folder, schedule=None, load_arrays=False):
         """Initialize Results."""
         _ResultsFolder.__init__(self, folder)
         self.schedule = schedule
         self._arrays = self._load_arrays() if load_arrays else dict()
         self._valid_states = self._get_valid_states()
-    
+
     @property
     def schedule(self):
         """Return schedule."""
@@ -144,9 +144,9 @@ class Results(_ResultsFolder):
     @property
     def sun_down_occ_hours(self):
         """Return an integer for the number of occupied hours where the sun is down and
-        there's no possibility of being daylit or expereincing glare."""
+        there's no possibility of being daylit or experiencing glare."""
         return self._sun_down_occ_hours
-    
+
     @property
     def occ_mask(self):
         """Return an occupancy mask as a NumPy array that can be used to mask the
@@ -170,7 +170,7 @@ class Results(_ResultsFolder):
         return self._valid_states
 
     def daylight_autonomy(
-        self, threshold: float = 300, states: list = None, grids_filter: str = '*'):
+        self, threshold: float = 300, states: dict = None, grids_filter: str = '*'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
@@ -188,7 +188,7 @@ class Results(_ResultsFolder):
 
         return da
 
-    def continous_daylight_autonomy(
+    def continuous_daylight_autonomy(
         self, threshold: float = 300, states: list = None, grids_filter: str = '*'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
@@ -313,9 +313,9 @@ class Results(_ResultsFolder):
     def _load_array(self, grid_id: str, light_path: str, state: int = 0,
                     type: str = 'total', extension: str = '.npy') -> np.ndarray:
         """Load a NumPy file to an array.
-        
+
         This method will also update the arrays property value.
-        
+
         Args:
             grid_id: Grid identifier.
             light_path: Light path identifier.
@@ -323,7 +323,7 @@ class Results(_ResultsFolder):
             type: Which type of result to return a file for. E.g., 'total' for total
                 illuminance or 'direct' for direct illuminance.
             extension: File extension. (Default: .npy).
-        
+
         Returns:
             A NumPy array from a NumPy file.
         """
@@ -350,12 +350,12 @@ class Results(_ResultsFolder):
 
     def _state_identifier(self, light_path: str, state: int = 0) -> str:
         """Get the state identifier from a light path and state integer.
-        
+
         Args:
             light_path: Light path identifier.
             state: Integer of the state. E.g., 0 for the default state. State integer
                 must be minimum 0, or in case of -1 it will return None.
-        
+
         Returns:
             State identifier. For static apertures the identifier is
             '__static_apertures__', and for other light paths it is the light path
@@ -366,10 +366,10 @@ class Results(_ResultsFolder):
         valid_states = self.valid_states[light_path]
         if state in valid_states:
             if light_path == 'static_apertures':
-                state_identifer = '__static_apertures__'
+                state_identifier = '__static_apertures__'
             else:
-                state_identifer = str(state) + '_' + light_path
-            return state_identifer
+                state_identifier = str(state) + '_' + light_path
+            return state_identifier
         elif state == -1:
             return None
         else:
@@ -379,7 +379,7 @@ class Results(_ResultsFolder):
     def _get_file(self, grid_id: str, light_path: str, state_identifier: str,
                   type: str = 'total', extension: str = '.npy') -> Path:
         """Return the path of a results file.
-        
+
         Args:
             grid_id: Grid identifier.
             light_path: Light path identifier.
@@ -397,25 +397,22 @@ class Results(_ResultsFolder):
         else:
             file = Path(self.folder, light_path, state_identifier, type,
                         grid_id + extension)
-        
+
         return file
 
-    @staticmethod
-    def _static_states(states: dict):
+    def _static_states(self, states: dict):
         if all(len(values) == 1 for values in states.values()):
             return True
         else:
             return False
 
-    @staticmethod
-    def _dynamic_states(states: dict):
+    def _dynamic_states(self, states: dict):
         if any(len(values) != 1 for values in states.values()):
             return True
         else:
             return False
 
-    @staticmethod
-    def _validate_dynamic_states(states: dict):
+    def _validate_dynamic_states(self, states: dict):
         if all(len(values) == 8760 for values in states.values()):
             return states
         for light_path, values in states.items():
@@ -428,8 +425,7 @@ class Results(_ResultsFolder):
                     )
         return states
 
-    @staticmethod
-    def _validate_states(states: dict):
+    def _validate_states(self, states: dict):
         if all(isinstance(v, int) for values in states.values() for v in values):
             return states
         for light_path, values in states.items():
@@ -441,11 +437,24 @@ class Results(_ResultsFolder):
                     'integers: %s.' % (light_path, str(e))
                     )
         return states
- 
+
+    def _get_grid_states(self, grid_info, states: dict = None):
+        light_paths = [lp[0] for lp in grid_info['light_path']]
+        if states:
+            for light_path in light_paths:
+                if light_path not in states:
+                    states[light_path] = self.default_states[light_path]
+            states = {lp: states[lp] for lp in light_paths if lp in states}
+        else:
+            states = self.default_states
+            states = {lp: states[lp] for lp in light_paths if lp in states}
+
+        return states
+
     def _array_from_states(
         self, grid_info, states: dict = None, type: str = 'total') -> np.ndarray:
         """Create an array for a given grid by the states settings.
-        
+
         Args:
             grid_info: Grid information of the grid.
             states: A dictionary of states. Light paths as keys and lists of 8760 values
@@ -453,23 +462,18 @@ class Results(_ResultsFolder):
                 off.
             type: Which type of result to create an array for. E.g., 'total' for total
                 illuminance or 'direct' for direct illuminance.
-        
+
         Returns:
             A NumPy array based on the states settings.
         """
         grid_id = grid_info['identifier']
         grid_count = grid_info['count']
-        light_paths = [lp[0] for lp in grid_info['light_path']]
         # get states that are relevant for the grid
-        if states:
-            states = {lp: states[lp] for lp in light_paths if lp in states}
-            states = Results._validate_states(states)
-        else:
-            states = self.default_states
-            states = {lp: states[lp] for lp in light_paths if lp in states}
+        states = self._get_grid_states(grid_info, states=states)
+        states = self._validate_states(states)
 
         arrays = []
-        if Results._static_states(states):
+        if self._static_states(states):
             for light_path, state in states.items():
                 state = state[0]
                 if state == -1:
@@ -478,7 +482,7 @@ class Results(_ResultsFolder):
                 arrays.append(array)
             array = sum(arrays)
         else:
-            states = Results._validate_dynamic_states(states)
+            states = self._validate_dynamic_states(states)
             for light_path, lp_states in states.items():
                 # create default 0 array
                 light_path_array = np.zeros((grid_count, len(self.sun_up_hours)))
@@ -511,7 +515,7 @@ class Results(_ResultsFolder):
             grids_info, _ = _process_input_folder(self.folder, grids_filter)
         else:
             grids_info = self.grids_info
-        
+
         return grids_info
 
     def _load_arrays(self):
@@ -540,7 +544,7 @@ class Results(_ResultsFolder):
 
     def _get_valid_states(self) -> dict:
         """Returns a dictionary with valid states for each light path.
-        
+
         For each light path there will be a key (identifier of the light path) and its
         value will be a list of valid states as integers.
 
