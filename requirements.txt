@@ -1,5 +1,4 @@
-ladybug-core==0.39.55
-honeybee-radiance>=1.63.19
+honeybee-radiance==1.64.32
 click>=7.1.2
 pyarrow>=7.0.0
 pandas>=1.3.5

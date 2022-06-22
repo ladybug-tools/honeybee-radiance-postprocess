@@ -65,14 +65,27 @@ jobs:
         run:
           npm install @semantic-release/exec
       - name: run semantic release
-        run:
+        id: new_release
+        run: |
+          nextRelease="`npx semantic-release@^17.0.0 --dryRun | grep -oP 'Published release \K.*? ' || true`"
           npx semantic-release@^17.0.0
+          echo "::set-output name=tag::$nextRelease"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
           PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      - name: Update pollination-honeybee-radiance-postprocess
+        if: contains(steps.new_release.outputs.tag, '.')
+        env:
+          DISPATCH_REPO: pollination/honeybee-radiance-postprocess
+          DEPS_TOKEN: ${{ secrets.DEPS_UPDATING }}
+        run: |
+          curl -X POST https://api.github.com/repos/$DISPATCH_REPO/dispatches \
+          -H "Accept: application/vnd.github.everest-preview+json" \
+          -d '{"event_type": "honeybee_radiance_postprocess_release", "client_payload": {"version": "${{ steps.new_release.outputs.tag }}"}}' \
+          -u ladybugbot:$DEPS_TOKEN
 
   docs:
     name: Generate docs
