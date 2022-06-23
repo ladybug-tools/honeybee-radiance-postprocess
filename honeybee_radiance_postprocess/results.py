@@ -1,4 +1,5 @@
 import numpy as np
+import json
 from pathlib import Path
 from itertools import islice, cycle
 
@@ -23,17 +24,19 @@ class _ResultsFolder(object):
         * sun_up_hours
         * light_paths
         * default_states
+        * grid_states
 
     """
     __slots__ = ('_folder', '_grids_info', '_sun_up_hours', '_light_paths',
-                 '_default_states')
+                 '_default_states', '_grid_states')
 
     def __init__(self, folder):
         """Initialize ResultsFolder."""
         self._folder = Path(folder).absolute().as_posix()
         self._grids_info, self._sun_up_hours = _process_input_folder(self.folder, '*')
-        self._light_paths = self._load_light_paths()
-        self._default_states = self._load_default_states()
+        self._light_paths = self._get_light_paths()
+        self._default_states = self._get_default_states()
+        self._grid_states = self._get_grid_states()
 
     @property
     def folder(self):
@@ -60,7 +63,12 @@ class _ResultsFolder(object):
         """Return default states as a dictionary."""
         return self._default_states
 
-    def _load_light_paths(self):
+    @property
+    def grid_states(self):
+        """Return grid states as a dictionary."""
+        return self._grid_states
+
+    def _get_light_paths(self) -> list:
         """Find all light paths in grids_info."""
         lp = []
         for grid_info in self.grids_info:
@@ -78,12 +86,23 @@ class _ResultsFolder(object):
 
         return lp
 
-    def _load_default_states(self):
+    def _get_default_states(self) -> dict:
         """Set default state to 0 for all light paths."""
         default_states = {}
         for light_path in self.light_paths:
             default_states[light_path] = [0]
         return default_states
+
+    def _get_grid_states(self) -> dict:
+        """Read grid_states.json if available."""
+        info = Path(self.folder, 'grid_states.json')
+        if info.is_file():
+            with open(info) as data_f:
+                data = json.load(data_f)
+            return data
+        else:
+            # only static results
+            return None
 
     def __repr__(self):
         return '%s: %s' % (self.__class__.__name__, self.folder)
@@ -303,11 +322,13 @@ class Results(_ResultsFolder):
 
     def _get_array(self, grid_id: str, light_path: str, state: int = 0,
                    type: str = 'total', extension: str = '.npy') -> np.ndarray:
-        state_identifier = self._state_identifier(light_path, state=state)
+        state_identifier = self._state_identifier(grid_id, light_path, state=state)
+
         try:
             array = self.arrays[grid_id][light_path][state_identifier][type]
         except:
-            array = self._load_array(grid_id, light_path, state=state, type=type)
+            array = self._load_array(
+                grid_id, light_path, state=state, type=type, extension=extension)
         return array
 
     def _load_array(self, grid_id: str, light_path: str, state: int = 0,
@@ -337,7 +358,7 @@ class Results(_ResultsFolder):
                     arrays[key] = value
             return arrays
 
-        state_identifier = self._state_identifier(light_path, state=state)
+        state_identifier = self._state_identifier(grid_id, light_path, state=state)
         file = self._get_file(grid_id, light_path, state_identifier, type,
                               extension=extension)
         array = np.load(file)
@@ -348,10 +369,11 @@ class Results(_ResultsFolder):
 
         return array
 
-    def _state_identifier(self, light_path: str, state: int = 0) -> str:
+    def _state_identifier(self, grid_id: str, light_path: str, state: int = 0) -> str:
         """Get the state identifier from a light path and state integer.
 
         Args:
+            grid_id: Grid identifier.
             light_path: Light path identifier.
             state: Integer of the state. E.g., 0 for the default state. State integer
                 must be minimum 0, or in case of -1 it will return None.
@@ -368,7 +390,7 @@ class Results(_ResultsFolder):
             if light_path == 'static_apertures':
                 state_identifier = '__static_apertures__'
             else:
-                state_identifier = str(state) + '_' + light_path
+                state_identifier = self.grid_states[grid_id][light_path][state]
             return state_identifier
         elif state == -1:
             return None
@@ -438,7 +460,19 @@ class Results(_ResultsFolder):
                     )
         return states
 
-    def _get_grid_states(self, grid_info, states: dict = None):
+    def _filter_grid_states(self, grid_info, states: dict = None):
+        """Filter a dictionary of states by grid. Only light paths relevant to the given
+        grid will be returned.
+        
+        Args:
+            grid_info: Grid information of the grid.
+            states: A dictionary of states. Light paths as keys and lists of 8760 values
+                for each key. The values should be integers matching the states or -1 for
+                off.
+        
+        Returns:
+            A filtered states dictionary.
+        """
         light_paths = [lp[0] for lp in grid_info['light_path']]
         if states:
             for light_path in light_paths:
@@ -469,7 +503,7 @@ class Results(_ResultsFolder):
         grid_id = grid_info['identifier']
         grid_count = grid_info['count']
         # get states that are relevant for the grid
-        states = self._get_grid_states(grid_info, states=states)
+        states = self._filter_grid_states(grid_info, states=states)
         states = self._validate_states(states)
 
         arrays = []
@@ -558,16 +592,12 @@ class Results(_ResultsFolder):
         }
         """
         valid_states = dict()
-
-        for light_path in self.light_paths:
-            if light_path == 'static_apertures':
-                valid_states[light_path] = [0]
-                continue
-            light_path_folder = Path(self.folder, light_path)
-            for state_folder in Path(light_path_folder).iterdir():
-                if light_path in valid_states:
-                    valid_states[light_path].append(int(state_folder.stem.split('_')[0]))
-                else:
-                    valid_states[light_path] = [int(state_folder.stem.split('_')[0])]
+        grid_states = self.grid_states
+        if 'static_apertures' in self.light_paths:
+            valid_states['static_apertures'] = [0]
+        for grid_id, light_paths in grid_states.items():
+            for light_path, states in light_paths.items():
+                if light_path not in valid_states:
+                    valid_states[light_path] = list(range(len(states)))
 
         return valid_states
