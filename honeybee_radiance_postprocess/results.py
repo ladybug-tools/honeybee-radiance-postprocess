@@ -2,12 +2,14 @@ import numpy as np
 import json
 from pathlib import Path
 from itertools import islice, cycle
+from typing import Union
 
 from honeybee_radiance.postprocess.annual import (_process_input_folder,
     filter_schedule_by_hours, generate_default_schedule)
 from honeybee_radiance_postprocess.metrics import (da_array2d, cda_array2d, udi_array2d,
     udi_lower_array2d, udi_upper_array2d)
 from .util import occupancy_filter
+from ladybug.dt import DateTime
 
 
 class _ResultsFolder(object):
@@ -27,13 +29,14 @@ class _ResultsFolder(object):
         * grid_states
 
     """
-    __slots__ = ('_folder', '_grids_info', '_sun_up_hours', '_light_paths',
+    __slots__ = ('_folder', '_grids_info', '_sun_up_hours', '_datetimes', '_light_paths',
                  '_default_states', '_grid_states')
 
     def __init__(self, folder):
         """Initialize ResultsFolder."""
         self._folder = Path(folder).absolute().as_posix()
         self._grids_info, self._sun_up_hours = _process_input_folder(self.folder, '*')
+        self._datetimes = [DateTime.from_hoy(hoy) for hoy in list(map(int, self.sun_up_hours))]
         self._light_paths = self._get_light_paths()
         self._default_states = self._get_default_states()
         self._grid_states = self._get_grid_states()
@@ -52,6 +55,11 @@ class _ResultsFolder(object):
     def sun_up_hours(self):
         """Return sun up hours."""
         return self._sun_up_hours
+
+    @property
+    def datetimes(self):
+        """Return DateTimes for sun up hours."""
+        return self._datetimes
 
     @property
     def light_paths(self):
@@ -319,6 +327,49 @@ class Results(_ResultsFolder):
             udi_upper.append(udi_upper_results)
 
         return da, cda, udi, udi_lower, udi_upper
+
+    def point_in_time(
+        self, datetime: Union[int, DateTime], states: list = None, grids_filter='*',
+        type='total'):
+
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+
+        try:
+            assert isinstance(datetime, int)
+            dt = DateTime.from_hoy(datetime)
+        except:
+            assert isinstance(datetime, DateTime)
+            dt = datetime
+        idx = self._index_from_datetime(dt)
+
+        pit_values = []
+        for grid_info in grids_info:
+            if idx:
+                array = self._array_from_states(grid_info, states=states, type=type)
+                pit_values.append(array[:, idx])
+            else:
+                # datetime not in sun up hours, add zeros
+                pit_values.append(np.zeros(grid_info['count']))
+
+        return pit_values
+
+    def _index_from_datetime(self, datetime: DateTime):
+        """Returns the index of the input datetime in the list of datetimes from the
+        datetimes property.
+        If the DateTime is not in the list, the function will return None.
+        
+        Args:
+            datetime: A DateTime 
+        """
+        assert isinstance(datetime, DateTime), \
+            'Expected Ladybug DateTime input but received %s' % type(datetime)
+        try:
+            index = self.datetimes.index(datetime)
+        except:
+            # DateTime not in sun up hours
+            index = None
+
+        return index
 
     def _get_array(self, grid_id: str, light_path: str, state: int = 0,
                    type: str = 'total', extension: str = '.npy') -> np.ndarray:
