@@ -203,7 +203,7 @@ class Results(_ResultsFolder):
 
         da = []
         for grid_info in grids_info:
-            array = self._array_from_states(grid_info, states=states, type='total')
+            array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
                 array_filter = np.apply_along_axis(
                     occupancy_filter, 1, array, mask=self.occ_mask)
@@ -222,7 +222,7 @@ class Results(_ResultsFolder):
 
         cda = []
         for grid_info in grids_info:
-            array = self._array_from_states(grid_info, states=states, type='total')
+            array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
                 array_filter = np.apply_along_axis(
                     occupancy_filter, 1, array, mask=self.occ_mask)
@@ -242,7 +242,7 @@ class Results(_ResultsFolder):
 
         udi = []
         for grid_info in grids_info:
-            array = self._array_from_states(grid_info, states=states, type='total')
+            array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
                 array_filter = np.apply_along_axis(
                     occupancy_filter, 1, array, mask=self.occ_mask)
@@ -262,7 +262,7 @@ class Results(_ResultsFolder):
 
         udi_lower = []
         for grid_info in grids_info:
-            array = self._array_from_states(grid_info, states=states, type='total')
+            array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
                 array_filter = np.apply_along_axis(
                     occupancy_filter, 1, array, mask=self.occ_mask)
@@ -281,7 +281,7 @@ class Results(_ResultsFolder):
 
         udi_upper = []
         for grid_info in grids_info:
-            array = self._array_from_states(grid_info, states=states, type='total')
+            array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
                 array_filter = np.apply_along_axis(
                     occupancy_filter, 1, array, mask=self.occ_mask)
@@ -302,7 +302,7 @@ class Results(_ResultsFolder):
 
         da = cda = udi = udi_lower = udi_upper = []
         for grid_info in grids_info:
-            array = self._array_from_states(grid_info, states=states, type='total')
+            array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
                 array_filter = np.apply_along_axis(
                     occupancy_filter, 1, array, mask=self.occ_mask)
@@ -330,22 +330,24 @@ class Results(_ResultsFolder):
 
     def point_in_time(
         self, datetime: Union[int, DateTime], states: list = None, grids_filter='*',
-        type='total'):
+        res_type='total'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
-        try:
-            assert isinstance(datetime, int)
+        if isinstance(datetime, int):
             dt = DateTime.from_hoy(datetime)
-        except:
-            assert isinstance(datetime, DateTime)
+        elif isinstance(datetime, DateTime):
             dt = datetime
+        else:
+            raise ValueError('Input datetime must be of type %s or %s. Received %s.'
+                % (int, DateTime, type(datetime)))
         idx = self._index_from_datetime(dt)
 
         pit_values = []
         for grid_info in grids_info:
             if idx:
-                array = self._array_from_states(grid_info, states=states, type=type)
+                array = self._array_from_states(
+                    grid_info, states=states, res_type=res_type)
                 pit_values.append(array[:, idx])
             else:
                 # datetime not in sun up hours, add zeros
@@ -372,18 +374,18 @@ class Results(_ResultsFolder):
         return index
 
     def _get_array(self, grid_id: str, light_path: str, state: int = 0,
-                   type: str = 'total', extension: str = '.npy') -> np.ndarray:
+                   res_type: str = 'total', extension: str = '.npy') -> np.ndarray:
         state_identifier = self._state_identifier(grid_id, light_path, state=state)
 
         try:
-            array = self.arrays[grid_id][light_path][state_identifier][type]
+            array = self.arrays[grid_id][light_path][state_identifier][res_type]
         except:
             array = self._load_array(
-                grid_id, light_path, state=state, type=type, extension=extension)
+                grid_id, light_path, state=state, res_type=res_type, extension=extension)
         return array
 
     def _load_array(self, grid_id: str, light_path: str, state: int = 0,
-                    type: str = 'total', extension: str = '.npy') -> np.ndarray:
+                    res_type: str = 'total', extension: str = '.npy') -> np.ndarray:
         """Load a NumPy file to an array.
 
         This method will also update the arrays property value.
@@ -392,7 +394,7 @@ class Results(_ResultsFolder):
             grid_id: Grid identifier.
             light_path: Light path identifier.
             state: Integer of the state. E.g., 0 for the default state
-            type: Which type of result to return a file for. E.g., 'total' for total
+            res_type: Which type of result to return a file for. E.g., 'total' for total
                 illuminance or 'direct' for direct illuminance.
             extension: File extension. (Default: .npy).
 
@@ -410,11 +412,11 @@ class Results(_ResultsFolder):
             return arrays
 
         state_identifier = self._state_identifier(grid_id, light_path, state=state)
-        file = self._get_file(grid_id, light_path, state_identifier, type,
+        file = self._get_file(grid_id, light_path, state_identifier, res_type,
                               extension=extension)
         array = np.load(file)
 
-        array_dict = {grid_id: {light_path: {state_identifier: {type: array}}}}
+        array_dict = {grid_id: {light_path: {state_identifier: {res_type: array}}}}
         arrays = merge_dicts(array_dict, self.arrays)
         self.arrays = arrays
 
@@ -450,14 +452,14 @@ class Results(_ResultsFolder):
                 'Received state %s.' % (light_path, valid_states, state))
 
     def _get_file(self, grid_id: str, light_path: str, state_identifier: str,
-                  type: str = 'total', extension: str = '.npy') -> Path:
+                  res_type: str = 'total', extension: str = '.npy') -> Path:
         """Return the path of a results file.
 
         Args:
             grid_id: Grid identifier.
             light_path: Light path identifier.
             state_identifier: State identifier.
-            type: Which type of result to return a file for. E.g., 'total' for total
+            res_type: Which type of result to return a file for. E.g., 'total' for total
                 illuminance or 'direct' for direct illuminance.
             extension: File extension. (Default: .npy).
         
@@ -465,10 +467,10 @@ class Results(_ResultsFolder):
             Path to a NumPy file.
         """
         if light_path == 'static_apertures':
-            file = Path(self.folder, light_path, '__static_apertures__', type,
+            file = Path(self.folder, light_path, '__static_apertures__', res_type,
                         grid_id + extension)
         else:
-            file = Path(self.folder, light_path, state_identifier, type,
+            file = Path(self.folder, light_path, state_identifier, res_type,
                         grid_id + extension)
 
         return file
@@ -537,7 +539,7 @@ class Results(_ResultsFolder):
         return states
 
     def _array_from_states(
-        self, grid_info, states: dict = None, type: str = 'total') -> np.ndarray:
+        self, grid_info, states: dict = None, res_type: str = 'total') -> np.ndarray:
         """Create an array for a given grid by the states settings.
 
         Args:
@@ -545,7 +547,7 @@ class Results(_ResultsFolder):
             states: A dictionary of states. Light paths as keys and lists of 8760 values
                 for each key. The values should be integers matching the states or -1 for
                 off.
-            type: Which type of result to create an array for. E.g., 'total' for total
+            res_type: Which type of result to create an array for. E.g., 'total' for total
                 illuminance or 'direct' for direct illuminance.
 
         Returns:
@@ -563,7 +565,8 @@ class Results(_ResultsFolder):
                 state = state[0]
                 if state == -1:
                     continue
-                array = self._get_array(grid_id, light_path, state=state, type=type)
+                array = self._get_array(
+                    grid_id, light_path, state=state, res_type=res_type)
                 arrays.append(array)
             array = sum(arrays)
         else:
@@ -576,7 +579,8 @@ class Results(_ResultsFolder):
                 for state in set(states_array.tolist()):
                     if state == -1:
                         continue
-                    array = self._get_array(grid_id, light_path, state=state, type=type)
+                    array = self._get_array(
+                        grid_id, light_path, state=state, res_type=res_type)
                     conds = [states_array == state, states_array != state]
                     light_path_array = np.select(conds, [array, light_path_array])
                 arrays.append(light_path_array)
@@ -619,11 +623,11 @@ class Results(_ResultsFolder):
                 for state_folder in Path(light_path_folder).iterdir():
                     state = state_folder.name
                     arrays[grid_id][light_path][state] = dict()
-                    for type_folder in Path(state_folder).iterdir():
-                        type = type_folder.name
-                        file = Path(type_folder, grid_id + '.npy')
+                    for res_type_folder in Path(state_folder).iterdir():
+                        res_type = res_type_folder.name
+                        file = Path(res_type_folder, grid_id + '.npy')
                         array = np.load(file)
-                        arrays[grid_id][light_path][state][type] = array
+                        arrays[grid_id][light_path][state][res_type] = array
 
         return arrays
 
