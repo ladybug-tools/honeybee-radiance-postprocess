@@ -132,4 +132,108 @@ def metrics_to_folder(
         with open(grid_info, 'w') as outf:
             json.dump(grids, outf)
 
+    # create info for available results. This file will be used by honeybee-vtk for
+    # results visualization
+    config_file = os.path.join(metrics_folder, 'config.json')
+
+    cfg = _annual_daylight_config()
+
+    with open(config_file, 'w') as outf:
+        json.dump(cfg, outf)
+
     return metrics_folder
+
+
+def _annual_daylight_config():
+    """Return vtk-config for annual daylight. """
+    cfg = {
+        "data": [
+            {
+                "identifier": "Useful Daylight Illuminance Lower",
+                "object_type": "grid",
+                "unit": "Percentage",
+                "path": "udi_lower",
+                "hide": False,
+                "legend_parameters": {
+                    "hide_legend": False,
+                    "min": 0,
+                    "max": 100,
+                    "color_set": "nuanced",
+                },
+            },
+            {
+                "identifier": "Useful Daylight Illuminance Upper",
+                "object_type": "grid",
+                "unit": "Percentage",
+                "path": "udi_upper",
+                "hide": False,
+                "legend_parameters": {
+                    "hide_legend": False,
+                    "min": 0,
+                    "max": 100,
+                    "color_set": "glare_study",
+                    "label_parameters": {
+                        "color": [34, 247, 10],
+                        "size": 0,
+                        "bold": True,
+                    },
+                },
+            },
+            {
+                "identifier": "Useful Daylight Illuminance",
+                "object_type": "grid",
+                "unit": "Percentage",
+                "path": "udi",
+                "hide": False,
+                "legend_parameters": {
+                    "hide_legend": False,
+                    "min": 0,
+                    "max": 100,
+                    "color_set": "annual_comfort",
+                    "label_parameters": {
+                        "color": [34, 247, 10],
+                        "size": 0,
+                        "bold": True,
+                    },
+                },
+            },
+            {
+                "identifier": "Continuous Daylight Autonomy",
+                "object_type": "grid",
+                "unit": "Percentage",
+                "path": "cda",
+                "hide": False,
+                "legend_parameters": {
+                    "hide_legend": False,
+                    "min": 0,
+                    "max": 100,
+                    "color_set": "annual_comfort",
+                    "label_parameters": {
+                        "color": [34, 247, 10],
+                        "size": 0,
+                        "bold": True,
+                    },
+                },
+            },
+            {
+                "identifier": "Daylight Autonomy",
+                "object_type": "grid",
+                "unit": "Percentage",
+                "path": "da",
+                "hide": False,
+                "legend_parameters": {
+                    "hide_legend": False,
+                    "min": 0,
+                    "max": 100,
+                    "color_set": "annual_comfort",
+                    "label_parameters": {
+                        "color": [34, 247, 10],
+                        "size": 0,
+                        "bold": True,
+                    },
+                },
+            },
+        ]
+    }
+
+    return cfg
