@@ -19,7 +19,7 @@ def metrics_to_files(ill_file, occ_pattern, output_folder, threshold=300,
     """Compute annual metrics for an ill file and write the results to a folder.
 
     This function generates 5 different files or daylight autonomy, continuous daylight
-    automony, lower than useful daylight illuminance, useful daylight illuminance and
+    autonomy, lower than useful daylight illuminance, useful daylight illuminance and
     higher than useful daylight illuminance.
 
     Args:
