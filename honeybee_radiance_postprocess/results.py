@@ -300,7 +300,11 @@ class Results(_ResultsFolder):
         grids_info = self._filter_grids(grids_filter=grids_filter)
         sun_down_occ_hours = self.sun_down_occ_hours
 
-        da = cda = udi = udi_lower = udi_upper = []
+        da = []
+        cda = []
+        udi = []
+        udi_lower = []
+        udi_upper = []
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
