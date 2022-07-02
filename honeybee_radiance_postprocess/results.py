@@ -2,13 +2,14 @@ import numpy as np
 import json
 from pathlib import Path
 from itertools import islice, cycle
-from typing import Union
+from typing import Dict, Union
 
 from honeybee_radiance.postprocess.annual import (_process_input_folder,
     filter_schedule_by_hours, generate_default_schedule)
 from honeybee_radiance_postprocess.metrics import (da_array2d, cda_array2d, udi_array2d,
     udi_lower_array2d, udi_upper_array2d)
 from .util import occupancy_filter
+from .annualdaylight import _annual_daylight_config
 from ladybug.dt import DateTime
 
 
@@ -331,6 +332,39 @@ class Results(_ResultsFolder):
             udi_upper.append(udi_upper_results)
 
         return da, cda, udi, udi_lower, udi_upper, grids_info
+
+    def annual_metrics_to_folder(
+        self, target_folder: str, threshold: float = 300, min_t: float = 100, max_t: float = 3000,
+        states: list = None, grids_filter: str = '*', config: Dict = None):
+
+        folder = Path(target_folder)
+        folder.mkdir(parents=True, exist_ok=True)
+
+        da, cda, udi, udi_lower, udi_upper, grids_info = self.annual_metrics(
+            threshold= threshold, min_t=min_t, max_t=max_t, states=states,
+            grids_filter=grids_filter)
+
+        pattern = {
+            'da': da, 'cda': cda, 'udi_lower': udi_lower, 'udi': udi,
+            'udi_upper': udi_upper
+        }
+        for metric, data in pattern.items():
+            metric_folder = folder.joinpath(metric)
+            extension = metric.split('_')[0]
+            for count, grid_info in enumerate(grids_info):
+                d = data[count]
+                full_id = grid_info['full_id']
+                output_file = metric_folder.joinpath(f'{full_id}.{extension}')
+                output_file.parent.mkdir(parents=True, exist_ok=True)
+                np.savetxt(output_file, d, fmt='%.2f')
+
+        for metric in pattern.keys():
+            info_file = folder.joinpath(metric, 'grids_info.json')
+            info_file.write_text(json.dumps(grids_info))
+
+        config = config or _annual_daylight_config()
+        config_file = folder.joinpath(metric, 'config.json')
+        config_file.write_text(json.dumps(config))
 
     def point_in_time(
         self, datetime: Union[int, DateTime], states: list = None, grids_filter='*',
