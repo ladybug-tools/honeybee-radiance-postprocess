@@ -330,7 +330,7 @@ class Results(_ResultsFolder):
             udi_lower.append(udi_lower_results)
             udi_upper.append(udi_upper_results)
 
-        return da, cda, udi, udi_lower, udi_upper
+        return da, cda, udi, udi_lower, udi_upper, grids_info
 
     def point_in_time(
         self, datetime: Union[int, DateTime], states: list = None, grids_filter='*',
@@ -377,25 +377,28 @@ class Results(_ResultsFolder):
 
         return index
 
-    def _get_array(self, grid_id: str, light_path: str, state: int = 0,
+    def _get_array(self, grid_info: dict, light_path: str, state: int = 0,
                    res_type: str = 'total', extension: str = '.npy') -> np.ndarray:
+        grid_id = grid_info['identifier']
+
         state_identifier = self._state_identifier(grid_id, light_path, state=state)
 
         try:
             array = self.arrays[grid_id][light_path][state_identifier][res_type]
         except:
             array = self._load_array(
-                grid_id, light_path, state=state, res_type=res_type, extension=extension)
+                grid_info, light_path, state=state, res_type=res_type, extension=extension
+            )
         return array
 
-    def _load_array(self, grid_id: str, light_path: str, state: int = 0,
+    def _load_array(self, grid_info: dict, light_path: str, state: int = 0,
                     res_type: str = 'total', extension: str = '.npy') -> np.ndarray:
         """Load a NumPy file to an array.
 
         This method will also update the arrays property value.
 
         Args:
-            grid_id: Grid identifier.
+            grid_info: Grid information.
             light_path: Light path identifier.
             state: Integer of the state. E.g., 0 for the default state
             res_type: Which type of result to return a file for. E.g., 'total' for total
@@ -405,6 +408,8 @@ class Results(_ResultsFolder):
         Returns:
             A NumPy array from a NumPy file.
         """
+        grid_id = grid_info['identifier']
+        full_id = grid_info['full_id']
 
         def merge_dicts(array_dict, arrays):
             for key, value in array_dict.items():
@@ -416,7 +421,7 @@ class Results(_ResultsFolder):
             return arrays
 
         state_identifier = self._state_identifier(grid_id, light_path, state=state)
-        file = self._get_file(grid_id, light_path, state_identifier, res_type,
+        file = self._get_file(full_id, light_path, state_identifier, res_type,
                               extension=extension)
         array = np.load(file)
 
@@ -557,7 +562,6 @@ class Results(_ResultsFolder):
         Returns:
             A NumPy array based on the states settings.
         """
-        grid_id = grid_info['identifier']
         grid_count = grid_info['count']
         # get states that are relevant for the grid
         states = self._filter_grid_states(grid_info, states=states)
@@ -570,7 +574,7 @@ class Results(_ResultsFolder):
                 if state == -1:
                     continue
                 array = self._get_array(
-                    grid_id, light_path, state=state, res_type=res_type)
+                    grid_info, light_path, state=state, res_type=res_type)
                 arrays.append(array)
             array = sum(arrays)
         else:
@@ -584,7 +588,7 @@ class Results(_ResultsFolder):
                     if state == -1:
                         continue
                     array = self._get_array(
-                        grid_id, light_path, state=state, res_type=res_type)
+                        grid_info, light_path, state=state, res_type=res_type)
                     conds = [states_array == state, states_array != state]
                     light_path_array = np.select(conds, [array, light_path_array])
                 arrays.append(light_path_array)
