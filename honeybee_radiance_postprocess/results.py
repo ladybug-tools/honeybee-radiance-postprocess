@@ -86,12 +86,12 @@ class _ResultsFolder(object):
                 light_path = light_path[0]
                 if light_path in lp:
                     continue
-                if light_path == 'static_apertures':
+                if light_path == '__static_apertures__':
                     lp.insert(0, light_path)
                 else:
                     lp.append(light_path)
-            if not light_paths and 'static_apertures' not in lp:
-                lp.insert(0, 'static_apertures')
+            if not light_paths and '__static_apertures__' not in lp:
+                lp.insert(0, '__static_apertures__')
 
         return lp
 
@@ -483,7 +483,7 @@ class Results(_ResultsFolder):
         # I.e., state integer <--> state identifier.
         valid_states = self.valid_states[light_path]
         if state in valid_states:
-            if light_path == 'static_apertures':
+            if light_path == '__static_apertures__':
                 state_identifier = '__static_apertures__'
             else:
                 state_identifier = self.grid_states[grid_id][light_path][state]
@@ -690,8 +690,8 @@ class Results(_ResultsFolder):
         """
         valid_states = dict()
         grid_states = self.grid_states
-        if 'static_apertures' in self.light_paths:
-            valid_states['static_apertures'] = [0]
+        if '__static_apertures__' in self.light_paths:
+            valid_states['__static_apertures__'] = [0]
         for grid_id, light_paths in grid_states.items():
             for light_path, states in light_paths.items():
                 if light_path not in valid_states:
