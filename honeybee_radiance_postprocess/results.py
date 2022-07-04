@@ -363,7 +363,7 @@ class Results(_ResultsFolder):
             info_file.write_text(json.dumps(grids_info))
 
         config = config or _annual_daylight_config()
-        config_file = folder.joinpath(metric, 'config.json')
+        config_file = folder.joinpath('config.json')
         config_file.write_text(json.dumps(config))
 
     def point_in_time(
