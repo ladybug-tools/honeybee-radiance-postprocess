@@ -509,12 +509,7 @@ class Results(_ResultsFolder):
         Returns:
             Path to a NumPy file.
         """
-        if light_path == 'static_apertures':
-            file = Path(self.folder, light_path, '__static_apertures__', res_type,
-                        grid_id + extension)
-        else:
-            file = Path(self.folder, light_path, state_identifier, res_type,
-                        grid_id + extension)
+        file = Path(self.folder, light_path, state_identifier, res_type, grid_id + extension)
 
         return file
 
@@ -681,7 +676,7 @@ class Results(_ResultsFolder):
 
         Example of output format:
         {
-            'static_apertures': [0],
+            '__static_apertures__': [0],
             'Room1_North': [0, 1],
             'Room1_South': [0, 1],
             'Room2_North1': [0, 1],
@@ -692,7 +687,7 @@ class Results(_ResultsFolder):
         grid_states = self.grid_states
         if '__static_apertures__' in self.light_paths:
             valid_states['__static_apertures__'] = [0]
-        for grid_id, light_paths in grid_states.items():
+        for light_paths in grid_states.values():
             for light_path, states in light_paths.items():
                 if light_path not in valid_states:
                     valid_states[light_path] = list(range(len(states)))
