@@ -1,5 +1,6 @@
 """Post-processing Results class."""
 import json
+import itertools
 from pathlib import Path
 from itertools import islice, cycle
 from typing import Tuple, Union, List
