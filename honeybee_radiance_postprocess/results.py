@@ -217,7 +217,7 @@ class Results(_ResultsFolder):
         return da
 
     def continuous_daylight_autonomy(
-        self, threshold: float = 300, states: list = None, grids_filter: str = '*'):
+        self, threshold: float = 300, states: dict = None, grids_filter: str = '*'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
@@ -236,7 +236,7 @@ class Results(_ResultsFolder):
         return cda
 
     def useful_daylight_illuminance(
-        self, min_t: float = 100, max_t: float = 3000, states: list = None,
+        self, min_t: float = 100, max_t: float = 3000, states: dict = None,
         grids_filter: str = '*'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
@@ -256,7 +256,7 @@ class Results(_ResultsFolder):
         return udi
 
     def useful_daylight_illuminance_lower(
-        self, min_t: float = 100, states: list = None, grids_filter: str = '*'):
+        self, min_t: float = 100, states: dict = None, grids_filter: str = '*'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
         sun_down_occ_hours = self.sun_down_occ_hours
@@ -276,7 +276,7 @@ class Results(_ResultsFolder):
         return udi_lower
 
     def useful_daylight_illuminance_upper(
-        self, max_t: float = 3000, states: list = None, grids_filter: str = '*'):
+        self, max_t: float = 3000, states: dict = None, grids_filter: str = '*'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
@@ -296,7 +296,7 @@ class Results(_ResultsFolder):
 
     def annual_metrics(
         self, threshold: float = 300, min_t: float = 100, max_t: float = 3000,
-        states: list = None, grids_filter: str = '*'):
+        states: dict = None, grids_filter: str = '*'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
         sun_down_occ_hours = self.sun_down_occ_hours
@@ -335,7 +335,7 @@ class Results(_ResultsFolder):
 
     def annual_metrics_to_folder(
         self, target_folder: str, threshold: float = 300, min_t: float = 100, max_t: float = 3000,
-        states: list = None, grids_filter: str = '*', config: Dict = None):
+        states: dict = None, grids_filter: str = '*', config: Dict = None):
 
         folder = Path(target_folder)
         folder.mkdir(parents=True, exist_ok=True)
@@ -367,7 +367,7 @@ class Results(_ResultsFolder):
         config_file.write_text(json.dumps(config))
 
     def point_in_time(
-        self, datetime: Union[int, DateTime], states: list = None, grids_filter='*',
+        self, datetime: Union[int, DateTime], states: dict = None, grids_filter='*',
         res_type='total'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
