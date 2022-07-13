@@ -4,7 +4,7 @@ import sys
 import os
 import logging
 
-from honeybee_radiance_postprocess.annualdaylight import metrics_to_folder
+from honeybee_radiance_postprocess.results import Results
 
 _logger = logging.getLogger(__name__)
 
@@ -41,6 +41,10 @@ def post_process():
     show_default=True
 )
 @click.option(
+    '--states', '-st', help='A dictionary of states.', default=None, type=dict,
+    show_default=True
+)
+@click.option(
     '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
     show_default=True
 )
@@ -49,8 +53,8 @@ def post_process():
     'metric files.', default='metrics'
 )
 def annual_metrics(
-    folder, schedule, threshold, lower_threshold, upper_threshold, grids_filter,
-    sub_folder
+    folder, schedule, threshold, lower_threshold, upper_threshold, states,
+    grids_filter, sub_folder
 ):
     """Compute annual metrics in a folder and write them in a subfolder.
 
@@ -76,10 +80,11 @@ def annual_metrics(
     else:
         schedule = None
     try:
-        metrics_to_folder(
-            folder, schedule, threshold, lower_threshold, upper_threshold,
-            grids_filter, sub_folder
-        )
+        results = Results(folder, schedule=schedule)
+        results.annual_metrics_to_folder(
+            sub_folder, threshold=threshold, min_t=lower_threshold,
+            max_t=upper_threshold, states=states, grids_filter=grids_filter
+            )
     except Exception:
         _logger.exception('Failed to calculate annual metrics.')
         sys.exit(1)
