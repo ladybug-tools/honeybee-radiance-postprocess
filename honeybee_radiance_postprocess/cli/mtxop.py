@@ -4,7 +4,7 @@ import sys
 import logging
 import numpy as np
 
-from ..translator import array_to_feather, binary_to_array
+from ..reader import binary_to_array
 
 _logger = logging.getLogger(__name__)
 
@@ -32,13 +32,8 @@ def mtxop():
 @click.option(
     '--name', '-n', help='Output file name.', default='output', show_default=True
 )
-@click.option(
-    '--array/--table', is_flag=True, help='A flag to select which format to save the '
-    'output in. The default is a NumPy array. The alternative is a PyArrow table saved '
-    'in a feather file.', default=True
-)
 def two_matrix_operations(
-    first_mtx, second_mtx, operator, conversion, name, array
+    first_mtx, second_mtx, operator, conversion, name
         ):
     """Operations between two Radiance matrices.
 
@@ -61,10 +56,7 @@ def two_matrix_operations(
             conversion = np.array(conversion, dtype=np.float32)
             data = np.dot(data, conversion)
 
-        if array:
-            np.save(name, data)
-        else:
-            array_to_feather(data, name)
+        np.save(name, data)
 
     except Exception:
         _logger.exception('Operation on two Radiance matrix failed.')
@@ -98,13 +90,8 @@ def two_matrix_operations(
 @click.option(
     '--name', '-n', help='Output file name.', default='output', show_default=True
 )
-@click.option(
-    '--array/--table', is_flag=True, help='A flag to select which format to save the '
-    'output in. The default is a NumPy array. The alternative is a PyArrow table saved '
-    'in a feather file.', default=True
-)
 def three_matrix_operations(
-    first_mtx, second_mtx, third_mtx, operator_one, operator_two, conversion, name, array
+    first_mtx, second_mtx, third_mtx, operator_one, operator_two, conversion, name
         ):
     """Operations between three Radiance matrices.
 
@@ -129,10 +116,7 @@ def three_matrix_operations(
             conversion = np.array(conversion, dtype=np.float32)
             data = np.dot(data, conversion)
 
-        if array:
-            np.save(name, data)
-        else:
-            array_to_feather(data, name)
+        np.save(name, data)
 
     except Exception:
         _logger.exception('Operation on three Radiance matrix failed.')
