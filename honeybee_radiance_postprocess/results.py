@@ -476,7 +476,7 @@ class Results(_ResultsFolder):
 
         Returns:
             State identifier. For static apertures the identifier is
-            '__static_apertures__', and for other light paths it is the light path
+            'default', and for other light paths it is the light path
             identifier preceded by the state integer, e.g., '0_light_path'.
         """
         # TODO: Figure out if there is a better way to handle the states.
@@ -484,7 +484,7 @@ class Results(_ResultsFolder):
         valid_states = self.valid_states[light_path]
         if state in valid_states:
             if light_path == '__static_apertures__':
-                state_identifier = '__static_apertures__'
+                state_identifier = 'default'
             else:
                 state_identifier = self.grid_states[grid_id][light_path][state]
             return state_identifier
