@@ -7,8 +7,8 @@ from typing import Dict, Union
 from honeybee_radiance.postprocess.annual import (_process_input_folder,
     filter_schedule_by_hours, generate_default_schedule)
 from honeybee_radiance_postprocess.metrics import (da_array2d, cda_array2d, udi_array2d,
-    udi_lower_array2d, udi_upper_array2d)
-from .util import occupancy_filter
+    udi_lower_array2d, udi_upper_array2d, avg_values_array2d)
+from .util import filter_array, hoys_mask
 from .annualdaylight import _annual_daylight_config
 from ladybug.dt import DateTime
 
@@ -28,10 +28,11 @@ class _ResultsFolder(object):
         * light_paths
         * default_states
         * grid_states
+        * timestep
 
     """
     __slots__ = ('_folder', '_grids_info', '_sun_up_hours', '_datetimes', '_light_paths',
-                 '_default_states', '_grid_states')
+                 '_default_states', '_grid_states', '_timestep')
 
     def __init__(self, folder):
         """Initialize ResultsFolder."""
@@ -41,6 +42,7 @@ class _ResultsFolder(object):
         self._light_paths = self._get_light_paths()
         self._default_states = self._get_default_states()
         self._grid_states = self._get_grid_states()
+        self._timestep = self._set_timestep()
 
     @property
     def folder(self):
@@ -77,6 +79,11 @@ class _ResultsFolder(object):
         """Return grid states as a dictionary."""
         return self._grid_states
 
+    @property
+    def timestep(self):
+        """Return timestep as an integer."""
+        return self._timestep
+
     def _get_light_paths(self) -> list:
         """Find all light paths in grids_info."""
         lp = []
@@ -112,6 +119,16 @@ class _ResultsFolder(object):
         else:
             # only static results
             return None
+    
+    def _set_timestep(self) -> float:
+        timestep_file = Path(self.folder, 'timestep.txt')
+        if timestep_file.is_file():
+            with open(timestep_file) as file:
+                timestep = int(file.readline())
+        else:
+            timestep = 1
+        
+        return timestep
 
     def __repr__(self):
         return '%s: %s' % (self.__class__.__name__, self.folder)
@@ -207,7 +224,7 @@ class Results(_ResultsFolder):
             array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
                 array_filter = np.apply_along_axis(
-                    occupancy_filter, 1, array, mask=self.occ_mask)
+                    filter_array, 1, array, mask=self.occ_mask)
                 results = da_array2d(
                     array_filter, total_occ=self.total_occ, threshold=threshold)
             else:
@@ -226,7 +243,7 @@ class Results(_ResultsFolder):
             array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
                 array_filter = np.apply_along_axis(
-                    occupancy_filter, 1, array, mask=self.occ_mask)
+                    filter_array, 1, array, mask=self.occ_mask)
                 results = cda_array2d(
                     array_filter, total_occ=self.total_occ, threshold=threshold)
             else:
@@ -246,7 +263,7 @@ class Results(_ResultsFolder):
             array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
                 array_filter = np.apply_along_axis(
-                    occupancy_filter, 1, array, mask=self.occ_mask)
+                    filter_array, 1, array, mask=self.occ_mask)
                 results = udi_array2d(
                     array_filter, total_occ=self.total_occ, min_t=min_t, max_t=max_t)
             else:
@@ -266,7 +283,7 @@ class Results(_ResultsFolder):
             array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
                 array_filter = np.apply_along_axis(
-                    occupancy_filter, 1, array, mask=self.occ_mask)
+                    filter_array, 1, array, mask=self.occ_mask)
                 results = udi_lower_array2d(array_filter, total_occ=self.total_occ,
                     min_t=min_t, sun_down_occ_hours=sun_down_occ_hours)
             else:
@@ -285,7 +302,7 @@ class Results(_ResultsFolder):
             array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
                 array_filter = np.apply_along_axis(
-                    occupancy_filter, 1, array, mask=self.occ_mask)
+                    filter_array, 1, array, mask=self.occ_mask)
                 results = udi_upper_array2d(
                     array_filter, total_occ=self.total_occ, max_t=max_t)
             else:
@@ -310,7 +327,7 @@ class Results(_ResultsFolder):
             array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
                 array_filter = np.apply_along_axis(
-                    occupancy_filter, 1, array, mask=self.occ_mask)
+                    filter_array, 1, array, mask=self.occ_mask)
                 da_results = da_array2d(
                     array_filter, total_occ=self.total_occ, threshold=threshold)
                 cda_results = cda_array2d(
@@ -392,6 +409,43 @@ class Results(_ResultsFolder):
                 pit_values.append(np.zeros(grid_info['count']))
 
         return pit_values
+
+    def average_values(
+        self, hoys: list = [], states: dict = None, grids_filter='*',
+        res_type='total',):
+        """Get average values for each sensor over a given period.
+        
+        The hoys input can be used to filter the data for a particular time period.
+        
+        Args:
+            hoys: An optional numbers or list of numbers to select the hours of the year
+                (HOYs) for which results will be computed.
+            states: A dictionary of states.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+            res_type: Type of results to load.
+
+        Returns:
+            Average value for each sensor.
+        """
+
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+
+        full_length = 8760 * self.timestep if len(hoys) == 0 else len(hoys)
+        mask = hoys_mask(self.sun_up_hours, hoys, self.timestep)
+
+        average_values = []
+        for grid_info in grids_info:
+            array = self._array_from_states(grid_info, states=states, res_type=res_type)
+            if np.any(array):
+                array_filter = np.apply_along_axis(
+                    filter_array, 1, array, mask=mask)
+                results = avg_values_array2d(
+                    array_filter, full_length)
+            else:
+                results = np.zeros(grid_info['count'])
+            average_values.append(results)
+        
+        return average_values
 
     def _index_from_datetime(self, datetime: DateTime):
         """Returns the index of the input datetime in the list of datetimes from the

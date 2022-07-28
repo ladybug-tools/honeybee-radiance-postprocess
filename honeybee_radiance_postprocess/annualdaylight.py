@@ -10,7 +10,7 @@ from honeybee_radiance.postprocess.annual import filter_schedule_by_hours, \
     _process_input_folder
 from .metrics import da_array2d, cda_array2d, udi_array2d, \
     udi_lower_array2d, udi_upper_array2d
-from .util import occupancy_filter
+from .util import filter_array
 
 
 def metrics_to_files(ill_file, occ_pattern, output_folder, threshold=300,
@@ -64,7 +64,7 @@ def metrics_to_files(ill_file, occ_pattern, output_folder, threshold=300,
 
     mask = np.array(occ_pattern)
     results = np.load(ill_file)
-    results_occ = np.apply_along_axis(occupancy_filter, 1, results, mask=mask)
+    results_occ = np.apply_along_axis(filter_array, 1, results, mask=mask)
 
     dar = da_array2d(results_occ, total_occ=total_hours, threshold=threshold)
     np.savetxt(da, dar, fmt='%.2f')

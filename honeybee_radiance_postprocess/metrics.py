@@ -238,3 +238,42 @@ def udi_upper_array1d(
         total_occ = array.size
 
     return np.float64((array > max_t).sum() / total_occ * 100)
+
+
+def avg_values_array2d(
+        array: np.ndarray, full_length: int = 8760) -> np.ndarray:
+    """Calculate daylight autonomy for a 2D NumPy array.
+    
+    Args:
+        array: A 2D NumPy array.
+        total_occ: Integer indicating the number of occupied hours. If not given any
+            input the number of occupied hours will be found by the array shape.
+        threshold: Threshold value for daylight autonomy. Default: 300.
+    
+    Returns:
+        A 1-dimensional NumPy array with the daylight autonomy for each row in the input
+        array.
+    """
+    check_array_dim(array, 2)
+
+    avg_values = np.apply_along_axis(
+            avg_values_array1d, 1, array, full_length=full_length)
+
+    return avg_values
+
+
+def avg_values_array1d(array: np.ndarray, full_length: int = 8760) -> np.float64:
+    """Calculate daylight autonomy for a 1D NumPy array.
+    
+    Args:
+        array: A 1D NumPy array.
+        total_occ: Integer indicating the number of occupied hours. If not given any
+            input the number of occupied hours will be found by the array shape.
+        threshold: Threshold value for daylight autonomy. Default: 300.
+        
+    Returns:
+        A NumPy float of the daylight autonomy.
+    """
+    check_array_dim(array, 1)
+
+    return array.sum() / full_length

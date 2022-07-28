@@ -90,3 +90,57 @@ def annual_metrics(
         sys.exit(1)
     else:
         sys.exit(0)
+
+
+@post_process.command('average-values')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.option(
+    '--hoys-file', '-h', help='Path to an HOYs file. Values must be separated by new line. '
+    'If not provided the data will not be filtered by HOYs.',
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--states', '-st', help='A dictionary of states.', default=None, type=dict,
+    show_default=True
+)
+@click.option(
+    '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
+    show_default=True
+)
+@click.option(
+    '--res-type', '-rt', help='Which type of results to process', default='total',
+    show_default=True
+)
+def average_values(
+    folder, hoys_file, states, grids_filter, res_type
+):
+    """Get average values for each sensor over a given period.
+
+    \b
+    Args:
+        folder: Results folder. This folder is an output folder of annual
+        daylight recipe. Folder should include grids_info.json and sun-up-hours.txt.
+        The command uses the list in grids_info.json to find the result files for each
+        sensor grid.
+    """
+    if hoys_file:
+        with open(hoys_file) as hoys:
+            hoys = [int(h) for h in hoys.readlines()]
+    else:
+        hoys = []
+
+    try:
+        results = Results(folder, )
+        average_values = results.average_values(
+            hoys=hoys, states=states, grids_filter=grids_filter,
+            res_type=res_type)
+        for grid in average_values:
+            print(grid[0:5])
+    except Exception:
+        _logger.exception('Failed to calculate average values.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
