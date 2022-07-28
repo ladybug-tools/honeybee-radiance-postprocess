@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>honeybee_radiance_postprocess.results module &#8212; honeybee-radiance-postprocess  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="honeybee_radiance_postprocess.util module" href="honeybee_radiance_postprocess.util.html" />
+    <link rel="prev" title="honeybee_radiance_postprocess.reader module" href="honeybee_radiance_postprocess.reader.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          honeybee-radiance-postprocess</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="cli/index.html">CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli/index.html#commands">Commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cli/main.html">main</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/main.html#honeybee-radiance-postprocess">honeybee-radiance-postprocess</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/translate.html">translate</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/translate.html#honeybee-radiance-postprocess-translate">honeybee-radiance-postprocess translate</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/translate.html#honeybee-radiance-postprocess-translate-binary-to-npy">binary-to-npy</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/translate.html#honeybee-radiance-postprocess-translate-npy-to-txt">npy-to-txt</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/translate.html#honeybee-radiance-postprocess-translate-txt-to-npy">txt-to-npy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/postprocess.html">postprocess</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/postprocess.html#honeybee-radiance-postprocess-post-process">honeybee-radiance-postprocess post-process</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/postprocess.html#honeybee-radiance-postprocess-post-process-annual-daylight">annual-daylight</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/postprocess.html#honeybee-radiance-postprocess-post-process-average-values">average-values</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/mtxop.html">mtxop</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/mtxop.html#honeybee-radiance-postprocess-mtxop">honeybee-radiance-postprocess mtxop</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/mtxop.html#honeybee-radiance-postprocess-mtxop-operate-three">operate-three</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/mtxop.html#honeybee-radiance-postprocess-mtxop-operate-two">operate-two</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/grid.html">grid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/grid.html#honeybee-radiance-postprocess-grid">honeybee-radiance-postprocess grid</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/grid.html#honeybee-radiance-postprocess-grid-merge-folder">merge-folder</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="honeybee_radiance_postprocess.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.cli.html">honeybee_radiance_postprocess.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance_postprocess.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance_postprocess.cli.grid.html">honeybee_radiance_postprocess.cli.grid module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance_postprocess.cli.mtxop.html">honeybee_radiance_postprocess.cli.mtxop module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance_postprocess.cli.postprocess.html">honeybee_radiance_postprocess.cli.postprocess module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance_postprocess.cli.translate.html">honeybee_radiance_postprocess.cli.translate module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance_postprocess.cli.util.html">honeybee_radiance_postprocess.cli.util module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance_postprocess.cli.html#module-honeybee_radiance_postprocess.cli">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee_radiance_postprocess.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.annualdaylight.html">honeybee_radiance_postprocess.annualdaylight module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.helper.html">honeybee_radiance_postprocess.helper module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.metrics.html">honeybee_radiance_postprocess.metrics module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.reader.html">honeybee_radiance_postprocess.reader module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">honeybee_radiance_postprocess.results module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.util.html">honeybee_radiance_postprocess.util module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="honeybee_radiance_postprocess.html#module-honeybee_radiance_postprocess">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="cli/index.html">CLI</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="honeybee_radiance_postprocess.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee_radiance_postprocess.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.annualdaylight.html">honeybee_radiance_postprocess.annualdaylight module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.helper.html">honeybee_radiance_postprocess.helper module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.metrics.html">honeybee_radiance_postprocess.metrics module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.reader.html">honeybee_radiance_postprocess.reader module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">honeybee_radiance_postprocess.results module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.util.html">honeybee_radiance_postprocess.util module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="honeybee_radiance_postprocess.html#module-honeybee_radiance_postprocess">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="honeybee_radiance_postprocess.reader.html" title="Previous Chapter: honeybee_radiance_postprocess.reader module"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; honeybee_radi...</span>
+    </a>
+  </li>
+  <li>
+    <a href="honeybee_radiance_postprocess.util.html" title="Next Chapter: honeybee_radiance_postprocess.util module"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">honeybee_radi... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="_sources/honeybee_radiance_postprocess.results.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="cli/index.html">CLI</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="honeybee_radiance_postprocess.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee_radiance_postprocess.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.annualdaylight.html">honeybee_radiance_postprocess.annualdaylight module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.helper.html">honeybee_radiance_postprocess.helper module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.metrics.html">honeybee_radiance_postprocess.metrics module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.reader.html">honeybee_radiance_postprocess.reader module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">honeybee_radiance_postprocess.results module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.util.html">honeybee_radiance_postprocess.util module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="honeybee_radiance_postprocess.html#module-honeybee_radiance_postprocess">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <section id="module-honeybee_radiance_postprocess.results">
+<span id="honeybee-radiance-postprocess-results-module"></span><h1>honeybee_radiance_postprocess.results module<a class="headerlink" href="#module-honeybee_radiance_postprocess.results" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="honeybee_radiance_postprocess.results.Results">
+<em class="property">class </em><code class="sig-prename descclassname">honeybee_radiance_postprocess.results.</code><code class="sig-name descname">Results</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">folder</span></em>, <em class="sig-param"><span class="n">schedule</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">load_arrays</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee_radiance_postprocess/results.html#Results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">honeybee_radiance_postprocess.results._ResultsFolder</span></code></p>
+<p>Results class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> – Path to results folder.</p></li>
+<li><p><strong>schedule</strong> – 8760 values as a list. Values must be either 0 or 1. Values of 1
+indicates occupied hours. If not schedule is provided a default schedule
+will be used. (Default: None).</p></li>
+<li><p><strong>load_arrays</strong> – Set to True to load all NumPy arrays. If False the arrays will be
+loaded only once they are needed. In both cases the loaded array(s) will be
+stored in a dictionary under the arrays property. (Default: False).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Properties:</dt><dd><ul class="simple">
+<li><p>schedule</p></li>
+<li><p>occ_pattern</p></li>
+<li><p>total_occ</p></li>
+<li><p>sun_down_occ_hours</p></li>
+<li><p>occ_mask</p></li>
+<li><p>arrays</p></li>
+<li><p>valid_states</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.annual_metrics">
+<code class="sig-name descname">annual_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">threshold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">300</span></em>, <em class="sig-param"><span class="n">min_t</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">100</span></em>, <em class="sig-param"><span class="n">max_t</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">3000</span></em>, <em class="sig-param"><span class="n">states</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">grids_filter</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'*'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee_radiance_postprocess/results.html#Results.annual_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.annual_metrics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.annual_metrics_to_folder">
+<code class="sig-name descname">annual_metrics_to_folder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target_folder</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">300</span></em>, <em class="sig-param"><span class="n">min_t</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">100</span></em>, <em class="sig-param"><span class="n">max_t</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">3000</span></em>, <em class="sig-param"><span class="n">states</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">grids_filter</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'*'</span></em>, <em class="sig-param"><span class="n">config</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee_radiance_postprocess/results.html#Results.annual_metrics_to_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.annual_metrics_to_folder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.average_values">
+<code class="sig-name descname">average_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hoys</span><span class="p">:</span> <span class="n">list</span> <span class="o">=</span> <span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">states</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">grids_filter</span><span class="o">=</span><span class="default_value">'*'</span></em>, <em class="sig-param"><span class="n">res_type</span><span class="o">=</span><span class="default_value">'total'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee_radiance_postprocess/results.html#Results.average_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.average_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get average values for each sensor over a given period.</p>
+<p>The hoys input can be used to filter the data for a particular time period.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hoys</strong> – An optional numbers or list of numbers to select the hours of the year
+(HOYs) for which results will be computed.</p></li>
+<li><p><strong>states</strong> – A dictionary of states.</p></li>
+<li><p><strong>grids_filter</strong> – The name of a grid or a pattern to filter the grids.</p></li>
+<li><p><strong>res_type</strong> – Type of results to load.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Average value for each sensor.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.continuous_daylight_autonomy">
+<code class="sig-name descname">continuous_daylight_autonomy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">threshold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">300</span></em>, <em class="sig-param"><span class="n">states</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">grids_filter</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'*'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee_radiance_postprocess/results.html#Results.continuous_daylight_autonomy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.continuous_daylight_autonomy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.daylight_autonomy">
+<code class="sig-name descname">daylight_autonomy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">threshold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">300</span></em>, <em class="sig-param"><span class="n">states</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">grids_filter</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'*'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee_radiance_postprocess/results.html#Results.daylight_autonomy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.daylight_autonomy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.point_in_time">
+<code class="sig-name descname">point_in_time</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datetime</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>ladybug.dt.DateTime<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">states</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">grids_filter</span><span class="o">=</span><span class="default_value">'*'</span></em>, <em class="sig-param"><span class="n">res_type</span><span class="o">=</span><span class="default_value">'total'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee_radiance_postprocess/results.html#Results.point_in_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.point_in_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.useful_daylight_illuminance">
+<code class="sig-name descname">useful_daylight_illuminance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">min_t</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">100</span></em>, <em class="sig-param"><span class="n">max_t</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">3000</span></em>, <em class="sig-param"><span class="n">states</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">grids_filter</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'*'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee_radiance_postprocess/results.html#Results.useful_daylight_illuminance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.useful_daylight_illuminance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.useful_daylight_illuminance_lower">
+<code class="sig-name descname">useful_daylight_illuminance_lower</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">min_t</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">100</span></em>, <em class="sig-param"><span class="n">states</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">grids_filter</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'*'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee_radiance_postprocess/results.html#Results.useful_daylight_illuminance_lower"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.useful_daylight_illuminance_lower" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.useful_daylight_illuminance_upper">
+<code class="sig-name descname">useful_daylight_illuminance_upper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">max_t</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">3000</span></em>, <em class="sig-param"><span class="n">states</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">grids_filter</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'*'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee_radiance_postprocess/results.html#Results.useful_daylight_illuminance_upper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.useful_daylight_illuminance_upper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.arrays">
+<em class="property">property </em><code class="sig-name descname">arrays</code><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.arrays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dictionary of all the NumPy arrays that have been loaded.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.datetimes">
+<em class="property">property </em><code class="sig-name descname">datetimes</code><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.datetimes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return DateTimes for sun up hours.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.default_states">
+<em class="property">property </em><code class="sig-name descname">default_states</code><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.default_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return default states as a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.folder">
+<em class="property">property </em><code class="sig-name descname">folder</code><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return full path to results folder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.grid_states">
+<em class="property">property </em><code class="sig-name descname">grid_states</code><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.grid_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return grid states as a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.grids_info">
+<em class="property">property </em><code class="sig-name descname">grids_info</code><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.grids_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return grids information as list of dictionaries for each grid.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.light_paths">
+<em class="property">property </em><code class="sig-name descname">light_paths</code><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.light_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the identifiers of the light paths.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.occ_mask">
+<em class="property">property </em><code class="sig-name descname">occ_mask</code><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.occ_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an occupancy mask as a NumPy array that can be used to mask the
+results.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.occ_pattern">
+<em class="property">property </em><code class="sig-name descname">occ_pattern</code><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.occ_pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a filtered version of the annual schedule that only includes the
+sun-up-hours.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.schedule">
+<em class="property">property </em><code class="sig-name descname">schedule</code><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.schedule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return schedule.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.sun_down_occ_hours">
+<em class="property">property </em><code class="sig-name descname">sun_down_occ_hours</code><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.sun_down_occ_hours" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an integer for the number of occupied hours where the sun is down and
+there’s no possibility of being daylit or experiencing glare.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.sun_up_hours">
+<em class="property">property </em><code class="sig-name descname">sun_up_hours</code><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.sun_up_hours" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return sun up hours.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.timestep">
+<em class="property">property </em><code class="sig-name descname">timestep</code><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.timestep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return timestep as an integer.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.total_occ">
+<em class="property">property </em><code class="sig-name descname">total_occ</code><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.total_occ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an integer for the total occupied hours of the schedule.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance_postprocess.results.Results.valid_states">
+<em class="property">property </em><code class="sig-name descname">valid_states</code><a class="headerlink" href="#honeybee_radiance_postprocess.results.Results.valid_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dictionary with valid states. Each light path is represented by a
+key-value pair where the light path identifier is the key and the value is a list
+of valid states, e.g., [0, 1, 2, …].</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2022, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.3.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

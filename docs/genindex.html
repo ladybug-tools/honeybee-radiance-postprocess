@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index &#8212; honeybee-radiance-postprocess  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          honeybee-radiance-postprocess</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="cli/index.html">CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli/index.html#commands">Commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cli/main.html">main</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/main.html#honeybee-radiance-postprocess">honeybee-radiance-postprocess</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/translate.html">translate</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/translate.html#honeybee-radiance-postprocess-translate">honeybee-radiance-postprocess translate</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/translate.html#honeybee-radiance-postprocess-translate-binary-to-npy">binary-to-npy</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/translate.html#honeybee-radiance-postprocess-translate-npy-to-txt">npy-to-txt</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/translate.html#honeybee-radiance-postprocess-translate-txt-to-npy">txt-to-npy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/postprocess.html">postprocess</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/postprocess.html#honeybee-radiance-postprocess-post-process">honeybee-radiance-postprocess post-process</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/postprocess.html#honeybee-radiance-postprocess-post-process-annual-daylight">annual-daylight</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/postprocess.html#honeybee-radiance-postprocess-post-process-average-values">average-values</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/mtxop.html">mtxop</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/mtxop.html#honeybee-radiance-postprocess-mtxop">honeybee-radiance-postprocess mtxop</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/mtxop.html#honeybee-radiance-postprocess-mtxop-operate-three">operate-three</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/mtxop.html#honeybee-radiance-postprocess-mtxop-operate-two">operate-two</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/grid.html">grid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/grid.html#honeybee-radiance-postprocess-grid">honeybee-radiance-postprocess grid</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/grid.html#honeybee-radiance-postprocess-grid-merge-folder">merge-folder</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="honeybee_radiance_postprocess.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.cli.html">honeybee_radiance_postprocess.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance_postprocess.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance_postprocess.cli.grid.html">honeybee_radiance_postprocess.cli.grid module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance_postprocess.cli.mtxop.html">honeybee_radiance_postprocess.cli.mtxop module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance_postprocess.cli.postprocess.html">honeybee_radiance_postprocess.cli.postprocess module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance_postprocess.cli.translate.html">honeybee_radiance_postprocess.cli.translate module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance_postprocess.cli.util.html">honeybee_radiance_postprocess.cli.util module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance_postprocess.cli.html#module-honeybee_radiance_postprocess.cli">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="honeybee_radiance_postprocess.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.annualdaylight.html">honeybee_radiance_postprocess.annualdaylight module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.helper.html">honeybee_radiance_postprocess.helper module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.metrics.html">honeybee_radiance_postprocess.metrics module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.reader.html">honeybee_radiance_postprocess.reader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.results.html">honeybee_radiance_postprocess.results module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance_postprocess.util.html">honeybee_radiance_postprocess.util module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="honeybee_radiance_postprocess.html#module-honeybee_radiance_postprocess">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="cli/index.html">CLI</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="cli/index.html">CLI</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#Symbols"><strong>Symbols</strong></a>
+ | <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
+ 
+</div>
+<h2 id="Symbols">Symbols</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    --conversion &lt;conversion&gt;
+
+      <ul>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-three-conversion">honeybee-radiance-postprocess-mtxop-operate-three command line option</a>
+</li>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-two-conversion">honeybee-radiance-postprocess-mtxop-operate-two command line option</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-binary-to-npy-conversion">honeybee-radiance-postprocess-translate-binary-to-npy command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --dist-info &lt;dist_info&gt;
+
+      <ul>
+        <li><a href="cli/grid.html#cmdoption-honeybee-radiance-postprocess-grid-merge-folder-di">honeybee-radiance-postprocess-grid-merge-folder command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --extension &lt;extension&gt;
+
+      <ul>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-npy-to-txt-ext">honeybee-radiance-postprocess-translate-npy-to-txt command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --format &lt;format&gt;
+
+      <ul>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-npy-to-txt-fmt">honeybee-radiance-postprocess-translate-npy-to-txt command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --grids-filter &lt;grids_filter&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-gf">honeybee-radiance-postprocess-post-process-annual-daylight command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-gf">honeybee-radiance-postprocess-post-process-average-values command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --hoys-file &lt;hoys_file&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-h">honeybee-radiance-postprocess-post-process-average-values command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --lower-threshold &lt;lower_threshold&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-lt">honeybee-radiance-postprocess-post-process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --name &lt;name&gt;
+
+      <ul>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-three-n">honeybee-radiance-postprocess-mtxop-operate-three command line option</a>
+</li>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-two-n">honeybee-radiance-postprocess-mtxop-operate-two command line option</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-binary-to-npy-n">honeybee-radiance-postprocess-translate-binary-to-npy command line option</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-npy-to-txt-n">honeybee-radiance-postprocess-translate-npy-to-txt command line option</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-txt-to-npy-n">honeybee-radiance-postprocess-translate-txt-to-npy command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --operator &lt;operator&gt;
+
+      <ul>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-two-operator">honeybee-radiance-postprocess-mtxop-operate-two command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --operator-one &lt;operator_one&gt;
+
+      <ul>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-three-operator-one">honeybee-radiance-postprocess-mtxop-operate-three command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --operator-two &lt;operator_two&gt;
+
+      <ul>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-three-operator-two">honeybee-radiance-postprocess-mtxop-operate-three command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --res-type &lt;res_type&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-rt">honeybee-radiance-postprocess-post-process-average-values command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --schedule &lt;schedule&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-sch">honeybee-radiance-postprocess-post-process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --states &lt;states&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-st">honeybee-radiance-postprocess-post-process-annual-daylight command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-st">honeybee-radiance-postprocess-post-process-average-values command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --sub_folder &lt;sub_folder&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-sf">honeybee-radiance-postprocess-post-process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    --threshold &lt;threshold&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-t">honeybee-radiance-postprocess-post-process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --upper-threshold &lt;upper_threshold&gt;
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-ut">honeybee-radiance-postprocess-post-process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --version
+
+      <ul>
+        <li><a href="cli/main.html#cmdoption-honeybee-radiance-postprocess-version">honeybee-radiance-postprocess command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -di
+
+      <ul>
+        <li><a href="cli/grid.html#cmdoption-honeybee-radiance-postprocess-grid-merge-folder-di">honeybee-radiance-postprocess-grid-merge-folder command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -ext
+
+      <ul>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-npy-to-txt-ext">honeybee-radiance-postprocess-translate-npy-to-txt command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -fmt
+
+      <ul>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-npy-to-txt-fmt">honeybee-radiance-postprocess-translate-npy-to-txt command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -gf
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-gf">honeybee-radiance-postprocess-post-process-annual-daylight command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-gf">honeybee-radiance-postprocess-post-process-average-values command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -h
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-h">honeybee-radiance-postprocess-post-process-average-values command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -lt
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-lt">honeybee-radiance-postprocess-post-process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -n
+
+      <ul>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-three-n">honeybee-radiance-postprocess-mtxop-operate-three command line option</a>
+</li>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-two-n">honeybee-radiance-postprocess-mtxop-operate-two command line option</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-binary-to-npy-n">honeybee-radiance-postprocess-translate-binary-to-npy command line option</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-npy-to-txt-n">honeybee-radiance-postprocess-translate-npy-to-txt command line option</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-txt-to-npy-n">honeybee-radiance-postprocess-translate-txt-to-npy command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -rt
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-rt">honeybee-radiance-postprocess-post-process-average-values command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -sch
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-sch">honeybee-radiance-postprocess-post-process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -sf
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-sf">honeybee-radiance-postprocess-post-process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -st
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-st">honeybee-radiance-postprocess-post-process-annual-daylight command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-st">honeybee-radiance-postprocess-post-process-average-values command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -t
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-t">honeybee-radiance-postprocess-post-process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -ut
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-ut">honeybee-radiance-postprocess-post-process-annual-daylight command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.annual_metrics">annual_metrics() (honeybee_radiance_postprocess.results.Results method)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.annual_metrics_to_folder">annual_metrics_to_folder() (honeybee_radiance_postprocess.results.Results method)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.arrays">arrays() (honeybee_radiance_postprocess.results.Results property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.reader.html#honeybee_radiance_postprocess.reader.ascii_to_array">ascii_to_array() (in module honeybee_radiance_postprocess.reader)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.average_values">average_values() (honeybee_radiance_postprocess.results.Results method)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.avg_values_array1d">avg_values_array1d() (in module honeybee_radiance_postprocess.metrics)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.avg_values_array2d">avg_values_array2d() (in module honeybee_radiance_postprocess.metrics)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.util.html#honeybee_radiance_postprocess.util.binary_mtx_dimension">binary_mtx_dimension() (in module honeybee_radiance_postprocess.util)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.reader.html#honeybee_radiance_postprocess.reader.binary_to_array">binary_to_array() (in module honeybee_radiance_postprocess.reader)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.cda_array1d">cda_array1d() (in module honeybee_radiance_postprocess.metrics)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.cda_array2d">cda_array2d() (in module honeybee_radiance_postprocess.metrics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.util.html#honeybee_radiance_postprocess.util.check_array_dim">check_array_dim() (in module honeybee_radiance_postprocess.util)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.continuous_daylight_autonomy">continuous_daylight_autonomy() (honeybee_radiance_postprocess.results.Results method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.da_array1d">da_array1d() (in module honeybee_radiance_postprocess.metrics)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.da_array2d">da_array2d() (in module honeybee_radiance_postprocess.metrics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.datetimes">datetimes() (honeybee_radiance_postprocess.results.Results property)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.daylight_autonomy">daylight_autonomy() (honeybee_radiance_postprocess.results.Results method)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.default_states">default_states() (honeybee_radiance_postprocess.results.Results property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    EXTENSION
+
+      <ul>
+        <li><a href="cli/grid.html#cmdoption-honeybee-radiance-postprocess-grid-merge-folder-arg-EXTENSION">honeybee-radiance-postprocess-grid-merge-folder command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.util.html#honeybee_radiance_postprocess.util.filter_array">filter_array() (in module honeybee_radiance_postprocess.util)</a>
+</li>
+      <li>
+    FIRST_MTX
+
+      <ul>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-three-arg-FIRST_MTX">honeybee-radiance-postprocess-mtxop-operate-three command line option</a>
+</li>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-two-arg-FIRST_MTX">honeybee-radiance-postprocess-mtxop-operate-two command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    FOLDER
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-arg-FOLDER">honeybee-radiance-postprocess-post-process-annual-daylight command line option</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-arg-FOLDER">honeybee-radiance-postprocess-post-process-average-values command line option</a>
+</li>
+      </ul></li>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.folder">folder() (honeybee_radiance_postprocess.results.Results property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.cli.util.html#honeybee_radiance_postprocess.cli.util.get_compare_func">get_compare_func() (in module honeybee_radiance_postprocess.cli.util)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.cli.util.html#honeybee_radiance_postprocess.cli.util.get_hoys">get_hoys() (in module honeybee_radiance_postprocess.cli.util)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.grid_states">grid_states() (honeybee_radiance_postprocess.results.Results property)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.grids_info">grids_info() (honeybee_radiance_postprocess.results.Results property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.cli.util.html#honeybee_radiance_postprocess.cli.util.handle_operator">handle_operator() (in module honeybee_radiance_postprocess.cli.util)</a>
+</li>
+      <li>
+    honeybee-radiance-postprocess command line option
+
+      <ul>
+        <li><a href="cli/main.html#cmdoption-honeybee-radiance-postprocess-version">--version</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee-radiance-postprocess-grid-merge-folder command line option
+
+      <ul>
+        <li><a href="cli/grid.html#cmdoption-honeybee-radiance-postprocess-grid-merge-folder-di">--dist-info &lt;dist_info&gt;</a>
+</li>
+        <li><a href="cli/grid.html#cmdoption-honeybee-radiance-postprocess-grid-merge-folder-di">-di</a>
+</li>
+        <li><a href="cli/grid.html#cmdoption-honeybee-radiance-postprocess-grid-merge-folder-arg-EXTENSION">EXTENSION</a>
+</li>
+        <li><a href="cli/grid.html#cmdoption-honeybee-radiance-postprocess-grid-merge-folder-arg-INPUT_FOLDER">INPUT_FOLDER</a>
+</li>
+        <li><a href="cli/grid.html#cmdoption-honeybee-radiance-postprocess-grid-merge-folder-arg-OUTPUT_FOLDER">OUTPUT_FOLDER</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee-radiance-postprocess-mtxop-operate-three command line option
+
+      <ul>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-three-conversion">--conversion &lt;conversion&gt;</a>
+</li>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-three-n">--name &lt;name&gt;</a>
+</li>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-three-operator-one">--operator-one &lt;operator_one&gt;</a>
+</li>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-three-operator-two">--operator-two &lt;operator_two&gt;</a>
+</li>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-three-n">-n</a>
+</li>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-three-arg-FIRST_MTX">FIRST_MTX</a>
+</li>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-three-arg-SECOND_MTX">SECOND_MTX</a>
+</li>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-three-arg-THIRD_MTX">THIRD_MTX</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee-radiance-postprocess-mtxop-operate-two command line option
+
+      <ul>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-two-conversion">--conversion &lt;conversion&gt;</a>
+</li>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-two-n">--name &lt;name&gt;</a>
+</li>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-two-operator">--operator &lt;operator&gt;</a>
+</li>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-two-n">-n</a>
+</li>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-two-arg-FIRST_MTX">FIRST_MTX</a>
+</li>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-two-arg-SECOND_MTX">SECOND_MTX</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee-radiance-postprocess-post-process-annual-daylight command line option
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-gf">--grids-filter &lt;grids_filter&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-lt">--lower-threshold &lt;lower_threshold&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-sch">--schedule &lt;schedule&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-st">--states &lt;states&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-sf">--sub_folder &lt;sub_folder&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-t">--threshold &lt;threshold&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-ut">--upper-threshold &lt;upper_threshold&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-gf">-gf</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-lt">-lt</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-sch">-sch</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-sf">-sf</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-st">-st</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-t">-t</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-ut">-ut</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-annual-daylight-arg-FOLDER">FOLDER</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee-radiance-postprocess-post-process-average-values command line option
+
+      <ul>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-gf">--grids-filter &lt;grids_filter&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-h">--hoys-file &lt;hoys_file&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-rt">--res-type &lt;res_type&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-st">--states &lt;states&gt;</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-gf">-gf</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-h">-h</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-rt">-rt</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-st">-st</a>
+</li>
+        <li><a href="cli/postprocess.html#cmdoption-honeybee-radiance-postprocess-post-process-average-values-arg-FOLDER">FOLDER</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    honeybee-radiance-postprocess-translate-binary-to-npy command line option
+
+      <ul>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-binary-to-npy-conversion">--conversion &lt;conversion&gt;</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-binary-to-npy-n">--name &lt;name&gt;</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-binary-to-npy-n">-n</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-binary-to-npy-arg-MTX_FILE">MTX_FILE</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee-radiance-postprocess-translate-npy-to-txt command line option
+
+      <ul>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-npy-to-txt-ext">--extension &lt;extension&gt;</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-npy-to-txt-fmt">--format &lt;format&gt;</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-npy-to-txt-n">--name &lt;name&gt;</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-npy-to-txt-ext">-ext</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-npy-to-txt-fmt">-fmt</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-npy-to-txt-n">-n</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-npy-to-txt-arg-NPY_FILE">NPY_FILE</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee-radiance-postprocess-translate-txt-to-npy command line option
+
+      <ul>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-txt-to-npy-n">--name &lt;name&gt;</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-txt-to-npy-n">-n</a>
+</li>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-txt-to-npy-arg-TXT_FILE">TXT_FILE</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.html#module-honeybee_radiance_postprocess">module</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess.annualdaylight
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.annualdaylight.html#module-honeybee_radiance_postprocess.annualdaylight">module</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess.cli
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.cli.html#module-honeybee_radiance_postprocess.cli">module</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess.cli.grid
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.cli.grid.html#module-honeybee_radiance_postprocess.cli.grid">module</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess.cli.mtxop
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.cli.mtxop.html#module-honeybee_radiance_postprocess.cli.mtxop">module</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess.cli.postprocess
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.cli.postprocess.html#module-honeybee_radiance_postprocess.cli.postprocess">module</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess.cli.translate
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.cli.translate.html#module-honeybee_radiance_postprocess.cli.translate">module</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess.cli.util
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.cli.util.html#module-honeybee_radiance_postprocess.cli.util">module</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess.helper
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.helper.html#module-honeybee_radiance_postprocess.helper">module</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess.metrics
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.metrics.html#module-honeybee_radiance_postprocess.metrics">module</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess.reader
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.reader.html#module-honeybee_radiance_postprocess.reader">module</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess.results
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.results.html#module-honeybee_radiance_postprocess.results">module</a>
+</li>
+      </ul></li>
+      <li>
+    honeybee_radiance_postprocess.util
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.util.html#module-honeybee_radiance_postprocess.util">module</a>
+</li>
+      </ul></li>
+      <li><a href="honeybee_radiance_postprocess.util.html#honeybee_radiance_postprocess.util.hoys_mask">hoys_mask() (in module honeybee_radiance_postprocess.util)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    INPUT_FOLDER
+
+      <ul>
+        <li><a href="cli/grid.html#cmdoption-honeybee-radiance-postprocess-grid-merge-folder-arg-INPUT_FOLDER">honeybee-radiance-postprocess-grid-merge-folder command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.light_paths">light_paths() (honeybee_radiance_postprocess.results.Results property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.annualdaylight.html#honeybee_radiance_postprocess.annualdaylight.metrics_to_files">metrics_to_files() (in module honeybee_radiance_postprocess.annualdaylight)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.annualdaylight.html#honeybee_radiance_postprocess.annualdaylight.metrics_to_folder">metrics_to_folder() (in module honeybee_radiance_postprocess.annualdaylight)</a>
+</li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="honeybee_radiance_postprocess.html#module-honeybee_radiance_postprocess">honeybee_radiance_postprocess</a>
+</li>
+        <li><a href="honeybee_radiance_postprocess.annualdaylight.html#module-honeybee_radiance_postprocess.annualdaylight">honeybee_radiance_postprocess.annualdaylight</a>
+</li>
+        <li><a href="honeybee_radiance_postprocess.cli.html#module-honeybee_radiance_postprocess.cli">honeybee_radiance_postprocess.cli</a>
+</li>
+        <li><a href="honeybee_radiance_postprocess.cli.grid.html#module-honeybee_radiance_postprocess.cli.grid">honeybee_radiance_postprocess.cli.grid</a>
+</li>
+        <li><a href="honeybee_radiance_postprocess.cli.mtxop.html#module-honeybee_radiance_postprocess.cli.mtxop">honeybee_radiance_postprocess.cli.mtxop</a>
+</li>
+        <li><a href="honeybee_radiance_postprocess.cli.postprocess.html#module-honeybee_radiance_postprocess.cli.postprocess">honeybee_radiance_postprocess.cli.postprocess</a>
+</li>
+        <li><a href="honeybee_radiance_postprocess.cli.translate.html#module-honeybee_radiance_postprocess.cli.translate">honeybee_radiance_postprocess.cli.translate</a>
+</li>
+        <li><a href="honeybee_radiance_postprocess.cli.util.html#module-honeybee_radiance_postprocess.cli.util">honeybee_radiance_postprocess.cli.util</a>
+</li>
+        <li><a href="honeybee_radiance_postprocess.helper.html#module-honeybee_radiance_postprocess.helper">honeybee_radiance_postprocess.helper</a>
+</li>
+        <li><a href="honeybee_radiance_postprocess.metrics.html#module-honeybee_radiance_postprocess.metrics">honeybee_radiance_postprocess.metrics</a>
+</li>
+        <li><a href="honeybee_radiance_postprocess.reader.html#module-honeybee_radiance_postprocess.reader">honeybee_radiance_postprocess.reader</a>
+</li>
+        <li><a href="honeybee_radiance_postprocess.results.html#module-honeybee_radiance_postprocess.results">honeybee_radiance_postprocess.results</a>
+</li>
+        <li><a href="honeybee_radiance_postprocess.util.html#module-honeybee_radiance_postprocess.util">honeybee_radiance_postprocess.util</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    MTX_FILE
+
+      <ul>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-binary-to-npy-arg-MTX_FILE">honeybee-radiance-postprocess-translate-binary-to-npy command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    NPY_FILE
+
+      <ul>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-npy-to-txt-arg-NPY_FILE">honeybee-radiance-postprocess-translate-npy-to-txt command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.occ_mask">occ_mask() (honeybee_radiance_postprocess.results.Results property)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.occ_pattern">occ_pattern() (honeybee_radiance_postprocess.results.Results property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    OUTPUT_FOLDER
+
+      <ul>
+        <li><a href="cli/grid.html#cmdoption-honeybee-radiance-postprocess-grid-merge-folder-arg-OUTPUT_FOLDER">honeybee-radiance-postprocess-grid-merge-folder command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.point_in_time">point_in_time() (honeybee_radiance_postprocess.results.Results method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.cli.util.html#honeybee_radiance_postprocess.cli.util.remove_header">remove_header() (in module honeybee_radiance_postprocess.cli.util)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.cli.grid.html#honeybee_radiance_postprocess.cli.grid.restore_original_distribution">restore_original_distribution() (in module honeybee_radiance_postprocess.cli.grid)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results">Results (class in honeybee_radiance_postprocess.results)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.schedule">schedule() (honeybee_radiance_postprocess.results.Results property)</a>
+</li>
+      <li>
+    SECOND_MTX
+
+      <ul>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-three-arg-SECOND_MTX">honeybee-radiance-postprocess-mtxop-operate-three command line option</a>
+</li>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-two-arg-SECOND_MTX">honeybee-radiance-postprocess-mtxop-operate-two command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.sun_down_occ_hours">sun_down_occ_hours() (honeybee_radiance_postprocess.results.Results property)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.sun_up_hours">sun_up_hours() (honeybee_radiance_postprocess.results.Results property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    THIRD_MTX
+
+      <ul>
+        <li><a href="cli/mtxop.html#cmdoption-honeybee-radiance-postprocess-mtxop-operate-three-arg-THIRD_MTX">honeybee-radiance-postprocess-mtxop-operate-three command line option</a>
+</li>
+      </ul></li>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.timestep">timestep() (honeybee_radiance_postprocess.results.Results property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.total_occ">total_occ() (honeybee_radiance_postprocess.results.Results property)</a>
+</li>
+      <li>
+    TXT_FILE
+
+      <ul>
+        <li><a href="cli/translate.html#cmdoption-honeybee-radiance-postprocess-translate-txt-to-npy-arg-TXT_FILE">honeybee-radiance-postprocess-translate-txt-to-npy command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.udi_array1d">udi_array1d() (in module honeybee_radiance_postprocess.metrics)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.udi_array2d">udi_array2d() (in module honeybee_radiance_postprocess.metrics)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.udi_lower_array1d">udi_lower_array1d() (in module honeybee_radiance_postprocess.metrics)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.udi_lower_array2d">udi_lower_array2d() (in module honeybee_radiance_postprocess.metrics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.udi_upper_array1d">udi_upper_array1d() (in module honeybee_radiance_postprocess.metrics)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.udi_upper_array2d">udi_upper_array2d() (in module honeybee_radiance_postprocess.metrics)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.useful_daylight_illuminance">useful_daylight_illuminance() (honeybee_radiance_postprocess.results.Results method)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.useful_daylight_illuminance_lower">useful_daylight_illuminance_lower() (honeybee_radiance_postprocess.results.Results method)</a>
+</li>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.useful_daylight_illuminance_upper">useful_daylight_illuminance_upper() (honeybee_radiance_postprocess.results.Results method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.valid_states">valid_states() (honeybee_radiance_postprocess.results.Results property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2022, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.3.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>grid &#8212; honeybee-radiance-postprocess  documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="honeybee_radiance_postprocess package" href="../honeybee_radiance_postprocess.html" />
+    <link rel="prev" title="mtxop" href="mtxop.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          honeybee-radiance-postprocess</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">CLI</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#commands">Commands</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="main.html">main</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="main.html#honeybee-radiance-postprocess">honeybee-radiance-postprocess</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="translate.html">translate</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="translate.html#honeybee-radiance-postprocess-translate">honeybee-radiance-postprocess translate</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="translate.html#honeybee-radiance-postprocess-translate-binary-to-npy">binary-to-npy</a></li>
+<li class="toctree-l5"><a class="reference internal" href="translate.html#honeybee-radiance-postprocess-translate-npy-to-txt">npy-to-txt</a></li>
+<li class="toctree-l5"><a class="reference internal" href="translate.html#honeybee-radiance-postprocess-translate-txt-to-npy">txt-to-npy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="postprocess.html">postprocess</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="postprocess.html#honeybee-radiance-postprocess-post-process">honeybee-radiance-postprocess post-process</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="postprocess.html#honeybee-radiance-postprocess-post-process-annual-daylight">annual-daylight</a></li>
+<li class="toctree-l5"><a class="reference internal" href="postprocess.html#honeybee-radiance-postprocess-post-process-average-values">average-values</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mtxop.html">mtxop</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mtxop.html#honeybee-radiance-postprocess-mtxop">honeybee-radiance-postprocess mtxop</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="mtxop.html#honeybee-radiance-postprocess-mtxop-operate-three">operate-three</a></li>
+<li class="toctree-l5"><a class="reference internal" href="mtxop.html#honeybee-radiance-postprocess-mtxop-operate-two">operate-two</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">grid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#honeybee-radiance-postprocess-grid">honeybee-radiance-postprocess grid</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#honeybee-radiance-postprocess-grid-merge-folder">merge-folder</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../honeybee_radiance_postprocess.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.html">honeybee_radiance_postprocess.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.grid.html">honeybee_radiance_postprocess.cli.grid module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.mtxop.html">honeybee_radiance_postprocess.cli.mtxop module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.postprocess.html">honeybee_radiance_postprocess.cli.postprocess module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.translate.html">honeybee_radiance_postprocess.cli.translate module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.util.html">honeybee_radiance_postprocess.cli.util module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.html#module-honeybee_radiance_postprocess.cli">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../honeybee_radiance_postprocess.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.annualdaylight.html">honeybee_radiance_postprocess.annualdaylight module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.helper.html">honeybee_radiance_postprocess.helper module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html">honeybee_radiance_postprocess.metrics module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.reader.html">honeybee_radiance_postprocess.reader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.results.html">honeybee_radiance_postprocess.results module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.util.html">honeybee_radiance_postprocess.util module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../honeybee_radiance_postprocess.html#module-honeybee_radiance_postprocess">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">CLI</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#commands">Commands</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="main.html">main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="translate.html">translate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="postprocess.html">postprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mtxop.html">mtxop</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">grid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#honeybee-radiance-postprocess-grid">honeybee-radiance-postprocess grid</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#honeybee-radiance-postprocess-grid-merge-folder">merge-folder</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="mtxop.html" title="Previous Chapter: mtxop"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; mtxop</span>
+    </a>
+  </li>
+  <li>
+    <a href="../honeybee_radiance_postprocess.html" title="Next Chapter: honeybee_radiance_postprocess package"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">honeybee_radi... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/cli/grid.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">CLI</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#commands">Commands</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="main.html">main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="translate.html">translate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="postprocess.html">postprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mtxop.html">mtxop</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">grid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#honeybee-radiance-postprocess-grid">honeybee-radiance-postprocess grid</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#honeybee-radiance-postprocess-grid-merge-folder">merge-folder</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <section id="grid">
+<h1>grid<a class="headerlink" href="#grid" title="Permalink to this headline">¶</a></h1>
+<section id="honeybee-radiance-postprocess-grid">
+<h2>honeybee-radiance-postprocess grid<a class="headerlink" href="#honeybee-radiance-postprocess-grid" title="Permalink to this headline">¶</a></h2>
+<p>Commands for generating and modifying sensor grids.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>honeybee-radiance-postprocess grid <span class="o">[</span>OPTIONS<span class="o">]</span> COMMAND <span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="honeybee-radiance-postprocess-grid-merge-folder">
+<h3>merge-folder<a class="headerlink" href="#honeybee-radiance-postprocess-grid-merge-folder" title="Permalink to this headline">¶</a></h3>
+<p>Restructure files in a distributed folder.</p>
+<div class="line-block">
+<div class="line">Args:</div>
+<div class="line-block">
+<div class="line">input_folder: Path to input folder.</div>
+<div class="line">output_folder: Path to the new restructured folder</div>
+<div class="line">extension: Extension of the files to collect data from. It will be <code class="docutils literal notranslate"><span class="pre">pts</span></code> for</div>
+<div class="line-block">
+<div class="line">sensor files. Another common extension is <code class="docutils literal notranslate"><span class="pre">ill</span></code> for the results of daylight</div>
+<div class="line">studies.</div>
+</div>
+</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>honeybee-radiance-postprocess grid merge-folder <span class="o">[</span>OPTIONS<span class="o">]</span> INPUT_FOLDER
+                                                OUTPUT_FOLDER EXTENSION
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt id="cmdoption-honeybee-radiance-postprocess-grid-merge-folder-di">
+<span id="cmdoption-honeybee-radiance-postprocess-grid-merge-folder-dist-info"></span><code class="sig-name descname">-di</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--dist-info</code><code class="sig-prename descclassname"> &lt;dist_info&gt;</code><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-grid-merge-folder-di" title="Permalink to this definition">¶</a></dt>
+<dd><p>An optional input for distribution information to put the grids back together . Alternatively, the command will look for a _redist_info.json file inside the folder.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt id="cmdoption-honeybee-radiance-postprocess-grid-merge-folder-arg-INPUT_FOLDER">
+<span id="cmdoption-honeybee-radiance-postprocess-grid-merge-folder-arg-input-folder"></span><code class="sig-name descname">INPUT_FOLDER</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-grid-merge-folder-arg-INPUT_FOLDER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-honeybee-radiance-postprocess-grid-merge-folder-arg-OUTPUT_FOLDER">
+<span id="cmdoption-honeybee-radiance-postprocess-grid-merge-folder-arg-output-folder"></span><code class="sig-name descname">OUTPUT_FOLDER</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-grid-merge-folder-arg-OUTPUT_FOLDER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-honeybee-radiance-postprocess-grid-merge-folder-arg-EXTENSION">
+<span id="cmdoption-honeybee-radiance-postprocess-grid-merge-folder-arg-extension"></span><code class="sig-name descname">EXTENSION</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-honeybee-radiance-postprocess-grid-merge-folder-arg-EXTENSION" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2022, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.3.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

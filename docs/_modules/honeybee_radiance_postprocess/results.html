@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee_radiance_postprocess.results &#8212; honeybee-radiance-postprocess  documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          honeybee-radiance-postprocess</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../cli/index.html#commands">Commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/main.html">main</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/main.html#honeybee-radiance-postprocess">honeybee-radiance-postprocess</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/translate.html">translate</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/translate.html#honeybee-radiance-postprocess-translate">honeybee-radiance-postprocess translate</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/translate.html#honeybee-radiance-postprocess-translate-binary-to-npy">binary-to-npy</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/translate.html#honeybee-radiance-postprocess-translate-npy-to-txt">npy-to-txt</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/translate.html#honeybee-radiance-postprocess-translate-txt-to-npy">txt-to-npy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/postprocess.html">postprocess</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/postprocess.html#honeybee-radiance-postprocess-post-process">honeybee-radiance-postprocess post-process</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/postprocess.html#honeybee-radiance-postprocess-post-process-annual-daylight">annual-daylight</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/postprocess.html#honeybee-radiance-postprocess-post-process-average-values">average-values</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/mtxop.html">mtxop</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/mtxop.html#honeybee-radiance-postprocess-mtxop">honeybee-radiance-postprocess mtxop</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/mtxop.html#honeybee-radiance-postprocess-mtxop-operate-three">operate-three</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/mtxop.html#honeybee-radiance-postprocess-mtxop-operate-two">operate-two</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/grid.html">grid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/grid.html#honeybee-radiance-postprocess-grid">honeybee-radiance-postprocess grid</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/grid.html#honeybee-radiance-postprocess-grid-merge-folder">merge-folder</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee_radiance_postprocess.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_radiance_postprocess.cli.html">honeybee_radiance_postprocess.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance_postprocess.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance_postprocess.cli.grid.html">honeybee_radiance_postprocess.cli.grid module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance_postprocess.cli.mtxop.html">honeybee_radiance_postprocess.cli.mtxop module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance_postprocess.cli.postprocess.html">honeybee_radiance_postprocess.cli.postprocess module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance_postprocess.cli.translate.html">honeybee_radiance_postprocess.cli.translate module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance_postprocess.cli.util.html">honeybee_radiance_postprocess.cli.util module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance_postprocess.cli.html#module-honeybee_radiance_postprocess.cli">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee_radiance_postprocess.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_radiance_postprocess.annualdaylight.html">honeybee_radiance_postprocess.annualdaylight module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_radiance_postprocess.helper.html">honeybee_radiance_postprocess.helper module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_radiance_postprocess.metrics.html">honeybee_radiance_postprocess.metrics module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_radiance_postprocess.reader.html">honeybee_radiance_postprocess.reader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_radiance_postprocess.results.html">honeybee_radiance_postprocess.results module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_radiance_postprocess.util.html">honeybee_radiance_postprocess.util module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee_radiance_postprocess.html#module-honeybee_radiance_postprocess">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for honeybee_radiance_postprocess.results</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">islice</span><span class="p">,</span> <span class="n">cycle</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">honeybee_radiance.postprocess.annual</span> <span class="kn">import</span> <span class="p">(</span><span class="n">_process_input_folder</span><span class="p">,</span>
+    <span class="n">filter_schedule_by_hours</span><span class="p">,</span> <span class="n">generate_default_schedule</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">honeybee_radiance_postprocess.metrics</span> <span class="kn">import</span> <span class="p">(</span><span class="n">da_array2d</span><span class="p">,</span> <span class="n">cda_array2d</span><span class="p">,</span> <span class="n">udi_array2d</span><span class="p">,</span>
+    <span class="n">udi_lower_array2d</span><span class="p">,</span> <span class="n">udi_upper_array2d</span><span class="p">,</span> <span class="n">avg_values_array2d</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">filter_array</span><span class="p">,</span> <span class="n">hoys_mask</span>
+<span class="kn">from</span> <span class="nn">.annualdaylight</span> <span class="kn">import</span> <span class="n">_annual_daylight_config</span>
+<span class="kn">from</span> <span class="nn">ladybug.dt</span> <span class="kn">import</span> <span class="n">DateTime</span>
+
+
+<span class="k">class</span> <span class="nc">_ResultsFolder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for ResultsFolder.</span>
+
+<span class="sd">    This class includes properties that are independent of the results.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        folder: Path to results folder.</span>
+
+<span class="sd">    Properties:</span>
+<span class="sd">        * folder</span>
+<span class="sd">        * grids_info</span>
+<span class="sd">        * sun_up_hours</span>
+<span class="sd">        * light_paths</span>
+<span class="sd">        * default_states</span>
+<span class="sd">        * grid_states</span>
+<span class="sd">        * timestep</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_folder&#39;</span><span class="p">,</span> <span class="s1">&#39;_grids_info&#39;</span><span class="p">,</span> <span class="s1">&#39;_sun_up_hours&#39;</span><span class="p">,</span> <span class="s1">&#39;_datetimes&#39;</span><span class="p">,</span> <span class="s1">&#39;_light_paths&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;_default_states&#39;</span><span class="p">,</span> <span class="s1">&#39;_grid_states&#39;</span><span class="p">,</span> <span class="s1">&#39;_timestep&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize ResultsFolder.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_grids_info</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sun_up_hours</span> <span class="o">=</span> <span class="n">_process_input_folder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_datetimes</span> <span class="o">=</span> <span class="p">[</span><span class="n">DateTime</span><span class="o">.</span><span class="n">from_hoy</span><span class="p">(</span><span class="n">hoy</span><span class="p">)</span> <span class="k">for</span> <span class="n">hoy</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sun_up_hours</span><span class="p">))]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_light_paths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_light_paths</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_default_states</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_grid_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_grid_states</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timestep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_timestep</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">folder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return full path to results folder.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">grids_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return grids information as list of dictionaries for each grid.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grids_info</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sun_up_hours</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return sun up hours.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sun_up_hours</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">datetimes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return DateTimes for sun up hours.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_datetimes</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">light_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the identifiers of the light paths.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_light_paths</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">default_states</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return default states as a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_states</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">grid_states</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return grid states as a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grid_states</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return timestep as an integer.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timestep</span>
+
+    <span class="k">def</span> <span class="nf">_get_light_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Find all light paths in grids_info.&quot;&quot;&quot;</span>
+        <span class="n">lp</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">grid_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grids_info</span><span class="p">:</span>
+            <span class="n">light_paths</span> <span class="o">=</span> <span class="n">grid_info</span><span class="p">[</span><span class="s1">&#39;light_path&#39;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">light_path</span> <span class="ow">in</span> <span class="n">light_paths</span><span class="p">:</span>
+                <span class="n">light_path</span> <span class="o">=</span> <span class="n">light_path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">light_path</span> <span class="ow">in</span> <span class="n">lp</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">light_path</span> <span class="o">==</span> <span class="s1">&#39;__static_apertures__&#39;</span><span class="p">:</span>
+                    <span class="n">lp</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">light_path</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">lp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">light_path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">light_paths</span> <span class="ow">and</span> <span class="s1">&#39;__static_apertures__&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lp</span><span class="p">:</span>
+                <span class="n">lp</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;__static_apertures__&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">lp</span>
+
+    <span class="k">def</span> <span class="nf">_get_default_states</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Set default state to 0 for all light paths.&quot;&quot;&quot;</span>
+        <span class="n">default_states</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">light_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">light_paths</span><span class="p">:</span>
+            <span class="n">default_states</span><span class="p">[</span><span class="n">light_path</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">default_states</span>
+
+    <span class="k">def</span> <span class="nf">_get_grid_states</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Read grid_states.json if available.&quot;&quot;&quot;</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;grid_states.json&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">info</span><span class="p">)</span> <span class="k">as</span> <span class="n">data_f</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_f</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># only static results</span>
+            <span class="k">return</span> <span class="kc">None</span>
+    
+    <span class="k">def</span> <span class="nf">_set_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">timestep_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;timestep.txt&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">timestep_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">timestep_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                <span class="n">timestep</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">timestep</span> <span class="o">=</span> <span class="mi">1</span>
+        
+        <span class="k">return</span> <span class="n">timestep</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Results"><a class="viewcode-back" href="../../honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results">[docs]</a><span class="k">class</span> <span class="nc">Results</span><span class="p">(</span><span class="n">_ResultsFolder</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Results class.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        folder: Path to results folder.</span>
+<span class="sd">        schedule: 8760 values as a list. Values must be either 0 or 1. Values of 1</span>
+<span class="sd">            indicates occupied hours. If not schedule is provided a default schedule</span>
+<span class="sd">            will be used. (Default: None).</span>
+<span class="sd">        load_arrays: Set to True to load all NumPy arrays. If False the arrays will be</span>
+<span class="sd">            loaded only once they are needed. In both cases the loaded array(s) will be</span>
+<span class="sd">            stored in a dictionary under the arrays property. (Default: False).</span>
+
+<span class="sd">    Properties:</span>
+<span class="sd">        * schedule</span>
+<span class="sd">        * occ_pattern</span>
+<span class="sd">        * total_occ</span>
+<span class="sd">        * sun_down_occ_hours</span>
+<span class="sd">        * occ_mask</span>
+<span class="sd">        * arrays</span>
+<span class="sd">        * valid_states</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_schedule&#39;</span><span class="p">,</span> <span class="s1">&#39;_occ_pattern&#39;</span><span class="p">,</span> <span class="s1">&#39;_total_occ&#39;</span><span class="p">,</span> <span class="s1">&#39;_sun_down_occ_hours&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;_occ_mask&#39;</span><span class="p">,</span> <span class="s1">&#39;_arrays&#39;</span><span class="p">,</span> <span class="s1">&#39;_valid_states&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">schedule</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">load_arrays</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Results.&quot;&quot;&quot;</span>
+        <span class="n">_ResultsFolder</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span> <span class="o">=</span> <span class="n">schedule</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_arrays</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_arrays</span><span class="p">()</span> <span class="k">if</span> <span class="n">load_arrays</span> <span class="k">else</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_valid_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_valid_states</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">schedule</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return schedule.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schedule</span>
+
+    <span class="nd">@schedule</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">schedule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schedule</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_schedule</span> <span class="o">=</span> <span class="n">schedule</span> <span class="k">if</span> <span class="n">schedule</span> <span class="k">else</span> <span class="n">generate_default_schedule</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_occ</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">occ_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a filtered version of the annual schedule that only includes the</span>
+<span class="sd">        sun-up-hours.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_occ_pattern</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">total_occ</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return an integer for the total occupied hours of the schedule.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_occ</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sun_down_occ_hours</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return an integer for the number of occupied hours where the sun is down and</span>
+<span class="sd">        there&#39;s no possibility of being daylit or experiencing glare.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sun_down_occ_hours</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">occ_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return an occupancy mask as a NumPy array that can be used to mask the</span>
+<span class="sd">        results.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_occ_mask</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a dictionary of all the NumPy arrays that have been loaded.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrays</span>
+
+    <span class="nd">@arrays</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_arrays</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">valid_states</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a dictionary with valid states. Each light path is represented by a</span>
+<span class="sd">        key-value pair where the light path identifier is the key and the value is a list</span>
+<span class="sd">        of valid states, e.g., [0, 1, 2, ...].&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valid_states</span>
+
+<div class="viewcode-block" id="Results.daylight_autonomy"><a class="viewcode-back" href="../../honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.daylight_autonomy">[docs]</a>    <span class="k">def</span> <span class="nf">daylight_autonomy</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">grids_filter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span><span class="p">):</span>
+
+        <span class="n">grids_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_grids</span><span class="p">(</span><span class="n">grids_filter</span><span class="o">=</span><span class="n">grids_filter</span><span class="p">)</span>
+
+        <span class="n">da</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">grid_info</span> <span class="ow">in</span> <span class="n">grids_info</span><span class="p">:</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_array_from_states</span><span class="p">(</span><span class="n">grid_info</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="n">states</span><span class="p">,</span> <span class="n">res_type</span><span class="o">=</span><span class="s1">&#39;total&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+                <span class="n">array_filter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
+                    <span class="n">filter_array</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">occ_mask</span><span class="p">)</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">da_array2d</span><span class="p">(</span>
+                    <span class="n">array_filter</span><span class="p">,</span> <span class="n">total_occ</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_occ</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_info</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">])</span>
+            <span class="n">da</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">da</span></div>
+
+<div class="viewcode-block" id="Results.continuous_daylight_autonomy"><a class="viewcode-back" href="../../honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.continuous_daylight_autonomy">[docs]</a>    <span class="k">def</span> <span class="nf">continuous_daylight_autonomy</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">grids_filter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span><span class="p">):</span>
+
+        <span class="n">grids_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_grids</span><span class="p">(</span><span class="n">grids_filter</span><span class="o">=</span><span class="n">grids_filter</span><span class="p">)</span>
+
+        <span class="n">cda</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">grid_info</span> <span class="ow">in</span> <span class="n">grids_info</span><span class="p">:</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_array_from_states</span><span class="p">(</span><span class="n">grid_info</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="n">states</span><span class="p">,</span> <span class="n">res_type</span><span class="o">=</span><span class="s1">&#39;total&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+                <span class="n">array_filter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
+                    <span class="n">filter_array</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">occ_mask</span><span class="p">)</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">cda_array2d</span><span class="p">(</span>
+                    <span class="n">array_filter</span><span class="p">,</span> <span class="n">total_occ</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_occ</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_info</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">])</span>
+            <span class="n">cda</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">cda</span></div>
+
+<div class="viewcode-block" id="Results.useful_daylight_illuminance"><a class="viewcode-back" href="../../honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.useful_daylight_illuminance">[docs]</a>    <span class="k">def</span> <span class="nf">useful_daylight_illuminance</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">min_t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">max_t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">3000</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">grids_filter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span><span class="p">):</span>
+
+        <span class="n">grids_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_grids</span><span class="p">(</span><span class="n">grids_filter</span><span class="o">=</span><span class="n">grids_filter</span><span class="p">)</span>
+
+        <span class="n">udi</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">grid_info</span> <span class="ow">in</span> <span class="n">grids_info</span><span class="p">:</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_array_from_states</span><span class="p">(</span><span class="n">grid_info</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="n">states</span><span class="p">,</span> <span class="n">res_type</span><span class="o">=</span><span class="s1">&#39;total&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+                <span class="n">array_filter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
+                    <span class="n">filter_array</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">occ_mask</span><span class="p">)</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">udi_array2d</span><span class="p">(</span>
+                    <span class="n">array_filter</span><span class="p">,</span> <span class="n">total_occ</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_occ</span><span class="p">,</span> <span class="n">min_t</span><span class="o">=</span><span class="n">min_t</span><span class="p">,</span> <span class="n">max_t</span><span class="o">=</span><span class="n">max_t</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_info</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">])</span>
+            <span class="n">udi</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">udi</span></div>
+
+<div class="viewcode-block" id="Results.useful_daylight_illuminance_lower"><a class="viewcode-back" href="../../honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.useful_daylight_illuminance_lower">[docs]</a>    <span class="k">def</span> <span class="nf">useful_daylight_illuminance_lower</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">min_t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">grids_filter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span><span class="p">):</span>
+
+        <span class="n">grids_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_grids</span><span class="p">(</span><span class="n">grids_filter</span><span class="o">=</span><span class="n">grids_filter</span><span class="p">)</span>
+        <span class="n">sun_down_occ_hours</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sun_down_occ_hours</span>
+
+        <span class="n">udi_lower</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">grid_info</span> <span class="ow">in</span> <span class="n">grids_info</span><span class="p">:</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_array_from_states</span><span class="p">(</span><span class="n">grid_info</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="n">states</span><span class="p">,</span> <span class="n">res_type</span><span class="o">=</span><span class="s1">&#39;total&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+                <span class="n">array_filter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
+                    <span class="n">filter_array</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">occ_mask</span><span class="p">)</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">udi_lower_array2d</span><span class="p">(</span><span class="n">array_filter</span><span class="p">,</span> <span class="n">total_occ</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_occ</span><span class="p">,</span>
+                    <span class="n">min_t</span><span class="o">=</span><span class="n">min_t</span><span class="p">,</span> <span class="n">sun_down_occ_hours</span><span class="o">=</span><span class="n">sun_down_occ_hours</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_info</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">])</span>
+            <span class="n">udi_lower</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">udi_lower</span></div>
+
+<div class="viewcode-block" id="Results.useful_daylight_illuminance_upper"><a class="viewcode-back" href="../../honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.useful_daylight_illuminance_upper">[docs]</a>    <span class="k">def</span> <span class="nf">useful_daylight_illuminance_upper</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">max_t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">3000</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">grids_filter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span><span class="p">):</span>
+
+        <span class="n">grids_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_grids</span><span class="p">(</span><span class="n">grids_filter</span><span class="o">=</span><span class="n">grids_filter</span><span class="p">)</span>
+
+        <span class="n">udi_upper</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">grid_info</span> <span class="ow">in</span> <span class="n">grids_info</span><span class="p">:</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_array_from_states</span><span class="p">(</span><span class="n">grid_info</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="n">states</span><span class="p">,</span> <span class="n">res_type</span><span class="o">=</span><span class="s1">&#39;total&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+                <span class="n">array_filter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
+                    <span class="n">filter_array</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">occ_mask</span><span class="p">)</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">udi_upper_array2d</span><span class="p">(</span>
+                    <span class="n">array_filter</span><span class="p">,</span> <span class="n">total_occ</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_occ</span><span class="p">,</span> <span class="n">max_t</span><span class="o">=</span><span class="n">max_t</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_info</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">])</span>
+            <span class="n">udi_upper</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">udi_upper</span></div>
+
+<div class="viewcode-block" id="Results.annual_metrics"><a class="viewcode-back" href="../../honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.annual_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">annual_metrics</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span> <span class="n">min_t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">max_t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">3000</span><span class="p">,</span>
+        <span class="n">states</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">grids_filter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span><span class="p">):</span>
+
+        <span class="n">grids_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_grids</span><span class="p">(</span><span class="n">grids_filter</span><span class="o">=</span><span class="n">grids_filter</span><span class="p">)</span>
+        <span class="n">sun_down_occ_hours</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sun_down_occ_hours</span>
+
+        <span class="n">da</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cda</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">udi</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">udi_lower</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">udi_upper</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">grid_info</span> <span class="ow">in</span> <span class="n">grids_info</span><span class="p">:</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_array_from_states</span><span class="p">(</span><span class="n">grid_info</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="n">states</span><span class="p">,</span> <span class="n">res_type</span><span class="o">=</span><span class="s1">&#39;total&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+                <span class="n">array_filter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
+                    <span class="n">filter_array</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">occ_mask</span><span class="p">)</span>
+                <span class="n">da_results</span> <span class="o">=</span> <span class="n">da_array2d</span><span class="p">(</span>
+                    <span class="n">array_filter</span><span class="p">,</span> <span class="n">total_occ</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_occ</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span>
+                <span class="n">cda_results</span> <span class="o">=</span> <span class="n">cda_array2d</span><span class="p">(</span>
+                    <span class="n">array_filter</span><span class="p">,</span> <span class="n">total_occ</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_occ</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span>
+                <span class="n">udi_results</span> <span class="o">=</span> <span class="n">udi_array2d</span><span class="p">(</span>
+                    <span class="n">array_filter</span><span class="p">,</span> <span class="n">total_occ</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_occ</span><span class="p">,</span> <span class="n">min_t</span><span class="o">=</span><span class="n">min_t</span><span class="p">,</span> <span class="n">max_t</span><span class="o">=</span><span class="n">max_t</span><span class="p">)</span>
+                <span class="n">udi_lower_results</span> <span class="o">=</span> <span class="n">udi_lower_array2d</span><span class="p">(</span>
+                    <span class="n">array_filter</span><span class="p">,</span> <span class="n">total_occ</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_occ</span><span class="p">,</span> <span class="n">min_t</span><span class="o">=</span><span class="n">min_t</span><span class="p">,</span>
+                    <span class="n">sun_down_occ_hours</span><span class="o">=</span><span class="n">sun_down_occ_hours</span><span class="p">)</span>
+                <span class="n">udi_upper_results</span> <span class="o">=</span> <span class="n">udi_upper_array2d</span><span class="p">(</span>
+                    <span class="n">array_filter</span><span class="p">,</span> <span class="n">total_occ</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_occ</span><span class="p">,</span> <span class="n">max_t</span><span class="o">=</span><span class="n">max_t</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">da_results</span> <span class="o">=</span> <span class="n">cda_results</span> <span class="o">=</span> <span class="n">udi_results</span><span class="p">,</span> <span class="n">udi_lower_results</span> <span class="o">=</span> \
+                    <span class="n">udi_upper_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_info</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">])</span>
+            <span class="n">da</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">da_results</span><span class="p">)</span>
+            <span class="n">cda</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cda_results</span><span class="p">)</span>
+            <span class="n">udi</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">udi_results</span><span class="p">)</span>
+            <span class="n">udi_lower</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">udi_lower_results</span><span class="p">)</span>
+            <span class="n">udi_upper</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">udi_upper_results</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">da</span><span class="p">,</span> <span class="n">cda</span><span class="p">,</span> <span class="n">udi</span><span class="p">,</span> <span class="n">udi_lower</span><span class="p">,</span> <span class="n">udi_upper</span><span class="p">,</span> <span class="n">grids_info</span></div>
+
+<div class="viewcode-block" id="Results.annual_metrics_to_folder"><a class="viewcode-back" href="../../honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.annual_metrics_to_folder">[docs]</a>    <span class="k">def</span> <span class="nf">annual_metrics_to_folder</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">target_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span> <span class="n">min_t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">max_t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">3000</span><span class="p">,</span>
+        <span class="n">states</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">grids_filter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+        <span class="n">folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">target_folder</span><span class="p">)</span>
+        <span class="n">folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">da</span><span class="p">,</span> <span class="n">cda</span><span class="p">,</span> <span class="n">udi</span><span class="p">,</span> <span class="n">udi_lower</span><span class="p">,</span> <span class="n">udi_upper</span><span class="p">,</span> <span class="n">grids_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annual_metrics</span><span class="p">(</span>
+            <span class="n">threshold</span><span class="o">=</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">min_t</span><span class="o">=</span><span class="n">min_t</span><span class="p">,</span> <span class="n">max_t</span><span class="o">=</span><span class="n">max_t</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="n">states</span><span class="p">,</span>
+            <span class="n">grids_filter</span><span class="o">=</span><span class="n">grids_filter</span><span class="p">)</span>
+
+        <span class="n">pattern</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;da&#39;</span><span class="p">:</span> <span class="n">da</span><span class="p">,</span> <span class="s1">&#39;cda&#39;</span><span class="p">:</span> <span class="n">cda</span><span class="p">,</span> <span class="s1">&#39;udi_lower&#39;</span><span class="p">:</span> <span class="n">udi_lower</span><span class="p">,</span> <span class="s1">&#39;udi&#39;</span><span class="p">:</span> <span class="n">udi</span><span class="p">,</span>
+            <span class="s1">&#39;udi_upper&#39;</span><span class="p">:</span> <span class="n">udi_upper</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">metric</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">pattern</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">metric_folder</span> <span class="o">=</span> <span class="n">folder</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
+            <span class="n">extension</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">grid_info</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">grids_info</span><span class="p">):</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">count</span><span class="p">]</span>
+                <span class="n">full_id</span> <span class="o">=</span> <span class="n">grid_info</span><span class="p">[</span><span class="s1">&#39;full_id&#39;</span><span class="p">]</span>
+                <span class="n">output_file</span> <span class="o">=</span> <span class="n">metric_folder</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">full_id</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">output_file</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.2f</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">pattern</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">info_file</span> <span class="o">=</span> <span class="n">folder</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="s1">&#39;grids_info.json&#39;</span><span class="p">)</span>
+            <span class="n">info_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">grids_info</span><span class="p">))</span>
+
+        <span class="n">config</span> <span class="o">=</span> <span class="n">config</span> <span class="ow">or</span> <span class="n">_annual_daylight_config</span><span class="p">()</span>
+        <span class="n">config_file</span> <span class="o">=</span> <span class="n">folder</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s1">&#39;config.json&#39;</span><span class="p">)</span>
+        <span class="n">config_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">config</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Results.point_in_time"><a class="viewcode-back" href="../../honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.point_in_time">[docs]</a>    <span class="k">def</span> <span class="nf">point_in_time</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">datetime</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DateTime</span><span class="p">],</span> <span class="n">states</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">grids_filter</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span>
+        <span class="n">res_type</span><span class="o">=</span><span class="s1">&#39;total&#39;</span><span class="p">):</span>
+
+        <span class="n">grids_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_grids</span><span class="p">(</span><span class="n">grids_filter</span><span class="o">=</span><span class="n">grids_filter</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datetime</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">DateTime</span><span class="o">.</span><span class="n">from_hoy</span><span class="p">(</span><span class="n">datetime</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datetime</span><span class="p">,</span> <span class="n">DateTime</span><span class="p">):</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input datetime must be of type </span><span class="si">%s</span><span class="s1"> or </span><span class="si">%s</span><span class="s1">. Received </span><span class="si">%s</span><span class="s1">.&#39;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">DateTime</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">datetime</span><span class="p">)))</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index_from_datetime</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+
+        <span class="n">pit_values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">grid_info</span> <span class="ow">in</span> <span class="n">grids_info</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">idx</span><span class="p">:</span>
+                <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_array_from_states</span><span class="p">(</span>
+                    <span class="n">grid_info</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="n">states</span><span class="p">,</span> <span class="n">res_type</span><span class="o">=</span><span class="n">res_type</span><span class="p">)</span>
+                <span class="n">pit_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">array</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># datetime not in sun up hours, add zeros</span>
+                <span class="n">pit_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_info</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">pit_values</span></div>
+
+<div class="viewcode-block" id="Results.average_values"><a class="viewcode-back" href="../../honeybee_radiance_postprocess.results.html#honeybee_radiance_postprocess.results.Results.average_values">[docs]</a>    <span class="k">def</span> <span class="nf">average_values</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">hoys</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">states</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">grids_filter</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span>
+        <span class="n">res_type</span><span class="o">=</span><span class="s1">&#39;total&#39;</span><span class="p">,):</span>
+        <span class="sd">&quot;&quot;&quot;Get average values for each sensor over a given period.</span>
+<span class="sd">        </span>
+<span class="sd">        The hoys input can be used to filter the data for a particular time period.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            hoys: An optional numbers or list of numbers to select the hours of the year</span>
+<span class="sd">                (HOYs) for which results will be computed.</span>
+<span class="sd">            states: A dictionary of states.</span>
+<span class="sd">            grids_filter: The name of a grid or a pattern to filter the grids.</span>
+<span class="sd">            res_type: Type of results to load.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Average value for each sensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">grids_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_grids</span><span class="p">(</span><span class="n">grids_filter</span><span class="o">=</span><span class="n">grids_filter</span><span class="p">)</span>
+
+        <span class="n">full_length</span> <span class="o">=</span> <span class="mi">8760</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hoys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="n">hoys</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">hoys_mask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sun_up_hours</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span><span class="p">)</span>
+
+        <span class="n">average_values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">grid_info</span> <span class="ow">in</span> <span class="n">grids_info</span><span class="p">:</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_array_from_states</span><span class="p">(</span><span class="n">grid_info</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="n">states</span><span class="p">,</span> <span class="n">res_type</span><span class="o">=</span><span class="n">res_type</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+                <span class="n">array_filter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
+                    <span class="n">filter_array</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">avg_values_array2d</span><span class="p">(</span>
+                    <span class="n">array_filter</span><span class="p">,</span> <span class="n">full_length</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_info</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">])</span>
+            <span class="n">average_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">average_values</span></div>
+
+    <span class="k">def</span> <span class="nf">_index_from_datetime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datetime</span><span class="p">:</span> <span class="n">DateTime</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the index of the input datetime in the list of datetimes from the</span>
+<span class="sd">        datetimes property.</span>
+<span class="sd">        If the DateTime is not in the list, the function will return None.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            datetime: A DateTime </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datetime</span><span class="p">,</span> <span class="n">DateTime</span><span class="p">),</span> \
+            <span class="s1">&#39;Expected Ladybug DateTime input but received </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">datetime</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datetimes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">datetime</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="c1"># DateTime not in sun up hours</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">index</span>
+
+    <span class="k">def</span> <span class="nf">_get_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">light_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                   <span class="n">res_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.npy&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">grid_id</span> <span class="o">=</span> <span class="n">grid_info</span><span class="p">[</span><span class="s1">&#39;identifier&#39;</span><span class="p">]</span>
+
+        <span class="n">state_identifier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_identifier</span><span class="p">(</span><span class="n">grid_id</span><span class="p">,</span> <span class="n">light_path</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arrays</span><span class="p">[</span><span class="n">grid_id</span><span class="p">][</span><span class="n">light_path</span><span class="p">][</span><span class="n">state_identifier</span><span class="p">][</span><span class="n">res_type</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_array</span><span class="p">(</span>
+                <span class="n">grid_info</span><span class="p">,</span> <span class="n">light_path</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">res_type</span><span class="o">=</span><span class="n">res_type</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="n">extension</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">array</span>
+
+    <span class="k">def</span> <span class="nf">_load_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">light_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="n">res_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.npy&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Load a NumPy file to an array.</span>
+
+<span class="sd">        This method will also update the arrays property value.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            grid_info: Grid information.</span>
+<span class="sd">            light_path: Light path identifier.</span>
+<span class="sd">            state: Integer of the state. E.g., 0 for the default state</span>
+<span class="sd">            res_type: Which type of result to return a file for. E.g., &#39;total&#39; for total</span>
+<span class="sd">                illuminance or &#39;direct&#39; for direct illuminance.</span>
+<span class="sd">            extension: File extension. (Default: .npy).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A NumPy array from a NumPy file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">grid_id</span> <span class="o">=</span> <span class="n">grid_info</span><span class="p">[</span><span class="s1">&#39;identifier&#39;</span><span class="p">]</span>
+        <span class="n">full_id</span> <span class="o">=</span> <span class="n">grid_info</span><span class="p">[</span><span class="s1">&#39;full_id&#39;</span><span class="p">]</span>
+
+        <span class="k">def</span> <span class="nf">merge_dicts</span><span class="p">(</span><span class="n">array_dict</span><span class="p">,</span> <span class="n">arrays</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">array_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">node</span> <span class="o">=</span> <span class="n">arrays</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})</span>
+                    <span class="n">merge_dicts</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">arrays</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">return</span> <span class="n">arrays</span>
+
+        <span class="n">state_identifier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_identifier</span><span class="p">(</span><span class="n">grid_id</span><span class="p">,</span> <span class="n">light_path</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_file</span><span class="p">(</span><span class="n">full_id</span><span class="p">,</span> <span class="n">light_path</span><span class="p">,</span> <span class="n">state_identifier</span><span class="p">,</span> <span class="n">res_type</span><span class="p">,</span>
+                              <span class="n">extension</span><span class="o">=</span><span class="n">extension</span><span class="p">)</span>
+        <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+        <span class="n">array_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">grid_id</span><span class="p">:</span> <span class="p">{</span><span class="n">light_path</span><span class="p">:</span> <span class="p">{</span><span class="n">state_identifier</span><span class="p">:</span> <span class="p">{</span><span class="n">res_type</span><span class="p">:</span> <span class="n">array</span><span class="p">}}}}</span>
+        <span class="n">arrays</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">(</span><span class="n">array_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">arrays</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arrays</span> <span class="o">=</span> <span class="n">arrays</span>
+
+        <span class="k">return</span> <span class="n">array</span>
+
+    <span class="k">def</span> <span class="nf">_state_identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">light_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the state identifier from a light path and state integer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            grid_id: Grid identifier.</span>
+<span class="sd">            light_path: Light path identifier.</span>
+<span class="sd">            state: Integer of the state. E.g., 0 for the default state. State integer</span>
+<span class="sd">                must be minimum 0, or in case of -1 it will return None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            State identifier. For static apertures the identifier is</span>
+<span class="sd">            &#39;default&#39;, and for other light paths it is the light path</span>
+<span class="sd">            identifier preceded by the state integer, e.g., &#39;0_light_path&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Figure out if there is a better way to handle the states.</span>
+        <span class="c1"># I.e., state integer &lt;--&gt; state identifier.</span>
+        <span class="n">valid_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_states</span><span class="p">[</span><span class="n">light_path</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">valid_states</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">light_path</span> <span class="o">==</span> <span class="s1">&#39;__static_apertures__&#39;</span><span class="p">:</span>
+                <span class="n">state_identifier</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">state_identifier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_states</span><span class="p">[</span><span class="n">grid_id</span><span class="p">][</span><span class="n">light_path</span><span class="p">][</span><span class="n">state</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">state_identifier</span>
+        <span class="k">elif</span> <span class="n">state</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;State of </span><span class="si">%s</span><span class="s1"> must be any of </span><span class="si">%s</span><span class="s1"> for on or -1 for off. &#39;</span>
+                <span class="s1">&#39;Received state </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">light_path</span><span class="p">,</span> <span class="n">valid_states</span><span class="p">,</span> <span class="n">state</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">light_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">state_identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                  <span class="n">res_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.npy&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the path of a results file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            grid_id: Grid identifier.</span>
+<span class="sd">            light_path: Light path identifier.</span>
+<span class="sd">            state_identifier: State identifier.</span>
+<span class="sd">            res_type: Which type of result to return a file for. E.g., &#39;total&#39; for total</span>
+<span class="sd">                illuminance or &#39;direct&#39; for direct illuminance.</span>
+<span class="sd">            extension: File extension. (Default: .npy).</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Path to a NumPy file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">folder</span><span class="p">,</span> <span class="n">light_path</span><span class="p">,</span> <span class="n">state_identifier</span><span class="p">,</span> <span class="n">res_type</span><span class="p">,</span> <span class="n">grid_id</span> <span class="o">+</span> <span class="n">extension</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">file</span>
+
+    <span class="k">def</span> <span class="nf">_static_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">states</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_dynamic_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">states</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_validate_dynamic_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">8760</span> <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">states</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="k">return</span> <span class="n">states</span>
+        <span class="k">for</span> <span class="n">light_path</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">states</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">8670</span><span class="p">:</span>
+                <span class="n">states</span><span class="p">[</span><span class="n">light_path</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">islice</span><span class="p">(</span><span class="n">cycle</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="mi">8760</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">8760</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;The light path </span><span class="si">%s</span><span class="s1"> has </span><span class="si">%s</span><span class="s1"> values in its states schedule. Maximum &#39;</span>
+                    <span class="s1">&#39;allowed number of values is 8760.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">light_path</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
+                    <span class="p">)</span>
+        <span class="k">return</span> <span class="n">states</span>
+
+    <span class="k">def</span> <span class="nf">_validate_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">states</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">states</span>
+        <span class="k">for</span> <span class="n">light_path</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">states</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">states</span><span class="p">[</span><span class="n">light_path</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">values</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;Failed to convert states schedule for light path </span><span class="si">%s</span><span class="s1"> to &#39;</span>
+                    <span class="s1">&#39;integers: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">light_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                    <span class="p">)</span>
+        <span class="k">return</span> <span class="n">states</span>
+
+    <span class="k">def</span> <span class="nf">_filter_grid_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_info</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Filter a dictionary of states by grid. Only light paths relevant to the given</span>
+<span class="sd">        grid will be returned.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            grid_info: Grid information of the grid.</span>
+<span class="sd">            states: A dictionary of states. Light paths as keys and lists of 8760 values</span>
+<span class="sd">                for each key. The values should be integers matching the states or -1 for</span>
+<span class="sd">                off.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A filtered states dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">light_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">lp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">lp</span> <span class="ow">in</span> <span class="n">grid_info</span><span class="p">[</span><span class="s1">&#39;light_path&#39;</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="n">states</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">light_path</span> <span class="ow">in</span> <span class="n">light_paths</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">light_path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+                    <span class="n">states</span><span class="p">[</span><span class="n">light_path</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_states</span><span class="p">[</span><span class="n">light_path</span><span class="p">]</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="p">{</span><span class="n">lp</span><span class="p">:</span> <span class="n">states</span><span class="p">[</span><span class="n">lp</span><span class="p">]</span> <span class="k">for</span> <span class="n">lp</span> <span class="ow">in</span> <span class="n">light_paths</span> <span class="k">if</span> <span class="n">lp</span> <span class="ow">in</span> <span class="n">states</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_states</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="p">{</span><span class="n">lp</span><span class="p">:</span> <span class="n">states</span><span class="p">[</span><span class="n">lp</span><span class="p">]</span> <span class="k">for</span> <span class="n">lp</span> <span class="ow">in</span> <span class="n">light_paths</span> <span class="k">if</span> <span class="n">lp</span> <span class="ow">in</span> <span class="n">states</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">states</span>
+
+    <span class="k">def</span> <span class="nf">_array_from_states</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">grid_info</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">res_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;total&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create an array for a given grid by the states settings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            grid_info: Grid information of the grid.</span>
+<span class="sd">            states: A dictionary of states. Light paths as keys and lists of 8760 values</span>
+<span class="sd">                for each key. The values should be integers matching the states or -1 for</span>
+<span class="sd">                off.</span>
+<span class="sd">            res_type: Which type of result to create an array for. E.g., &#39;total&#39; for total</span>
+<span class="sd">                illuminance or &#39;direct&#39; for direct illuminance.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A NumPy array based on the states settings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">grid_count</span> <span class="o">=</span> <span class="n">grid_info</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span>
+        <span class="c1"># get states that are relevant for the grid</span>
+        <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_grid_states</span><span class="p">(</span><span class="n">grid_info</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="n">states</span><span class="p">)</span>
+        <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_states</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+
+        <span class="n">arrays</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static_states</span><span class="p">(</span><span class="n">states</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">light_path</span><span class="p">,</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_array</span><span class="p">(</span>
+                    <span class="n">grid_info</span><span class="p">,</span> <span class="n">light_path</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">res_type</span><span class="o">=</span><span class="n">res_type</span><span class="p">)</span>
+                <span class="n">arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">arrays</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_dynamic_states</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">light_path</span><span class="p">,</span> <span class="n">lp_states</span> <span class="ow">in</span> <span class="n">states</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c1"># create default 0 array</span>
+                <span class="n">light_path_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">grid_count</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sun_up_hours</span><span class="p">)))</span>
+                <span class="c1"># slice states to match sun up hours</span>
+                <span class="n">states_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lp_states</span><span class="p">)[</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sun_up_hours</span><span class="p">))]</span>
+                <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">states_array</span><span class="o">.</span><span class="n">tolist</span><span class="p">()):</span>
+                    <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_array</span><span class="p">(</span>
+                        <span class="n">grid_info</span><span class="p">,</span> <span class="n">light_path</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">res_type</span><span class="o">=</span><span class="n">res_type</span><span class="p">)</span>
+                    <span class="n">conds</span> <span class="o">=</span> <span class="p">[</span><span class="n">states_array</span> <span class="o">==</span> <span class="n">state</span><span class="p">,</span> <span class="n">states_array</span> <span class="o">!=</span> <span class="n">state</span><span class="p">]</span>
+                    <span class="n">light_path_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">conds</span><span class="p">,</span> <span class="p">[</span><span class="n">array</span><span class="p">,</span> <span class="n">light_path_array</span><span class="p">])</span>
+                <span class="n">arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">light_path_array</span><span class="p">)</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">arrays</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+
+        <span class="k">return</span> <span class="n">array</span>
+
+    <span class="k">def</span> <span class="nf">_update_occ</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set properties related to occupancy.&quot;&quot;&quot;</span>
+        <span class="n">sun_up_hours</span><span class="p">,</span> <span class="n">schedule</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sun_up_hours</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_occ_pattern</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_occ</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sun_down_occ_hours</span> <span class="o">=</span> \
+            <span class="n">filter_schedule_by_hours</span><span class="p">(</span><span class="n">sun_up_hours</span><span class="o">=</span><span class="n">sun_up_hours</span><span class="p">,</span> <span class="n">schedule</span><span class="o">=</span><span class="n">schedule</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_occ_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">occ_pattern</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_filter_grids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grids_filter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return grids information.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">grids_filter</span> <span class="o">!=</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span>
+            <span class="n">grids_info</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_process_input_folder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">folder</span><span class="p">,</span> <span class="n">grids_filter</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">grids_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grids_info</span>
+
+        <span class="k">return</span> <span class="n">grids_info</span>
+
+    <span class="k">def</span> <span class="nf">_load_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load all the NumPy arrays in the results folder.&quot;&quot;&quot;</span>
+        <span class="n">arrays</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">grids_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grids_info</span>
+
+        <span class="k">for</span> <span class="n">grid_info</span> <span class="ow">in</span> <span class="n">grids_info</span><span class="p">:</span>
+            <span class="n">grid_id</span> <span class="o">=</span> <span class="n">grid_info</span><span class="p">[</span><span class="s1">&#39;identifier&#39;</span><span class="p">]</span>
+            <span class="n">light_paths</span> <span class="o">=</span> <span class="n">grid_info</span><span class="p">[</span><span class="s1">&#39;light_path&#39;</span><span class="p">]</span>
+            <span class="n">arrays</span><span class="p">[</span><span class="n">grid_id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">light_path</span> <span class="ow">in</span> <span class="n">light_paths</span><span class="p">:</span>
+                <span class="n">light_path</span> <span class="o">=</span> <span class="n">light_path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">arrays</span><span class="p">[</span><span class="n">grid_id</span><span class="p">][</span><span class="n">light_path</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                <span class="n">light_path_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">folder</span><span class="p">,</span> <span class="n">light_path</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">state_folder</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">light_path_folder</span><span class="p">)</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+                    <span class="n">state</span> <span class="o">=</span> <span class="n">state_folder</span><span class="o">.</span><span class="n">name</span>
+                    <span class="n">arrays</span><span class="p">[</span><span class="n">grid_id</span><span class="p">][</span><span class="n">light_path</span><span class="p">][</span><span class="n">state</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">res_type_folder</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">state_folder</span><span class="p">)</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+                        <span class="n">res_type</span> <span class="o">=</span> <span class="n">res_type_folder</span><span class="o">.</span><span class="n">name</span>
+                        <span class="n">file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">res_type_folder</span><span class="p">,</span> <span class="n">grid_id</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">)</span>
+                        <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+                        <span class="n">arrays</span><span class="p">[</span><span class="n">grid_id</span><span class="p">][</span><span class="n">light_path</span><span class="p">][</span><span class="n">state</span><span class="p">][</span><span class="n">res_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span>
+
+        <span class="k">return</span> <span class="n">arrays</span>
+
+    <span class="k">def</span> <span class="nf">_get_valid_states</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns a dictionary with valid states for each light path.</span>
+
+<span class="sd">        For each light path there will be a key (identifier of the light path) and its</span>
+<span class="sd">        value will be a list of valid states as integers.</span>
+
+<span class="sd">        Example of output format:</span>
+<span class="sd">        {</span>
+<span class="sd">            &#39;__static_apertures__&#39;: [0],</span>
+<span class="sd">            &#39;Room1_North&#39;: [0, 1],</span>
+<span class="sd">            &#39;Room1_South&#39;: [0, 1],</span>
+<span class="sd">            &#39;Room2_North1&#39;: [0, 1],</span>
+<span class="sd">            &#39;Room2_North2&#39;: [0, 1]</span>
+<span class="sd">        }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">valid_states</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">grid_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_states</span>
+        <span class="k">if</span> <span class="s1">&#39;__static_apertures__&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">light_paths</span><span class="p">:</span>
+            <span class="n">valid_states</span><span class="p">[</span><span class="s1">&#39;__static_apertures__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">light_paths</span> <span class="ow">in</span> <span class="n">grid_states</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">light_path</span><span class="p">,</span> <span class="n">states</span> <span class="ow">in</span> <span class="n">light_paths</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">light_path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_states</span><span class="p">:</span>
+                    <span class="n">valid_states</span><span class="p">[</span><span class="n">light_path</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="n">valid_states</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2022, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.3.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
