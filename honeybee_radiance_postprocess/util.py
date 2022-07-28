@@ -1,7 +1,7 @@
 """Post-processing utility functions."""
 
 import numpy as np
-from typing import Tuple
+from typing import Tuple, Union
 
 
 def binary_mtx_dimension(filepath: str) -> Tuple[int, int, int, int]:
@@ -63,12 +63,39 @@ def check_array_dim(array: np.ndarray, dim: int):
         'Expected {}-dimensional array. Dimension of array is {}'.format(dim, array.ndim)
 
 
-def occupancy_filter(array, mask):
-    """Convert a list of ones and zeros to a NumPy masking array.
+def filter_array(array: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    """Filter a NumPy array by a masking array. The array will be passed as is if the
+    mask is None.
     
     Args:
-        mask: List of ones and zeros.
+        array: A NumPy array to filter.
+        mask: A NumPy array of ones/zeros or True/False.
     
     Returns:
-        A NumPy array of booleans."""
-    return array[mask.astype(bool)]
+        A filtered NumPy array.
+    """
+    if mask is not None:
+        return array[mask.astype(bool)]
+    else:
+        return array
+
+
+def hoys_mask(
+        sun_up_hours: list, hoys: list, timestep: int) -> np.ndarray:
+    """Create a NumPy masking array from a list of hoys.
+
+    Args:
+        sun_up_hours: A list of integers for the sun-up hours.
+        hoys: A list of 8760 * timestep values for the hoys to select. If an empty
+            list is passed, None will be returned.
+        timestep: Integer for the timestep of the analysis.
+    
+    Returns:
+        A NumPy array of booleans.
+    """
+    if len(hoys) != 0:
+        schedule = [False] * (8760 * timestep)
+        for hr in hoys:
+            schedule[int(hr * timestep)] = True
+        su_pattern = [schedule[int(h * timestep)] for h in sun_up_hours]
+        return np.array(su_pattern)
