@@ -1,4 +1,5 @@
 """honeybee radiance daylight postprocessing commands."""
+import json
 import click
 import sys
 import os
@@ -41,8 +42,9 @@ def post_process():
     show_default=True
 )
 @click.option(
-    '--states', '-st', help='A dictionary of states.', default=None, type=dict,
-    show_default=True
+    '--states-file', '-st', help='A JSON file with a dictionary of states. If states are not '
+    'provided the default states will be used for any aperture groups.', default=None,
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
     '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
@@ -53,7 +55,7 @@ def post_process():
     'metric files.', default='metrics'
 )
 def annual_metrics(
-    folder, schedule, threshold, lower_threshold, upper_threshold, states,
+    folder, schedule, threshold, lower_threshold, upper_threshold, states_file,
     grids_filter, sub_folder
 ):
     """Compute annual metrics in a folder and write them in a subfolder.
@@ -79,6 +81,11 @@ def annual_metrics(
             schedule = [int(float(v)) for v in hourly_schedule]
     else:
         schedule = None
+
+    if states_file:
+        with open(states_file) as json_file:
+            states = json.load(json_file)
+
     try:
         results = Results(folder, schedule=schedule)
         results.annual_metrics_to_folder(
@@ -103,19 +110,21 @@ def annual_metrics(
     type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
-    '--states', '-st', help='A dictionary of states.', default=None, type=dict,
-    show_default=True
+    '--states-file', '-st', help='A JSON file with a dictionary of states. If states '
+    'are not provided the default states will be used for any aperture groups.',
+    default=None, show_default=True,
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
     '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
     show_default=True
 )
 @click.option(
-    '--res-type', '-rt', help='Which type of results to process', default='total',
-    show_default=True
+    '--total/--direct', is_flag=True, default=True, help='Switch between total '
+    'and direct results. Default is total.'
 )
 def average_values(
-    folder, hoys_file, states, grids_filter, res_type
+    folder, hoys_file, states_file, grids_filter, total
 ):
     """Get average values for each sensor over a given period.
 
@@ -132,13 +141,17 @@ def average_values(
     else:
         hoys = []
 
+    if states_file:
+        with open(states_file) as json_file:
+            states = json.load(json_file)
+
+    res_type = 'total' if total is True else 'direct'
+ 
     try:
-        results = Results(folder, )
+        results = Results(folder)
         average_values = results.average_values(
             hoys=hoys, states=states, grids_filter=grids_filter,
             res_type=res_type)
-        for grid in average_values:
-            print(grid[0:5])
     except Exception:
         _logger.exception('Failed to calculate average values.')
         sys.exit(1)
