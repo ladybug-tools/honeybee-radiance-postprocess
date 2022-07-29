@@ -7,7 +7,7 @@ from typing import Dict, Union
 from honeybee_radiance.postprocess.annual import (_process_input_folder,
     filter_schedule_by_hours, generate_default_schedule)
 from honeybee_radiance_postprocess.metrics import (da_array2d, cda_array2d, udi_array2d,
-    udi_lower_array2d, udi_upper_array2d, avg_values_array2d)
+    udi_lower_array2d, udi_upper_array2d, average_values_array2d, cumulative_values_array2d)
 from .util import filter_array, hoys_mask
 from .annualdaylight import _annual_daylight_config
 from ladybug.dt import DateTime
@@ -439,13 +439,49 @@ class Results(_ResultsFolder):
             if np.any(array):
                 array_filter = np.apply_along_axis(
                     filter_array, 1, array, mask=mask)
-                results = avg_values_array2d(
+                results = average_values_array2d(
                     array_filter, full_length)
             else:
                 results = np.zeros(grid_info['count'])
             average_values.append(results)
         
         return average_values
+
+    def cumulative_values(
+        self, hoys: list = [], states: dict = None, grids_filter='*',
+        res_type='total',):
+        """Get cumulative values for each sensor over a given period.
+        
+        The hoys input can be used to filter the data for a particular time period.
+        
+        Args:
+            hoys: An optional numbers or list of numbers to select the hours of the year
+                (HOYs) for which results will be computed.
+            states: A dictionary of states.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+            res_type: Type of results to load.
+
+        Returns:
+            Cumulative value for each sensor.
+        """
+
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+
+        mask = hoys_mask(self.sun_up_hours, hoys, self.timestep)
+
+        cumulative_values = []
+        for grid_info in grids_info:
+            array = self._array_from_states(grid_info, states=states, res_type=res_type)
+            if np.any(array):
+                array_filter = np.apply_along_axis(
+                    filter_array, 1, array, mask=mask)
+                results = cumulative_values_array2d(
+                    array_filter, self.timestep)
+            else:
+                results = np.zeros(grid_info['count'])
+            cumulative_values.append(results)
+        
+        return cumulative_values
 
     def _index_from_datetime(self, datetime: DateTime):
         """Returns the index of the input datetime in the list of datetimes from the
