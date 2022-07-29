@@ -240,40 +240,71 @@ def udi_upper_array1d(
     return np.float64((array > max_t).sum() / total_occ * 100)
 
 
-def avg_values_array2d(
+def average_values_array2d(
         array: np.ndarray, full_length: int = 8760) -> np.ndarray:
-    """Calculate daylight autonomy for a 2D NumPy array.
+    """Calculate average values for a 2D NumPy array.
     
     Args:
         array: A 2D NumPy array.
-        total_occ: Integer indicating the number of occupied hours. If not given any
-            input the number of occupied hours will be found by the array shape.
-        threshold: Threshold value for daylight autonomy. Default: 300.
+        full_length: Integer to use as divisor.
     
     Returns:
-        A 1-dimensional NumPy array with the daylight autonomy for each row in the input
+        A 1-dimensional NumPy array with the average value for each row in the input
         array.
     """
     check_array_dim(array, 2)
 
     avg_values = np.apply_along_axis(
-            avg_values_array1d, 1, array, full_length=full_length)
+            average_values_array1d, 1, array, full_length=full_length)
 
     return avg_values
 
 
-def avg_values_array1d(array: np.ndarray, full_length: int = 8760) -> np.float64:
-    """Calculate daylight autonomy for a 1D NumPy array.
+def average_values_array1d(array: np.ndarray, full_length: int = 8760) -> np.float64:
+    """Calculate average value for a 1D NumPy array.
     
     Args:
         array: A 1D NumPy array.
-        total_occ: Integer indicating the number of occupied hours. If not given any
-            input the number of occupied hours will be found by the array shape.
-        threshold: Threshold value for daylight autonomy. Default: 300.
+        full_length: Integer to use as divisor.
         
     Returns:
-        A NumPy float of the daylight autonomy.
+        A NumPy float of the average value.
     """
     check_array_dim(array, 1)
 
     return array.sum() / full_length
+
+
+def cumulative_values_array2d(
+        array: np.ndarray, timestep: int = 1) -> np.ndarray:
+    """Calculate cumulative values for a 2D NumPy array.
+    
+    Args:
+        array: A 2D NumPy array.
+        timestep: Integer for the timestep of the analysis.
+    
+    Returns:
+        A 1-dimensional NumPy array with the cumulative value for each row in the input
+        array.
+    """
+    check_array_dim(array, 2)
+
+    avg_values = np.apply_along_axis(
+            cumulative_values_array1d, 1, array, timestep=timestep)
+
+    return avg_values
+
+
+def cumulative_values_array1d(array: np.ndarray, timestep: int = 1) -> np.float64:
+    """Calculate daylight autonomy for a 1D NumPy array.
+    
+    Args:
+        array: A 1D NumPy array.
+        timestep: Integer for the timestep of the analysis.
+        
+    Returns:
+        A NumPy float of the cumulative value.
+    """
+    check_array_dim(array, 1)
+
+    return array.sum() / timestep
