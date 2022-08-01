@@ -254,8 +254,7 @@ def average_values_array2d(
     """
     check_array_dim(array, 2)
 
-    avg_values = np.apply_along_axis(
-            average_values_array1d, 1, array, full_length=full_length)
+    avg_values = array.sum(axis=1) / full_length
 
     return avg_values
 
@@ -289,10 +288,9 @@ def cumulative_values_array2d(
     """
     check_array_dim(array, 2)
 
-    avg_values = np.apply_along_axis(
-            cumulative_values_array1d, 1, array, timestep=timestep)
+    cumulative_values = array.sum(axis=1) / timestep
 
-    return avg_values
+    return cumulative_values
 
 
 def cumulative_values_array1d(array: np.ndarray, timestep: int = 1) -> np.float64:
@@ -308,3 +306,32 @@ def cumulative_values_array1d(array: np.ndarray, timestep: int = 1) -> np.float6
     check_array_dim(array, 1)
 
     return array.sum() / timestep
+
+
+def peak_values_array2d(
+        array: np.ndarray, coincident: bool = False) -> np.ndarray:
+    """Calculate peak values for a 2D NumPy array.
+    
+    Args:
+        array: A 2D NumPy array.
+        coincident: Boolean to indicate whether output values represent the peak value
+            for each sensor throughout the entire analysis (False) or they represent
+            the highest overall value across each sensor grid at a particular timestep
+            (True).
+    
+    Returns:
+        A 1-dimensional NumPy array with the peak value for each row in the input
+        array, and the index of the maximum value representing the timestep in the array
+        with the largest value.
+    """
+    check_array_dim(array, 2)
+
+    max_i = None
+    if coincident:
+        array_summed = array.sum(axis=0)
+        max_i = np.argmax(array_summed)
+        peak_values = array[:, max_i]
+    else:
+        peak_values =  np.amax(array, axis=1)
+
+    return peak_values, max_i
