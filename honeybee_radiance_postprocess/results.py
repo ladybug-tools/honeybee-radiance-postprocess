@@ -7,7 +7,8 @@ from typing import Dict, Union
 from honeybee_radiance.postprocess.annual import (_process_input_folder,
     filter_schedule_by_hours, generate_default_schedule)
 from honeybee_radiance_postprocess.metrics import (da_array2d, cda_array2d, udi_array2d,
-    udi_lower_array2d, udi_upper_array2d, average_values_array2d, cumulative_values_array2d)
+    udi_lower_array2d, udi_upper_array2d, average_values_array2d,
+    cumulative_values_array2d, peak_values_array2d)
 from .util import filter_array, hoys_mask
 from .annualdaylight import _annual_daylight_config
 from ladybug.dt import DateTime
@@ -412,7 +413,7 @@ class Results(_ResultsFolder):
 
     def average_values(
         self, hoys: list = [], states: dict = None, grids_filter='*',
-        res_type='total',):
+        res_type='total'):
         """Get average values for each sensor over a given period.
         
         The hoys input can be used to filter the data for a particular time period.
@@ -445,11 +446,11 @@ class Results(_ResultsFolder):
                 results = np.zeros(grid_info['count'])
             average_values.append(results)
         
-        return average_values
+        return average_values, grids_info
 
     def cumulative_values(
         self, hoys: list = [], states: dict = None, grids_filter='*',
-        res_type='total',):
+        res_type='total'):
         """Get cumulative values for each sensor over a given period.
         
         The hoys input can be used to filter the data for a particular time period.
@@ -481,7 +482,52 @@ class Results(_ResultsFolder):
                 results = np.zeros(grid_info['count'])
             cumulative_values.append(results)
         
-        return cumulative_values
+        return cumulative_values, grids_info
+
+    def peak_values(
+        self, hoys: list = [], states: dict = None, grids_filter='*',
+        coincident: bool = False, res_type='total'):
+        """Get peak values for each sensor over a given period.
+        
+        The hoys input can be used to filter the data for a particular time period.
+        
+        Args:
+            hoys: An optional numbers or list of numbers to select the hours of the year
+                (HOYs) for which results will be computed.
+            states: A dictionary of states.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+            coincident: Boolean to indicate whether output values represent the peak
+                value for each sensor throughout the entire analysis (False) or they
+                represent the highest overall value across each sensor grid at a
+                particular timestep (True).
+            res_type: Type of results to load.
+
+        Returns:
+            Peak value for each sensor.
+        """
+
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+
+        mask = hoys_mask(self.sun_up_hours, hoys, self.timestep)
+
+        cumulative_values = []
+        max_hoys = []
+        for grid_info in grids_info:
+            array = self._array_from_states(grid_info, states=states, res_type=res_type)
+            if np.any(array):
+                array_filter = np.apply_along_axis(
+                    filter_array, 1, array, mask=mask)
+                results, max_i = peak_values_array2d(
+                    array_filter, coincident=coincident)
+            else:
+                results = np.zeros(grid_info['count'])
+            cumulative_values.append(results)
+            if max_i:
+                max_hoys.append(int(self.sun_up_hours[max_i]))
+            else:
+                max_hoys.append(max_i)
+        
+        return cumulative_values, max_hoys, grids_info
 
     def _index_from_datetime(self, datetime: DateTime):
         """Returns the index of the input datetime in the list of datetimes from the
