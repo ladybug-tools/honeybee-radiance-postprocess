@@ -82,6 +82,7 @@ def annual_metrics(
     else:
         schedule = None
 
+    states = None
     if states_file:
         with open(states_file) as json_file:
             states = json.load(json_file)
@@ -123,8 +124,12 @@ def annual_metrics(
     '--total/--direct', is_flag=True, default=True, help='Switch between total '
     'and direct results. Default is total.'
 )
+@click.option(
+    '--sub_folder', '-sf', help='Optional relative path for subfolder to write output '
+    'metric files.', default='metrics'
+)
 def average_values(
-    folder, hoys_file, states_file, grids_filter, total
+    folder, hoys_file, states_file, grids_filter, total, sub_folder
 ):
     """Get average values for each sensor over a given period.
 
@@ -141,6 +146,7 @@ def average_values(
     else:
         hoys = []
 
+    states = None
     if states_file:
         with open(states_file) as json_file:
             states = json.load(json_file)
@@ -149,8 +155,8 @@ def average_values(
  
     try:
         results = Results(folder)
-        average_values = results.average_values(
-            hoys=hoys, states=states, grids_filter=grids_filter,
+        results.average_values_to_folder(
+            sub_folder, hoys=hoys, states=states, grids_filter=grids_filter,
             res_type=res_type)
     except Exception:
         _logger.exception('Failed to calculate average values.')

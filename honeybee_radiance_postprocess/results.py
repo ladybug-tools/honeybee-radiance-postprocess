@@ -448,6 +448,28 @@ class Results(_ResultsFolder):
         
         return average_values, grids_info
 
+    def average_values_to_folder(
+        self, target_folder: str, hoys: list = [], states: dict = None, grids_filter='*',
+        res_type='total'):
+
+        folder = Path(target_folder)
+        folder.mkdir(parents=True, exist_ok=True)
+
+        average_values, grids_info = self.average_values(hoys=hoys, states=states,
+            grids_filter=grids_filter, res_type=res_type)
+        
+        metric_folder = folder.joinpath('average_values')
+
+        for count, grid_info in enumerate(grids_info):
+            d = average_values[count]
+            full_id = grid_info['full_id']
+            output_file = metric_folder.joinpath(f'{full_id}.average')
+            output_file.parent.mkdir(parents=True, exist_ok=True)
+            np.savetxt(output_file, d, fmt='%.2f')
+        
+        info_file = metric_folder.joinpath('grids_info.json')
+        info_file.write_text(json.dumps(grids_info))
+
     def cumulative_values(
         self, hoys: list = [], states: dict = None, grids_filter='*',
         res_type='total'):
