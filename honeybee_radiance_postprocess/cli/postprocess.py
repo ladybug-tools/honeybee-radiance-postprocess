@@ -163,3 +163,139 @@ def average_values(
         sys.exit(1)
     else:
         sys.exit(0)
+
+
+@post_process.command('cumulative-values')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.option(
+    '--hoys-file', '-h', help='Path to an HOYs file. Values must be separated by new line. '
+    'If not provided the data will not be filtered by HOYs.',
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--states-file', '-st', help='A JSON file with a dictionary of states. If states '
+    'are not provided the default states will be used for any aperture groups.',
+    default=None, show_default=True,
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
+    show_default=True
+)
+@click.option(
+    '--total/--direct', is_flag=True, default=True, help='Switch between total '
+    'and direct results. Default is total.'
+)
+@click.option(
+    '--sub_folder', '-sf', help='Optional relative path for subfolder to write output '
+    'metric files.', default='metrics'
+)
+def cumulative_values(
+    folder, hoys_file, states_file, grids_filter, total, sub_folder
+):
+    """Get cumulative values for each sensor over a given period.
+
+    \b
+    Args:
+        folder: Results folder. This folder is an output folder of annual
+        daylight recipe. Folder should include grids_info.json and sun-up-hours.txt.
+        The command uses the list in grids_info.json to find the result files for each
+        sensor grid.
+    """
+    if hoys_file:
+        with open(hoys_file) as hoys:
+            hoys = [int(h) for h in hoys.readlines()]
+    else:
+        hoys = []
+
+    states = None
+    if states_file:
+        with open(states_file) as json_file:
+            states = json.load(json_file)
+
+    res_type = 'total' if total is True else 'direct'
+ 
+    try:
+        results = Results(folder)
+        results.cumulative_values_to_folder(
+            sub_folder, hoys=hoys, states=states, grids_filter=grids_filter,
+            res_type=res_type)
+    except Exception:
+        _logger.exception('Failed to calculate cumulative values.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('peak-values')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.option(
+    '--hoys-file', '-h', help='Path to an HOYs file. Values must be separated by new line. '
+    'If not provided the data will not be filtered by HOYs.',
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--states-file', '-st', help='A JSON file with a dictionary of states. If states '
+    'are not provided the default states will be used for any aperture groups.',
+    default=None, show_default=True,
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
+    show_default=True
+)
+@click.option(
+    '--total/--direct', is_flag=True, default=True, help='Switch between total '
+    'and direct results. Default is total.'
+)
+@click.option(
+    '--coincident/--non-coincident', is_flag=True, default=False, show_default=True,
+    help='Boolean to indicate whether output values represent the the peak value for '
+    'each sensor throughout the entire analysis (False) or they represent the highest '
+    'overall value across each sensor grid at a particular timestep (True).'
+)
+@click.option(
+    '--sub_folder', '-sf', help='Optional relative path for subfolder to write output '
+    'metric files.', default='metrics'
+)
+def peak_values(
+    folder, hoys_file, states_file, grids_filter, total, coincident, sub_folder
+):
+    """Get peak values for each sensor over a given period.
+
+    \b
+    Args:
+        folder: Results folder. This folder is an output folder of annual
+        daylight recipe. Folder should include grids_info.json and sun-up-hours.txt.
+        The command uses the list in grids_info.json to find the result files for each
+        sensor grid.
+    """
+    if hoys_file:
+        with open(hoys_file) as hoys:
+            hoys = [int(h) for h in hoys.readlines()]
+    else:
+        hoys = []
+
+    states = None
+    if states_file:
+        with open(states_file) as json_file:
+            states = json.load(json_file)
+
+    res_type = 'total' if total is True else 'direct'
+ 
+    try:
+        results = Results(folder)
+        results.peak_values_to_folder(
+            sub_folder, hoys=hoys, states=states, grids_filter=grids_filter,
+            coincident=coincident, res_type=res_type)
+    except Exception:
+        _logger.exception('Failed to calculate peak values.')
+        sys.exit(1)
+    else:
+        sys.exit(0)

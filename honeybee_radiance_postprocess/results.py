@@ -506,6 +506,28 @@ class Results(_ResultsFolder):
         
         return cumulative_values, grids_info
 
+    def cumulative_values_to_folder(
+        self, target_folder: str, hoys: list = [], states: dict = None, grids_filter='*',
+        res_type='total'):
+
+        folder = Path(target_folder)
+        folder.mkdir(parents=True, exist_ok=True)
+
+        cumulative_values, grids_info = self.cumulative_values(hoys=hoys,
+            states=states, grids_filter=grids_filter, res_type=res_type)
+        
+        metric_folder = folder.joinpath('cumulative_values')
+
+        for count, grid_info in enumerate(grids_info):
+            d = cumulative_values[count]
+            full_id = grid_info['full_id']
+            output_file = metric_folder.joinpath(f'{full_id}.cumulative')
+            output_file.parent.mkdir(parents=True, exist_ok=True)
+            np.savetxt(output_file, d, fmt='%.2f')
+        
+        info_file = metric_folder.joinpath('grids_info.json')
+        info_file.write_text(json.dumps(grids_info))
+
     def peak_values(
         self, hoys: list = [], states: dict = None, grids_filter='*',
         coincident: bool = False, res_type='total'):
@@ -550,6 +572,29 @@ class Results(_ResultsFolder):
                 max_hoys.append(max_i)
         
         return cumulative_values, max_hoys, grids_info
+
+    def peak_values_to_folder(
+        self, target_folder: str, hoys: list = [], states: dict = None,
+        grids_filter='*', coincident: bool = False, res_type='total'):
+
+        folder = Path(target_folder)
+        folder.mkdir(parents=True, exist_ok=True)
+
+        peak_values, max_hoys, grids_info = self.peak_values(
+            hoys=hoys, states=states, grids_filter=grids_filter,
+            coincident=coincident, res_type=res_type)
+        
+        metric_folder = folder.joinpath('peak_values')
+
+        for count, grid_info in enumerate(grids_info):
+            d = peak_values[count]
+            full_id = grid_info['full_id']
+            output_file = metric_folder.joinpath(f'{full_id}.peak')
+            output_file.parent.mkdir(parents=True, exist_ok=True)
+            np.savetxt(output_file, d, fmt='%.2f')
+        
+        info_file = metric_folder.joinpath('grids_info.json')
+        info_file.write_text(json.dumps(grids_info))
 
     def _index_from_datetime(self, datetime: DateTime):
         """Returns the index of the input datetime in the list of datetimes from the
