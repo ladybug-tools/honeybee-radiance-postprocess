@@ -6,12 +6,16 @@ from typing import Dict, Union
 
 from honeybee_radiance.postprocess.annual import (_process_input_folder,
     filter_schedule_by_hours, generate_default_schedule)
-from honeybee_radiance_postprocess.metrics import (da_array2d, cda_array2d, udi_array2d,
+from .metrics import (da_array2d, cda_array2d, udi_array2d,
     udi_lower_array2d, udi_upper_array2d, average_values_array2d,
     cumulative_values_array2d, peak_values_array2d)
-from .util import filter_array, hoys_mask
+from .util import filter_array, hoys_mask, check_array_dim
 from .annualdaylight import _annual_daylight_config
+from ladybug.analysisperiod import AnalysisPeriod
+from ladybug.datacollection import HourlyContinuousCollection
+from ladybug.datatype.illuminance import Illuminance
 from ladybug.dt import DateTime
+from ladybug.header import Header
 
 
 class _ResultsFolder(object):
@@ -385,8 +389,8 @@ class Results(_ResultsFolder):
         config_file.write_text(json.dumps(config))
 
     def point_in_time(
-        self, datetime: Union[int, DateTime], states: dict = None, grids_filter='*',
-        res_type='total'):
+        self, datetime: Union[int, DateTime], states: dict = None,
+        grids_filter: str = '*', res_type: str = 'total'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
@@ -412,8 +416,8 @@ class Results(_ResultsFolder):
         return pit_values
 
     def average_values(
-        self, hoys: list = [], states: dict = None, grids_filter='*',
-        res_type='total'):
+        self, hoys: list = [], states: dict = None, grids_filter: str = '*',
+        res_type: str= 'total'):
         """Get average values for each sensor over a given period.
         
         The hoys input can be used to filter the data for a particular time period.
@@ -449,8 +453,8 @@ class Results(_ResultsFolder):
         return average_values, grids_info
 
     def average_values_to_folder(
-        self, target_folder: str, hoys: list = [], states: dict = None, grids_filter='*',
-        res_type='total'):
+        self, target_folder: str, hoys: list = [], states: dict = None,
+        grids_filter: str = '*', res_type: str = 'total'):
 
         folder = Path(target_folder)
         folder.mkdir(parents=True, exist_ok=True)
@@ -471,8 +475,8 @@ class Results(_ResultsFolder):
         info_file.write_text(json.dumps(grids_info))
 
     def cumulative_values(
-        self, hoys: list = [], states: dict = None, grids_filter='*',
-        res_type='total'):
+        self, hoys: list = [], states: dict = None, grids_filter: str = '*',
+        res_type: str = 'total'):
         """Get cumulative values for each sensor over a given period.
         
         The hoys input can be used to filter the data for a particular time period.
@@ -507,8 +511,8 @@ class Results(_ResultsFolder):
         return cumulative_values, grids_info
 
     def cumulative_values_to_folder(
-        self, target_folder: str, hoys: list = [], states: dict = None, grids_filter='*',
-        res_type='total'):
+        self, target_folder: str, hoys: list = [], states: dict = None,
+        grids_filter: str = '*', res_type: str = 'total'):
 
         folder = Path(target_folder)
         folder.mkdir(parents=True, exist_ok=True)
@@ -529,8 +533,8 @@ class Results(_ResultsFolder):
         info_file.write_text(json.dumps(grids_info))
 
     def peak_values(
-        self, hoys: list = [], states: dict = None, grids_filter='*',
-        coincident: bool = False, res_type='total'):
+        self, hoys: list = [], states: dict = None, grids_filter: str = '*',
+        coincident: bool = False, res_type: str = 'total'):
         """Get peak values for each sensor over a given period.
         
         The hoys input can be used to filter the data for a particular time period.
@@ -575,7 +579,7 @@ class Results(_ResultsFolder):
 
     def peak_values_to_folder(
         self, target_folder: str, hoys: list = [], states: dict = None,
-        grids_filter='*', coincident: bool = False, res_type='total'):
+        grids_filter: str = '*', coincident: bool = False, res_type='total'):
 
         folder = Path(target_folder)
         folder.mkdir(parents=True, exist_ok=True)
@@ -595,6 +599,71 @@ class Results(_ResultsFolder):
         
         info_file = metric_folder.joinpath('grids_info.json')
         info_file.write_text(json.dumps(grids_info))
+
+    def annual_data(
+        self, states: dict = None, grids_filter: str = '*',
+        sensor_index: dict = None, res_type: str = 'total'):
+
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+        analysis_period = AnalysisPeriod(timestep=self.timestep)
+
+        # if no sensor_index, create dict with all sensors
+        if not sensor_index:
+            sensor_index = dict()
+            for grid_info in grids_info:
+                sensor_index[grid_info['full_id']] = [i for i in range(grid_info['count'])]
+
+        data_collections = []
+        for grid_info in grids_info:
+            data_collections_grid = []
+            grid_id = grid_info['full_id']
+            array = self._array_from_states(grid_info, states=states, res_type=res_type)
+            indices = sensor_index[grid_id]
+            for idx in indices:
+                values = array[idx, :]
+                annual_array = Results.sun_up_hours_to_annual(
+                    self.sun_up_hours, values, self.timestep)
+                header = Header(Illuminance(), 'lux', analysis_period)
+                header.metadata['sensor grid'] = grid_id
+                header.metadata['sensor index'] = idx
+                data_collections_grid.append(HourlyContinuousCollection(header, annual_array.tolist()))
+            data_collections.append(data_collections_grid)
+
+        return data_collections, grids_info, sensor_index
+
+    def annual_data_to_folder(
+        self, target_folder: str, states: dict = None, grids_filter: str = '*',
+        sensor_index: dict = None, res_type: str = 'total'):
+
+        folder = Path(target_folder)
+        folder.mkdir(parents=True, exist_ok=True)
+
+        data_collections, grids_info, sensor_index = self.annual_data(
+            states=states, grids_filter=grids_filter, sensor_index=sensor_index,
+            res_type=res_type)
+
+        metric_folder = folder.joinpath('datacollections')
+
+        for count, grid_info in enumerate(grids_info):
+            grid_collections = data_collections[count]
+            for data_collection in grid_collections:
+                grid_id = grid_info['full_id']
+                sensor_id = data_collection.header.metadata['sensor index']
+                data_dict = data_collection.to_dict()
+                data_file = metric_folder.joinpath('%s_%s.json' % (grid_id, sensor_id))
+                data_file.parent.mkdir(parents=True, exist_ok=True)
+                data_file.write_text(json.dumps(data_dict))
+
+    @staticmethod
+    def sun_up_hours_to_annual(sun_up_hours, values, timestep):
+        check_array_dim(values, 1)
+        sun_up_hours = np.array(sun_up_hours).astype(int)
+        assert sun_up_hours.shape == values.shape
+
+        annual_array = np.zeros(8760 * timestep)
+        annual_array[sun_up_hours] = values
+
+        return annual_array
 
     def _index_from_datetime(self, datetime: DateTime):
         """Returns the index of the input datetime in the list of datetimes from the
