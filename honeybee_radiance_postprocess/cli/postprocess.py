@@ -42,7 +42,7 @@ def post_process():
     show_default=True
 )
 @click.option(
-    '--states-file', '-st', help='A JSON file with a dictionary of states. If states are not '
+    '--states', '-st', help='A JSON file with a dictionary of states. If states are not '
     'provided the default states will be used for any aperture groups.', default=None,
     type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
 )
@@ -55,7 +55,7 @@ def post_process():
     'metric files.', default='metrics'
 )
 def annual_metrics(
-    folder, schedule, threshold, lower_threshold, upper_threshold, states_file,
+    folder, schedule, threshold, lower_threshold, upper_threshold, states,
     grids_filter, sub_folder
 ):
     """Compute annual metrics in a folder and write them in a subfolder.
@@ -82,9 +82,8 @@ def annual_metrics(
     else:
         schedule = None
 
-    states = None
-    if states_file:
-        with open(states_file) as json_file:
+    if states:
+        with open(states) as json_file:
             states = json.load(json_file)
 
     try:
@@ -111,7 +110,7 @@ def annual_metrics(
     type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
-    '--states-file', '-st', help='A JSON file with a dictionary of states. If states '
+    '--states', '-st', help='A JSON file with a dictionary of states. If states '
     'are not provided the default states will be used for any aperture groups.',
     default=None, show_default=True,
     type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
@@ -129,7 +128,7 @@ def annual_metrics(
     'metric files.', default='metrics'
 )
 def average_values(
-    folder, hoys_file, states_file, grids_filter, total, sub_folder
+    folder, hoys_file, states, grids_filter, total, sub_folder
 ):
     """Get average values for each sensor over a given period.
 
@@ -146,9 +145,8 @@ def average_values(
     else:
         hoys = []
 
-    states = None
-    if states_file:
-        with open(states_file) as json_file:
+    if states:
+        with open(states) as json_file:
             states = json.load(json_file)
 
     res_type = 'total' if total is True else 'direct'
@@ -176,7 +174,7 @@ def average_values(
     type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
-    '--states-file', '-st', help='A JSON file with a dictionary of states. If states '
+    '--states', '-st', help='A JSON file with a dictionary of states. If states '
     'are not provided the default states will be used for any aperture groups.',
     default=None, show_default=True,
     type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
@@ -194,7 +192,7 @@ def average_values(
     'metric files.', default='metrics'
 )
 def cumulative_values(
-    folder, hoys_file, states_file, grids_filter, total, sub_folder
+    folder, hoys_file, states, grids_filter, total, sub_folder
 ):
     """Get cumulative values for each sensor over a given period.
 
@@ -211,9 +209,8 @@ def cumulative_values(
     else:
         hoys = []
 
-    states = None
-    if states_file:
-        with open(states_file) as json_file:
+    if states:
+        with open(states) as json_file:
             states = json.load(json_file)
 
     res_type = 'total' if total is True else 'direct'
@@ -241,7 +238,7 @@ def cumulative_values(
     type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
-    '--states-file', '-st', help='A JSON file with a dictionary of states. If states '
+    '--states', '-st', help='A JSON file with a dictionary of states. If states '
     'are not provided the default states will be used for any aperture groups.',
     default=None, show_default=True,
     type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
@@ -265,7 +262,7 @@ def cumulative_values(
     'metric files.', default='metrics'
 )
 def peak_values(
-    folder, hoys_file, states_file, grids_filter, total, coincident, sub_folder
+    folder, hoys_file, states, grids_filter, total, coincident, sub_folder
 ):
     """Get peak values for each sensor over a given period.
 
@@ -282,9 +279,8 @@ def peak_values(
     else:
         hoys = []
 
-    states = None
-    if states_file:
-        with open(states_file) as json_file:
+    if states:
+        with open(states) as json_file:
             states = json.load(json_file)
 
     res_type = 'total' if total is True else 'direct'
@@ -296,6 +292,69 @@ def peak_values(
             coincident=coincident, res_type=res_type)
     except Exception:
         _logger.exception('Failed to calculate peak values.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('annual-to-data')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.option(
+    '--states', '-st', help='A JSON file with a dictionary of states. If states '
+    'are not provided the default states will be used for any aperture groups.',
+    default=None, show_default=True,
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
+    show_default=True
+)
+@click.option(
+    '--sensor-index', '-si', help='A JSON file with a dictionary of sensor indices '
+    'for each grid. If not provided all sensors will be used.',
+    default=None, show_default=True,
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--total/--direct', is_flag=True, default=True, help='Switch between total '
+    'and direct results. Default is total.'
+)
+@click.option(
+    '--sub_folder', '-sf', help='Optional relative path for subfolder to write output '
+    'metric files.', default='metrics'
+)
+def annual_to_data(
+    folder, states, grids_filter, sensor_index, total, sub_folder
+):
+    """Get annual data collections as JSON files.
+
+    \b
+    Args:
+        folder: Results folder. This folder is an output folder of annual
+        daylight recipe. Folder should include grids_info.json and sun-up-hours.txt.
+        The command uses the list in grids_info.json to find the result files for each
+        sensor grid.
+    """
+    if states:
+        with open(states) as json_file:
+            states = json.load(json_file)
+
+    if sensor_index:
+        with open(sensor_index) as json_file:
+            sensor_index = json.load(json_file)
+
+    res_type = 'total' if total is True else 'direct'
+ 
+    try:
+        results = Results(folder)
+        results.annual_data_to_folder(
+            sub_folder, states=states, grids_filter=grids_filter,
+            sensor_index=sensor_index, res_type=res_type)
+    except Exception:
+        _logger.exception('Failed to create data collections.')
         sys.exit(1)
     else:
         sys.exit(0)
