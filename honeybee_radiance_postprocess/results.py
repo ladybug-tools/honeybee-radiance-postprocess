@@ -4,11 +4,11 @@ from pathlib import Path
 from itertools import islice, cycle
 from typing import Dict, Union
 
-from honeybee_radiance.postprocess.annual import (_process_input_folder,
-    filter_schedule_by_hours, generate_default_schedule)
-from .metrics import (da_array2d, cda_array2d, udi_array2d,
-    udi_lower_array2d, udi_upper_array2d, average_values_array2d,
-    cumulative_values_array2d, peak_values_array2d)
+from honeybee_radiance.postprocess.annual import _process_input_folder, \
+    filter_schedule_by_hours, generate_default_schedule
+from .metrics import da_array2d, cda_array2d, udi_array2d, \
+    udi_lower_array2d, udi_upper_array2d, average_values_array2d, \
+    cumulative_values_array2d, peak_values_array2d
 from .util import filter_array, hoys_mask, check_array_dim
 from .annualdaylight import _annual_daylight_config
 from ladybug.analysisperiod import AnalysisPeriod
@@ -43,7 +43,9 @@ class _ResultsFolder(object):
         """Initialize ResultsFolder."""
         self._folder = Path(folder).absolute().as_posix()
         self._grids_info, self._sun_up_hours = _process_input_folder(self.folder, '*')
-        self._datetimes = [DateTime.from_hoy(hoy) for hoy in list(map(int, self.sun_up_hours))]
+        self._datetimes = [
+            DateTime.from_hoy(hoy) for hoy in list(map(float, self.sun_up_hours))
+        ]
         self._light_paths = self._get_light_paths()
         self._default_states = self._get_default_states()
         self._grid_states = self._get_grid_states()
@@ -124,7 +126,7 @@ class _ResultsFolder(object):
         else:
             # only static results
             return None
-    
+
     def _set_timestep(self) -> float:
         timestep_file = Path(self.folder, 'timestep.txt')
         if timestep_file.is_file():
@@ -132,7 +134,7 @@ class _ResultsFolder(object):
                 timestep = int(file.readline())
         else:
             timestep = 1
-        
+
         return timestep
 
     def __repr__(self):
@@ -220,7 +222,7 @@ class Results(_ResultsFolder):
         return self._valid_states
 
     def daylight_autonomy(
-        self, threshold: float = 300, states: dict = None, grids_filter: str = '*'):
+            self, threshold: float = 300, states: dict = None, grids_filter: str = '*'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
@@ -239,7 +241,7 @@ class Results(_ResultsFolder):
         return da
 
     def continuous_daylight_autonomy(
-        self, threshold: float = 300, states: dict = None, grids_filter: str = '*'):
+            self, threshold: float = 300, states: dict = None, grids_filter: str = '*'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
@@ -258,8 +260,8 @@ class Results(_ResultsFolder):
         return cda
 
     def useful_daylight_illuminance(
-        self, min_t: float = 100, max_t: float = 3000, states: dict = None,
-        grids_filter: str = '*'):
+            self, min_t: float = 100, max_t: float = 3000, states: dict = None,
+            grids_filter: str = '*'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
@@ -278,7 +280,7 @@ class Results(_ResultsFolder):
         return udi
 
     def useful_daylight_illuminance_lower(
-        self, min_t: float = 100, states: dict = None, grids_filter: str = '*'):
+            self, min_t: float = 100, states: dict = None, grids_filter: str = '*'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
         sun_down_occ_hours = self.sun_down_occ_hours
@@ -289,7 +291,8 @@ class Results(_ResultsFolder):
             if np.any(array):
                 array_filter = np.apply_along_axis(
                     filter_array, 1, array, mask=self.occ_mask)
-                results = udi_lower_array2d(array_filter, total_occ=self.total_occ,
+                results = udi_lower_array2d(
+                    array_filter, total_occ=self.total_occ,
                     min_t=min_t, sun_down_occ_hours=sun_down_occ_hours)
             else:
                 results = np.zeros(grid_info['count'])
@@ -298,7 +301,7 @@ class Results(_ResultsFolder):
         return udi_lower
 
     def useful_daylight_illuminance_upper(
-        self, max_t: float = 3000, states: dict = None, grids_filter: str = '*'):
+            self, max_t: float = 3000, states: dict = None, grids_filter: str = '*'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
@@ -317,8 +320,8 @@ class Results(_ResultsFolder):
         return udi_upper
 
     def annual_metrics(
-        self, threshold: float = 300, min_t: float = 100, max_t: float = 3000,
-        states: dict = None, grids_filter: str = '*'):
+            self, threshold: float = 300, min_t: float = 100, max_t: float = 3000,
+            states: dict = None, grids_filter: str = '*'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
         sun_down_occ_hours = self.sun_down_occ_hours
@@ -356,14 +359,15 @@ class Results(_ResultsFolder):
         return da, cda, udi, udi_lower, udi_upper, grids_info
 
     def annual_metrics_to_folder(
-        self, target_folder: str, threshold: float = 300, min_t: float = 100, max_t: float = 3000,
-        states: dict = None, grids_filter: str = '*', config: Dict = None):
+            self, target_folder: str, threshold: float = 300,
+            min_t: float = 100, max_t: float = 3000,
+            states: dict = None, grids_filter: str = '*', config: Dict = None):
 
         folder = Path(target_folder)
         folder.mkdir(parents=True, exist_ok=True)
 
         da, cda, udi, udi_lower, udi_upper, grids_info = self.annual_metrics(
-            threshold= threshold, min_t=min_t, max_t=max_t, states=states,
+            threshold=threshold, min_t=min_t, max_t=max_t, states=states,
             grids_filter=grids_filter)
 
         pattern = {
@@ -389,8 +393,8 @@ class Results(_ResultsFolder):
         config_file.write_text(json.dumps(config))
 
     def point_in_time(
-        self, datetime: Union[int, DateTime], states: dict = None,
-        grids_filter: str = '*', res_type: str = 'total'):
+            self, datetime: Union[int, DateTime], states: dict = None,
+            grids_filter: str = '*', res_type: str = 'total'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
@@ -399,7 +403,8 @@ class Results(_ResultsFolder):
         elif isinstance(datetime, DateTime):
             dt = datetime
         else:
-            raise ValueError('Input datetime must be of type %s or %s. Received %s.'
+            raise ValueError(
+                'Input datetime must be of type %s or %s. Received %s.'
                 % (int, DateTime, type(datetime)))
         idx = self._index_from_datetime(dt)
 
@@ -416,12 +421,12 @@ class Results(_ResultsFolder):
         return pit_values
 
     def average_values(
-        self, hoys: list = [], states: dict = None, grids_filter: str = '*',
-        res_type: str= 'total'):
+            self, hoys: list = [], states: dict = None, grids_filter: str = '*',
+            res_type: str = 'total'):
         """Get average values for each sensor over a given period.
-        
+
         The hoys input can be used to filter the data for a particular time period.
-        
+
         Args:
             hoys: An optional numbers or list of numbers to select the hours of the year
                 (HOYs) for which results will be computed.
@@ -449,19 +454,20 @@ class Results(_ResultsFolder):
             else:
                 results = np.zeros(grid_info['count'])
             average_values.append(results)
-        
+
         return average_values, grids_info
 
     def average_values_to_folder(
-        self, target_folder: str, hoys: list = [], states: dict = None,
-        grids_filter: str = '*', res_type: str = 'total'):
+            self, target_folder: str, hoys: list = [], states: dict = None,
+            grids_filter: str = '*', res_type: str = 'total'):
 
         folder = Path(target_folder)
         folder.mkdir(parents=True, exist_ok=True)
 
-        average_values, grids_info = self.average_values(hoys=hoys, states=states,
+        average_values, grids_info = self.average_values(
+            hoys=hoys, states=states,
             grids_filter=grids_filter, res_type=res_type)
-        
+
         metric_folder = folder.joinpath('average_values')
 
         for count, grid_info in enumerate(grids_info):
@@ -470,17 +476,17 @@ class Results(_ResultsFolder):
             output_file = metric_folder.joinpath(f'{full_id}.average')
             output_file.parent.mkdir(parents=True, exist_ok=True)
             np.savetxt(output_file, d, fmt='%.2f')
-        
+
         info_file = metric_folder.joinpath('grids_info.json')
         info_file.write_text(json.dumps(grids_info))
 
     def cumulative_values(
-        self, hoys: list = [], states: dict = None, grids_filter: str = '*',
-        res_type: str = 'total'):
+            self, hoys: list = [], states: dict = None, grids_filter: str = '*',
+            res_type: str = 'total'):
         """Get cumulative values for each sensor over a given period.
-        
+
         The hoys input can be used to filter the data for a particular time period.
-        
+
         Args:
             hoys: An optional numbers or list of numbers to select the hours of the year
                 (HOYs) for which results will be computed.
@@ -507,19 +513,19 @@ class Results(_ResultsFolder):
             else:
                 results = np.zeros(grid_info['count'])
             cumulative_values.append(results)
-        
+
         return cumulative_values, grids_info
 
     def cumulative_values_to_folder(
-        self, target_folder: str, hoys: list = [], states: dict = None,
-        grids_filter: str = '*', res_type: str = 'total'):
+            self, target_folder: str, hoys: list = [], states: dict = None,
+            grids_filter: str = '*', res_type: str = 'total'):
 
         folder = Path(target_folder)
         folder.mkdir(parents=True, exist_ok=True)
 
-        cumulative_values, grids_info = self.cumulative_values(hoys=hoys,
-            states=states, grids_filter=grids_filter, res_type=res_type)
-        
+        cumulative_values, grids_info = self.cumulative_values(
+            hoys=hoys, states=states, grids_filter=grids_filter, res_type=res_type)
+
         metric_folder = folder.joinpath('cumulative_values')
 
         for count, grid_info in enumerate(grids_info):
@@ -528,17 +534,17 @@ class Results(_ResultsFolder):
             output_file = metric_folder.joinpath(f'{full_id}.cumulative')
             output_file.parent.mkdir(parents=True, exist_ok=True)
             np.savetxt(output_file, d, fmt='%.2f')
-        
+
         info_file = metric_folder.joinpath('grids_info.json')
         info_file.write_text(json.dumps(grids_info))
 
     def peak_values(
-        self, hoys: list = [], states: dict = None, grids_filter: str = '*',
-        coincident: bool = False, res_type: str = 'total'):
+            self, hoys: list = [], states: dict = None, grids_filter: str = '*',
+            coincident: bool = False, res_type: str = 'total'):
         """Get peak values for each sensor over a given period.
-        
+
         The hoys input can be used to filter the data for a particular time period.
-        
+
         Args:
             hoys: An optional numbers or list of numbers to select the hours of the year
                 (HOYs) for which results will be computed.
@@ -574,12 +580,12 @@ class Results(_ResultsFolder):
                 max_hoys.append(int(self.sun_up_hours[max_i]))
             else:
                 max_hoys.append(max_i)
-        
+
         return cumulative_values, max_hoys, grids_info
 
     def peak_values_to_folder(
-        self, target_folder: str, hoys: list = [], states: dict = None,
-        grids_filter: str = '*', coincident: bool = False, res_type='total'):
+            self, target_folder: str, hoys: list = [], states: dict = None,
+            grids_filter: str = '*', coincident: bool = False, res_type='total'):
 
         folder = Path(target_folder)
         folder.mkdir(parents=True, exist_ok=True)
@@ -587,7 +593,7 @@ class Results(_ResultsFolder):
         peak_values, max_hoys, grids_info = self.peak_values(
             hoys=hoys, states=states, grids_filter=grids_filter,
             coincident=coincident, res_type=res_type)
-        
+
         metric_folder = folder.joinpath('peak_values')
 
         for count, grid_info in enumerate(grids_info):
@@ -596,13 +602,13 @@ class Results(_ResultsFolder):
             output_file = metric_folder.joinpath(f'{full_id}.peak')
             output_file.parent.mkdir(parents=True, exist_ok=True)
             np.savetxt(output_file, d, fmt='%.2f')
-        
+
         info_file = metric_folder.joinpath('grids_info.json')
         info_file.write_text(json.dumps(grids_info))
 
     def annual_data(
-        self, states: dict = None, grids_filter: str = '*',
-        sensor_index: dict = None, res_type: str = 'total'):
+            self, states: dict = None, grids_filter: str = '*',
+            sensor_index: dict = None, res_type: str = 'total'):
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
         analysis_period = AnalysisPeriod(timestep=self.timestep)
@@ -611,7 +617,8 @@ class Results(_ResultsFolder):
         if not sensor_index:
             sensor_index = dict()
             for grid_info in grids_info:
-                sensor_index[grid_info['full_id']] = [i for i in range(grid_info['count'])]
+                sensor_index[grid_info['full_id']] = \
+                    [i for i in range(grid_info['count'])]
 
         data_collections = []
         for grid_info in grids_info:
@@ -626,14 +633,15 @@ class Results(_ResultsFolder):
                 header = Header(Illuminance(), 'lux', analysis_period)
                 header.metadata['sensor grid'] = grid_id
                 header.metadata['sensor index'] = idx
-                data_collections_grid.append(HourlyContinuousCollection(header, annual_array.tolist()))
+                data_collections_grid.append(
+                    HourlyContinuousCollection(header, annual_array.tolist()))
             data_collections.append(data_collections_grid)
 
         return data_collections, grids_info, sensor_index
 
     def annual_data_to_folder(
-        self, target_folder: str, states: dict = None, grids_filter: str = '*',
-        sensor_index: dict = None, res_type: str = 'total'):
+            self, target_folder: str, states: dict = None, grids_filter: str = '*',
+            sensor_index: dict = None, res_type: str = 'total'):
 
         folder = Path(target_folder)
         folder.mkdir(parents=True, exist_ok=True)
@@ -669,15 +677,15 @@ class Results(_ResultsFolder):
         """Returns the index of the input datetime in the list of datetimes from the
         datetimes property.
         If the DateTime is not in the list, the function will return None.
-        
+
         Args:
-            datetime: A DateTime 
+            datetime: A DateTime object.
         """
         assert isinstance(datetime, DateTime), \
             'Expected Ladybug DateTime input but received %s' % type(datetime)
         try:
             index = self.datetimes.index(datetime)
-        except:
+        except Exception:
             # DateTime not in sun up hours
             index = None
 
@@ -691,9 +699,10 @@ class Results(_ResultsFolder):
 
         try:
             array = self.arrays[grid_id][light_path][state_identifier][res_type]
-        except:
+        except Exception:
             array = self._load_array(
-                grid_info, light_path, state=state, res_type=res_type, extension=extension
+                grid_info, light_path, state=state, res_type=res_type,
+                extension=extension
             )
         return array
 
@@ -763,7 +772,8 @@ class Results(_ResultsFolder):
         elif state == -1:
             return None
         else:
-            raise ValueError('State of %s must be any of %s for on or -1 for off. '
+            raise ValueError(
+                'State of %s must be any of %s for on or -1 for off. '
                 'Received state %s.' % (light_path, valid_states, state))
 
     def _get_file(self, grid_id: str, light_path: str, state_identifier: str,
@@ -777,11 +787,12 @@ class Results(_ResultsFolder):
             res_type: Which type of result to return a file for. E.g., 'total' for total
                 illuminance or 'direct' for direct illuminance.
             extension: File extension. (Default: .npy).
-        
+
         Returns:
             Path to a NumPy file.
         """
-        file = Path(self.folder, light_path, state_identifier, res_type, grid_id + extension)
+        file = Path(self.folder, light_path, state_identifier,
+                    res_type, grid_id + extension)
 
         return file
 
@@ -807,7 +818,7 @@ class Results(_ResultsFolder):
                 raise ValueError(
                     'The light path %s has %s values in its states schedule. Maximum '
                     'allowed number of values is 8760.' % (light_path, len(values))
-                    )
+                )
         return states
 
     def _validate_states(self, states: dict):
@@ -820,19 +831,19 @@ class Results(_ResultsFolder):
                 raise ValueError(
                     'Failed to convert states schedule for light path %s to '
                     'integers: %s.' % (light_path, str(e))
-                    )
+                )
         return states
 
     def _filter_grid_states(self, grid_info, states: dict = None):
         """Filter a dictionary of states by grid. Only light paths relevant to the given
         grid will be returned.
-        
+
         Args:
             grid_info: Grid information of the grid.
             states: A dictionary of states. Light paths as keys and lists of 8760 values
                 for each key. The values should be integers matching the states or -1 for
                 off.
-        
+
         Returns:
             A filtered states dictionary.
         """
@@ -849,7 +860,7 @@ class Results(_ResultsFolder):
         return states
 
     def _array_from_states(
-        self, grid_info, states: dict = None, res_type: str = 'total') -> np.ndarray:
+            self, grid_info, states: dict = None, res_type: str = 'total') -> np.ndarray:
         """Create an array for a given grid by the states settings.
 
         Args:
@@ -857,8 +868,8 @@ class Results(_ResultsFolder):
             states: A dictionary of states. Light paths as keys and lists of 8760 values
                 for each key. The values should be integers matching the states or -1 for
                 off.
-            res_type: Which type of result to create an array for. E.g., 'total' for total
-                illuminance or 'direct' for direct illuminance.
+            res_type: Which type of result to create an array for. E.g., 'total'
+                for total illuminance or 'direct' for direct illuminance.
 
         Returns:
             A NumPy array based on the states settings.
