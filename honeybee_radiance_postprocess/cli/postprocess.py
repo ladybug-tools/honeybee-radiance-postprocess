@@ -51,7 +51,7 @@ def post_process():
     show_default=True
 )
 @click.option(
-    '--sub_folder', '-sf', help='Optional relative path for subfolder to write output '
+    '--sub-folder', '-sf', help='Optional relative path for subfolder to write output '
     'metric files.', default='metrics'
 )
 def annual_metrics(
@@ -70,10 +70,10 @@ def annual_metrics(
 
     \b
     Args:
-        folder: Results folder. This folder is an output folder of annual
-        daylight recipe. Folder should include grids_info.json and sun-up-hours.txt.
-        The command uses the list in grids_info.json to find the result files for each
-        sensor grid.
+        folder: Results folder. This folder is an output folder of annual daylight
+            recipe. Folder should include grids_info.json and sun-up-hours.txt. The
+            command uses the list in grids_info.json to find the result files for each
+            sensor grid.
     """
     # optional input - only check if the file exist otherwise ignore
     if schedule and os.path.isfile(schedule):
@@ -91,7 +91,7 @@ def annual_metrics(
         results.annual_metrics_to_folder(
             sub_folder, threshold=threshold, min_t=lower_threshold,
             max_t=upper_threshold, states=states, grids_filter=grids_filter
-            )
+        )
     except Exception:
         _logger.exception('Failed to calculate annual metrics.')
         sys.exit(1)
@@ -105,8 +105,8 @@ def annual_metrics(
     type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
 )
 @click.option(
-    '--hoys-file', '-h', help='Path to an HOYs file. Values must be separated by new line. '
-    'If not provided the data will not be filtered by HOYs.',
+    '--hoys-file', '-h', help='Path to an HOYs file. Values must be separated by '
+    'new line. If not provided the data will not be filtered by HOYs.',
     type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
@@ -124,7 +124,7 @@ def annual_metrics(
     'and direct results. Default is total.'
 )
 @click.option(
-    '--sub_folder', '-sf', help='Optional relative path for subfolder to write output '
+    '--sub-folder', '-sf', help='Optional relative path for subfolder to write output '
     'metric files.', default='metrics'
 )
 def average_values(
@@ -134,24 +134,24 @@ def average_values(
 
     \b
     Args:
-        folder: Results folder. This folder is an output folder of annual
-        daylight recipe. Folder should include grids_info.json and sun-up-hours.txt.
-        The command uses the list in grids_info.json to find the result files for each
-        sensor grid.
+        folder: Results folder. This folder is an output folder of annual daylight
+            recipe. Folder should include grids_info.json and sun-up-hours.txt. The
+            command uses the list in grids_info.json to find the result files for each
+            sensor grid.
     """
-    if hoys_file:
-        with open(hoys_file) as hoys:
-            hoys = [int(h) for h in hoys.readlines()]
-    else:
-        hoys = []
-
-    if states:
-        with open(states) as json_file:
-            states = json.load(json_file)
-
-    res_type = 'total' if total is True else 'direct'
- 
     try:
+        if hoys_file:
+            with open(hoys_file) as hoys:
+                hoys = [float(h) for h in hoys.readlines()]
+        else:
+            hoys = []
+
+        if states:
+            with open(states) as json_file:
+                states = json.load(json_file)
+
+        res_type = 'total' if total is True else 'direct'
+
         results = Results(folder)
         results.average_values_to_folder(
             sub_folder, hoys=hoys, states=states, grids_filter=grids_filter,
@@ -169,8 +169,8 @@ def average_values(
     type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
 )
 @click.option(
-    '--hoys-file', '-h', help='Path to an HOYs file. Values must be separated by new line. '
-    'If not provided the data will not be filtered by HOYs.',
+    '--hoys-file', '-h', help='Path to an HOYs file. Values must be separated by '
+    'new line. If not provided the data will not be filtered by HOYs.',
     type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
@@ -188,7 +188,7 @@ def average_values(
     'and direct results. Default is total.'
 )
 @click.option(
-    '--sub_folder', '-sf', help='Optional relative path for subfolder to write output '
+    '--sub-folder', '-sf', help='Optional relative path for subfolder to write output '
     'metric files.', default='metrics'
 )
 def cumulative_values(
@@ -198,24 +198,24 @@ def cumulative_values(
 
     \b
     Args:
-        folder: Results folder. This folder is an output folder of annual
-        daylight recipe. Folder should include grids_info.json and sun-up-hours.txt.
-        The command uses the list in grids_info.json to find the result files for each
-        sensor grid.
+        folder: Results folder. This folder is an output folder of annual daylight
+            recipe. Folder should include grids_info.json and sun-up-hours.txt. The
+            command uses the list in grids_info.json to find the result files for each
+            sensor grid.
     """
-    if hoys_file:
-        with open(hoys_file) as hoys:
-            hoys = [int(h) for h in hoys.readlines()]
-    else:
-        hoys = []
-
-    if states:
-        with open(states) as json_file:
-            states = json.load(json_file)
-
-    res_type = 'total' if total is True else 'direct'
- 
     try:
+        if hoys_file:
+            with open(hoys_file) as hoys:
+                hoys = [float(h) for h in hoys.readlines()]
+        else:
+            hoys = []
+
+        if states:
+            with open(states) as json_file:
+                states = json.load(json_file)
+
+        res_type = 'total' if total is True else 'direct'
+
         results = Results(folder)
         results.cumulative_values_to_folder(
             sub_folder, hoys=hoys, states=states, grids_filter=grids_filter,
@@ -233,8 +233,8 @@ def cumulative_values(
     type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
 )
 @click.option(
-    '--hoys-file', '-h', help='Path to an HOYs file. Values must be separated by new line. '
-    'If not provided the data will not be filtered by HOYs.',
+    '--hoys-file', '-h', help='Path to an HOYs file. Values must be separated by '
+    'new line. If not provided the data will not be filtered by HOYs.',
     type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
@@ -258,7 +258,7 @@ def cumulative_values(
     'overall value across each sensor grid at a particular timestep (True).'
 )
 @click.option(
-    '--sub_folder', '-sf', help='Optional relative path for subfolder to write output '
+    '--sub-folder', '-sf', help='Optional relative path for subfolder to write output '
     'metric files.', default='metrics'
 )
 def peak_values(
@@ -268,24 +268,24 @@ def peak_values(
 
     \b
     Args:
-        folder: Results folder. This folder is an output folder of annual
-        daylight recipe. Folder should include grids_info.json and sun-up-hours.txt.
-        The command uses the list in grids_info.json to find the result files for each
-        sensor grid.
+        folder: Results folder. This folder is an output folder of annual daylight
+            recipe. Folder should include grids_info.json and sun-up-hours.txt. The
+            command uses the list in grids_info.json to find the result files for each
+            sensor grid.
     """
-    if hoys_file:
-        with open(hoys_file) as hoys:
-            hoys = [int(h) for h in hoys.readlines()]
-    else:
-        hoys = []
-
-    if states:
-        with open(states) as json_file:
-            states = json.load(json_file)
-
-    res_type = 'total' if total is True else 'direct'
- 
     try:
+        if hoys_file:
+            with open(hoys_file) as hoys:
+                hoys = [float(h) for h in hoys.readlines()]
+        else:
+            hoys = []
+
+        if states:
+            with open(states) as json_file:
+                states = json.load(json_file)
+
+        res_type = 'total' if total is True else 'direct'
+
         results = Results(folder)
         results.peak_values_to_folder(
             sub_folder, hoys=hoys, states=states, grids_filter=grids_filter,
@@ -323,20 +323,21 @@ def peak_values(
     'and direct results. Default is total.'
 )
 @click.option(
-    '--sub_folder', '-sf', help='Optional relative path for subfolder to write output '
-    'metric files.', default='metrics'
+    '--output-file', '-f', help='Optional file to output the JSON strings of '
+    'the data collections. By default, it will be printed to stdout',
+    type=click.File('w'), default='-', show_default=True
 )
 def annual_to_data(
-    folder, states, grids_filter, sensor_index, total, sub_folder
+    folder, states, grids_filter, sensor_index, total, output_file
 ):
     """Get annual data collections as JSON files.
 
     \b
     Args:
-        folder: Results folder. This folder is an output folder of annual
-        daylight recipe. Folder should include grids_info.json and sun-up-hours.txt.
-        The command uses the list in grids_info.json to find the result files for each
-        sensor grid.
+        folder: Results folder. This folder is an output folder of annual daylight
+            recipe. Folder should include grids_info.json and sun-up-hours.txt. The
+            command uses the list in grids_info.json to find the result files for each
+            sensor grid.
     """
     if states:
         with open(states) as json_file:
@@ -347,12 +348,14 @@ def annual_to_data(
             sensor_index = json.load(json_file)
 
     res_type = 'total' if total is True else 'direct'
- 
+
     try:
         results = Results(folder)
-        results.annual_data_to_folder(
-            sub_folder, states=states, grids_filter=grids_filter,
+        data_cs, grids_info, sensor_index = results.annual_data(
+            states=states, grids_filter=grids_filter,
             sensor_index=sensor_index, res_type=res_type)
+        data_colls = [[data.to_dict() for data in data_list] for data_list in data_cs]
+        output_file.write(json.dumps(data_colls))
     except Exception:
         _logger.exception('Failed to create data collections.')
         sys.exit(1)

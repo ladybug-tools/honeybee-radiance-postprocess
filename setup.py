@@ -19,7 +19,9 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude=["tests*"]),
     install_requires=requirements,
     entry_points={
-        "console_scripts": ["honeybee-radiance-postprocess = honeybee_radiance_postprocess.cli:radiance"]
+        "console_scripts": [
+            "honeybee-radiance-postprocess = honeybee_radiance_postprocess.cli:radiance"
+        ]
     },
     classifiers=[
         "Programming Language :: Python :: 2.7",
