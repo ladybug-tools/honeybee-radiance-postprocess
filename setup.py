@@ -20,7 +20,7 @@ setuptools.setup(
     install_requires=requirements,
     entry_points={
         "console_scripts": [
-            "honeybee-radiance-postprocess = honeybee_radiance_postprocess.cli:radiance"
+            "honeybee-radiance-postprocess = honeybee_radiance_postprocess.cli:postprocess"
         ]
     },
     classifiers=[
