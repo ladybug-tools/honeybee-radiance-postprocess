@@ -1,5 +1,4 @@
 """Post-processing reader functions."""
-
 import numpy as np
 
 from .util import binary_mtx_dimension
@@ -9,7 +8,7 @@ def binary_to_array(
         binary_file: str, nrows: int = None, ncols: int = None, ncomp: int = None,
         line_count: int = 0) -> np.ndarray:
     """Read a Radiance binary file as a NumPy array.
-    
+
     Args:
         binary_file: Path to binary Radiance file.
         nrows: Number of rows in the Radiance file.
@@ -17,7 +16,7 @@ def binary_to_array(
         ncomp: Number of components of each element in the Radiance file.
         line_count: Number of lines to skip in the input file. Usually used to
             skip the header.
-    
+
     Returns:
         A NumPy array.
     """
@@ -43,7 +42,7 @@ def ascii_to_array(
         ascii_file: str, nrows: int = None, ncols: int = None, ncomp: int = None,
         line_count: int = 0) -> np.ndarray:
     """Read a Radiance ascii file as a NumPy array.
-    
+
     Args:
         ascii_file: Path to ascii Radiance file.
         nrows: Number of rows in the Radiance file.
@@ -51,7 +50,7 @@ def ascii_to_array(
         ncomp: Number of components of each element in the Radiance file.
         line_count: Number of lines to skip in the input file. Usually used to
             skip the header.
-    
+
     Returns:
         A NumPy array.
     """
