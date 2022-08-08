@@ -1,15 +1,16 @@
-"""Commands to work with Radiance matrix using NumPy."""
-import click
+"""Commands to work with Radiance matrices using NumPy."""
 import sys
 import logging
+from pathlib import Path
 import numpy as np
+import click
 
-from ..reader import binary_to_array
+from ..reader import binary_to_array, ascii_to_array
 
 _logger = logging.getLogger(__name__)
 
 
-@click.group(help='Commands to work with Radiance matrix using NumPy.')
+@click.group(help='Commands to work with Radiance matrices using NumPy.')
 def mtxop():
     pass
 
@@ -30,10 +31,18 @@ def mtxop():
     'the results from 3 RGB components into one as part of this command.'
 )
 @click.option(
+    '--binary/--ascii', is_flag=True, default=True, help='Switch between binary '
+    'and ascii input matrices. Default is binary.'
+)
+@click.option(
     '--name', '-n', help='Output file name.', default='output', show_default=True
 )
+@click.option(
+    '--output-folder', '-of', help='Output folder.', default='.',
+    type=click.Path(exists=False, file_okay=False, dir_okay=True, resolve_path=True)
+)
 def two_matrix_operations(
-    first_mtx, second_mtx, operator, conversion, name
+    first_mtx, second_mtx, operator, conversion, binary, name, output_folder
         ):
     """Operations between two Radiance matrices.
 
@@ -46,8 +55,12 @@ def two_matrix_operations(
         second-mtx: Path to second matrix.
     """
     try:
-        first = binary_to_array(first_mtx)
-        second = binary_to_array(second_mtx)
+        if binary:
+            first = binary_to_array(first_mtx)
+            second = binary_to_array(second_mtx)
+        else:
+            first = ascii_to_array(first_mtx)
+            second = ascii_to_array(second_mtx)
 
         data = eval('first %s second' % operator)
 
@@ -56,7 +69,9 @@ def two_matrix_operations(
             conversion = np.array(conversion, dtype=np.float32)
             data = np.dot(data, conversion)
 
-        np.save(name, data)
+        output = Path(output_folder, name)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        np.save(output, data)
 
     except Exception:
         _logger.exception('Operation on two Radiance matrix failed.')
@@ -88,11 +103,20 @@ def two_matrix_operations(
     'the results from 3 RGB components into one as part of this command.'
 )
 @click.option(
+    '--binary/--ascii', is_flag=True, default=True, help='Switch between binary '
+    'and ascii input matrices. Default is binary.'
+)
+@click.option(
     '--name', '-n', help='Output file name.', default='output', show_default=True
 )
+@click.option(
+    '--output-folder', '-of', help='Output folder.', default='.',
+    type=click.Path(exists=False, file_okay=False, dir_okay=True, resolve_path=True)
+)
 def three_matrix_operations(
-    first_mtx, second_mtx, third_mtx, operator_one, operator_two, conversion, name
-        ):
+    first_mtx, second_mtx, third_mtx, operator_one, operator_two, conversion,
+    binary, name, output_folder
+    ):
     """Operations between three Radiance matrices.
 
     The input matrices must be Radiance binary matrices. The operations will be performed
@@ -105,9 +129,14 @@ def three_matrix_operations(
         third-mtx: Path to third matrix.
     """
     try:
-        first = binary_to_array(first_mtx)
-        second = binary_to_array(second_mtx)
-        third = binary_to_array(third_mtx)
+        if binary:
+            first = binary_to_array(first_mtx)
+            second = binary_to_array(second_mtx)
+            third = binary_to_array(third_mtx)
+        else:
+            first = ascii_to_array(first_mtx)
+            second = ascii_to_array(second_mtx)
+            third = ascii_to_array(third_mtx)
 
         data = eval('first %s second %s third' % (operator_one, operator_two))
 
@@ -116,7 +145,9 @@ def three_matrix_operations(
             conversion = np.array(conversion, dtype=np.float32)
             data = np.dot(data, conversion)
 
-        np.save(name, data)
+        output = Path(output_folder, name)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        np.save(output, data)
 
     except Exception:
         _logger.exception('Operation on three Radiance matrix failed.')
