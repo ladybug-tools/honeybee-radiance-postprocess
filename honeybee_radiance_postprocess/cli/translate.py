@@ -1,8 +1,9 @@
 """Commands to translate objects."""
-import click
 import sys
 import logging
 import numpy as np
+import click
+from pathlib import Path
 
 from ..reader import binary_to_array
 
@@ -22,15 +23,17 @@ def translate():
     '--name', '-n', help='Output file name.', default='output', show_default=True
 )
 @click.option(
+    '--output-folder', '-of', help='Output folder.', default='.',
+    type=click.Path(exists=False, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.option(
     '--extension', '-ext', help='Output file extension', default='.txt', show_default=True
 )
 @click.option(
-    '--format', '-fmt', help='Output format for each element in the array',
+    '--output-format', '-fmt', help='Output format for each element in the array',
     default='%.7e', show_default=True
 )
-def npy_to_txt(
-    npy_file, name, extension, format
-        ):
+def npy_to_txt(npy_file, name, output_folder, extension, output_format):
     """Convert a npy file to text file.
 
     This command reads a NumPy array from a npy file and saves it as readable file. The
@@ -42,7 +45,9 @@ def npy_to_txt(
     """
     try:
         array = np.load(npy_file)
-        np.savetxt(name + extension, array, fmt=format, delimiter='\t')
+        output = Path(output_folder, name + extension)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        np.savetxt(output, array, fmt=output_format, delimiter='\t')
 
     except Exception:
         _logger.exception('Converting npy file to text file failed.')
@@ -58,9 +63,11 @@ def npy_to_txt(
 @click.option(
     '--name', '-n', help='Output file name.', default='output', show_default=True
 )
-def txt_to_npy(
-    txt_file, name
-        ):
+@click.option(
+    '--output-folder', '-of', help='Output folder.', default='.',
+    type=click.Path(exists=False, file_okay=False, dir_okay=True, resolve_path=True)
+)
+def txt_to_npy(txt_file, name, output_folder):
     """Convert a text file to npy file.
 
     This command reads a space or tab separated text file saves it as a NumPy file. As
@@ -72,7 +79,9 @@ def txt_to_npy(
     """
     try:
         array = np.loadtxt(txt_file, dtype=np.float32)
-        np.save(name, array)
+        output = Path(output_folder, name)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        np.save(output, array)
 
     except Exception:
         _logger.exception('Converting text file to npy file failed.')
@@ -92,9 +101,11 @@ def txt_to_npy(
 @click.option(
     '--name', '-n', help='Output file name.', default='output', show_default=True
 )
-def binary_to_npy(
-    mtx_file, conversion, name
-        ):
+@click.option(
+    '--output-folder', '-of', help='Output folder.', default='.',
+    type=click.Path(exists=False, file_okay=False, dir_okay=True, resolve_path=True)
+)
+def binary_to_npy(mtx_file, conversion, name, output_folder):
     """Convert a binary Radiance file to a npy file.
 
     This command reads a binary Radiance matrix file and saves it as a NumPy file.
@@ -109,7 +120,9 @@ def binary_to_npy(
             conversion = list(map(float, conversion.split(' ')))
             conversion = np.array(conversion, dtype=np.float32)
             array = np.dot(array, conversion)
-        np.save(name, array)
+        output = Path(output_folder, name)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        np.save(output, array)
 
     except Exception:
         _logger.exception('Converting binary Radiance file to npy file failed.')
