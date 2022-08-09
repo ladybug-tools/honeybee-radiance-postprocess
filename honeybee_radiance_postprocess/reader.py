@@ -5,8 +5,8 @@ from .util import binary_mtx_dimension
 
 
 def binary_to_array(
-        binary_file: str, nrows: int = None, ncols: int = None, ncomp: int = None,
-        line_count: int = 0) -> np.ndarray:
+        binary_file: str, nrows: int = None, ncols: int = None,
+        ncomp: int = None, line_count: int = 0) -> np.ndarray:
     """Read a Radiance binary file as a NumPy array.
 
     Args:
@@ -20,7 +20,6 @@ def binary_to_array(
     Returns:
         A NumPy array.
     """
-
     with open(binary_file, 'rb') as reader:
         if (nrows or ncols or ncomp) is None:
             # get nrows, ncols and header line count
@@ -39,8 +38,8 @@ def binary_to_array(
 
 
 def ascii_to_array(
-        ascii_file: str, nrows: int = None, ncols: int = None, ncomp: int = None,
-        line_count: int = 0) -> np.ndarray:
+        ascii_file: str, nrows: int = None, ncols: int = None,
+        ncomp: int = None, line_count: int = 0) -> np.ndarray:
     """Read a Radiance ascii file as a NumPy array.
 
     Args:
@@ -58,7 +57,7 @@ def ascii_to_array(
         if (nrows or ncols or ncomp) is None:
             # get nrows, ncols and header line count
             # we can reuse binary_mtx_dimension though the input file is ascii
-            nrows, ncols, ncomp, line_count = binary_mtx_dimension(ascii_file) 
+            nrows, ncols, ncomp, line_count = binary_mtx_dimension(ascii_file)
 
         array = np.loadtxt(reader, dtype=np.float32, skiprows=line_count)
         if ncomp != 1:

@@ -1,9 +1,15 @@
-import numpy as np
+"""Post-processing Results class."""
 import json
 from pathlib import Path
 from itertools import islice, cycle
-from typing import Dict, Union
+from typing import Tuple, Union
+import numpy as np
 
+from ladybug.analysisperiod import AnalysisPeriod
+from ladybug.datacollection import HourlyContinuousCollection
+from ladybug.datatype.illuminance import Illuminance
+from ladybug.dt import DateTime
+from ladybug.header import Header
 from honeybee_radiance.postprocess.annual import _process_input_folder, \
     filter_schedule_by_hours, generate_default_schedule
 from .metrics import da_array2d, cda_array2d, udi_array2d, \
@@ -11,11 +17,6 @@ from .metrics import da_array2d, cda_array2d, udi_array2d, \
     cumulative_values_array2d, peak_values_array2d
 from .util import filter_array, hoys_mask, check_array_dim
 from .annualdaylight import _annual_daylight_config
-from ladybug.analysisperiod import AnalysisPeriod
-from ladybug.datacollection import HourlyContinuousCollection
-from ladybug.datatype.illuminance import Illuminance
-from ladybug.dt import DateTime
-from ladybug.header import Header
 
 
 class _ResultsFolder(object):
@@ -128,6 +129,7 @@ class _ResultsFolder(object):
             return None
 
     def _set_timestep(self) -> float:
+        """Set timestep."""
         timestep_file = Path(self.folder, 'timestep.txt')
         if timestep_file.is_file():
             with open(timestep_file) as file:
@@ -138,7 +140,7 @@ class _ResultsFolder(object):
         return timestep
 
     def __repr__(self):
-        return '%s: %s' % (self.__class__.__name__, self.folder)
+        return f'{self.__class__.__name__}: {self.folder}'
 
 
 class Results(_ResultsFolder):
@@ -221,9 +223,19 @@ class Results(_ResultsFolder):
         of valid states, e.g., [0, 1, 2, ...]."""
         return self._valid_states
 
-    def daylight_autonomy(
-            self, threshold: float = 300, states: dict = None, grids_filter: str = '*'):
+    def daylight_autonomy(self, threshold: float = 300, states: dict = None,
+                          grids_filter: str = '*') -> Tuple[list, list]:
+        """Calculate daylight autonomy.
 
+        Args:
+            threshold: Threshold value for daylight autonomy. Defaults to 300.
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+
+        Returns:
+            Tuple: A tuple with the daylight autonomy and grid information.
+        """
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         da = []
@@ -238,11 +250,23 @@ class Results(_ResultsFolder):
                 results = np.zeros(grid_info['count'])
             da.append(results)
 
-        return da
+        return da, grids_info
 
     def continuous_daylight_autonomy(
-            self, threshold: float = 300, states: dict = None, grids_filter: str = '*'):
+            self, threshold: float = 300, states: dict = None,
+            grids_filter: str = '*') -> Tuple[list, list]:
+        """Calculate continuous daylight autonomy.
 
+        Args:
+            threshold: Threshold value for daylight autonomy. Defaults to 300.
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+
+        Returns:
+            Tuple: A tuple with the continuous daylight autonomy and grid
+                information.
+        """
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         cda = []
@@ -257,12 +281,23 @@ class Results(_ResultsFolder):
                 results = np.zeros(grid_info['count'])
             cda.append(results)
 
-        return cda
+        return cda, grids_info
 
     def useful_daylight_illuminance(
             self, min_t: float = 100, max_t: float = 3000, states: dict = None,
-            grids_filter: str = '*'):
+            grids_filter: str = '*') -> Tuple[list, list]:
+        """Calculate useful daylight illuminance.
 
+        Args:
+            min_t: Minimum threshold for useful daylight illuminance. Defaults to 100.
+            max_t: Maximum threshold for useful daylight illuminance. Defaults to 3000.
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+
+        Returns:
+            Tuple: A tuple with the useful daylight illuminance and grid information.
+        """
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         udi = []
@@ -277,11 +312,23 @@ class Results(_ResultsFolder):
                 results = np.zeros(grid_info['count'])
             udi.append(results)
 
-        return udi
+        return udi, grids_info
 
     def useful_daylight_illuminance_lower(
-            self, min_t: float = 100, states: dict = None, grids_filter: str = '*'):
+            self, min_t: float = 100, states: dict = None,
+            grids_filter: str = '*') -> Tuple[list, list]:
+        """Calculate lower than useful daylight illuminance.
 
+        Args:
+            min_t: Minimum threshold for useful daylight illuminance. Defaults to 100.
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+
+        Returns:
+            Tuple: A tuple with the lower than useful daylight illuminance and
+                grid information.
+        """
         grids_info = self._filter_grids(grids_filter=grids_filter)
         sun_down_occ_hours = self.sun_down_occ_hours
 
@@ -298,11 +345,23 @@ class Results(_ResultsFolder):
                 results = np.zeros(grid_info['count'])
             udi_lower.append(results)
 
-        return udi_lower
+        return udi_lower, grids_info
 
     def useful_daylight_illuminance_upper(
-            self, max_t: float = 3000, states: dict = None, grids_filter: str = '*'):
+            self, max_t: float = 3000, states: dict = None,
+            grids_filter: str = '*') -> Tuple[list, list]:
+        """Calculate higher than useful daylight illuminance.
 
+        Args:
+            max_t: Maximum threshold for useful daylight illuminance. Defaults to 3000.
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+
+        Returns:
+            Tuple: A tuple with the higher than useful daylight illuminance and
+                grid information.
+        """
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         udi_upper = []
@@ -317,12 +376,32 @@ class Results(_ResultsFolder):
                 results = np.zeros(grid_info['count'])
             udi_upper.append(results)
 
-        return udi_upper
+        return udi_upper, grids_info
 
     def annual_metrics(
-            self, threshold: float = 300, min_t: float = 100, max_t: float = 3000,
-            states: dict = None, grids_filter: str = '*'):
+            self, threshold: float = 300, min_t: float = 100,
+            max_t: float = 3000, states: dict = None,
+            grids_filter: str = '*') -> Tuple[list, list, list, list, list, list]:
+        """Calculate multiple annual daylight metrics.
 
+        This method will calculate the following metrics:
+            * Daylight autonomy
+            * Continuous daylight autonomy
+            * Useful daylight illuminance
+            * Lower than useful daylight illuminance
+            * Higher than useful daylight illuminance
+
+        Args:
+            threshold: Threshold value for daylight autonomy. Defaults to 300.
+            min_t: Minimum threshold for useful daylight illuminance. Defaults to 100.
+            max_t: Maximum threshold for useful daylight illuminance. Defaults to 3000.
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+
+        Returns:
+            Tuple: A tuple with the five annual daylight metrics and grid information.
+        """
         grids_info = self._filter_grids(grids_filter=grids_filter)
         sun_down_occ_hours = self.sun_down_occ_hours
 
@@ -360,9 +439,28 @@ class Results(_ResultsFolder):
 
     def annual_metrics_to_folder(
             self, target_folder: str, threshold: float = 300,
-            min_t: float = 100, max_t: float = 3000,
-            states: dict = None, grids_filter: str = '*', config: Dict = None):
+            min_t: float = 100, max_t: float = 3000, states: dict = None,
+            grids_filter: str = '*', config: dict = None):
+        """Calculate and write multiple annual daylight metrics to a folder.
 
+        This method will calculate the following metrics:
+            * Daylight autonomy
+            * Continuous daylight autonomy
+            * Useful daylight illuminance
+            * Lower than useful daylight illuminance
+            * Higher than useful daylight illuminance
+
+        Args:
+            target_folder: Folder path to write annual metrics in. Usually this
+                folder is called 'metrics'.
+            threshold: Threshold value for daylight autonomy. Defaults to 300.
+            min_t: Minimum threshold for useful daylight illuminance. Defaults to 100.
+            max_t: Maximum threshold for useful daylight illuminance. Defaults to 3000.
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+            config: _description_. Defaults to None.
+        """
         folder = Path(target_folder)
         folder.mkdir(parents=True, exist_ok=True)
 
@@ -394,8 +492,19 @@ class Results(_ResultsFolder):
 
     def point_in_time(
             self, datetime: Union[int, DateTime], states: dict = None,
-            grids_filter: str = '*', res_type: str = 'total'):
+            grids_filter: str = '*', res_type: str = 'total') -> Tuple[list, list]:
+        """Get point in time values.
 
+        Args:
+            datetime: Hour of the as an integer or DateTime object.
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+            res_type: Type of results to load. Defaults to 'total'.
+
+        Returns:
+            Tuple: A tuple with point in time values and grid information.
+        """
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         if isinstance(datetime, int):
@@ -403,9 +512,12 @@ class Results(_ResultsFolder):
         elif isinstance(datetime, DateTime):
             dt = datetime
         else:
-            raise ValueError(
-                'Input datetime must be of type %s or %s. Received %s.'
-                % (int, DateTime, type(datetime)))
+            error_message = (
+                f'Input datetime must be of type {int} or {DateTime}. '
+                f'Received {type(DateTime)}.'
+            )
+            raise ValueError(error_message)
+
         idx = self._index_from_datetime(dt)
 
         pit_values = []
@@ -418,26 +530,27 @@ class Results(_ResultsFolder):
                 # datetime not in sun up hours, add zeros
                 pit_values.append(np.zeros(grid_info['count']))
 
-        return pit_values
+        return pit_values, grids_info
 
     def average_values(
             self, hoys: list = [], states: dict = None, grids_filter: str = '*',
-            res_type: str = 'total'):
+            res_type: str = 'total') -> Tuple[list, list]:
         """Get average values for each sensor over a given period.
 
-        The hoys input can be used to filter the data for a particular time period.
+        The hoys input can be used to filter the data for a particular time
+        period.
 
         Args:
-            hoys: An optional numbers or list of numbers to select the hours of the year
-                (HOYs) for which results will be computed.
-            states: A dictionary of states.
+            hoys: An optional numbers or list of numbers to select the hours of
+                the year (HOYs) for which results will be computed. Defaults to [].
+            states: A dictionary of states. Defaults to None.
             grids_filter: The name of a grid or a pattern to filter the grids.
-            res_type: Type of results to load.
+                Defaults to '*'.
+            res_type: Type of results to load. Defaults to 'total'.
 
         Returns:
-            Average value for each sensor.
+            Tuple: A tuple with the average value for each sensor and grid information.
         """
-
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         full_length = 8760 * self.timestep if len(hoys) == 0 else len(hoys)
@@ -460,7 +573,19 @@ class Results(_ResultsFolder):
     def average_values_to_folder(
             self, target_folder: str, hoys: list = [], states: dict = None,
             grids_filter: str = '*', res_type: str = 'total'):
+        """Get average values for each sensor over a given period and write the
+        values to a folder.
 
+        Args:
+            target_folder: Folder path to write annual metrics in. Usually this
+                folder is called 'metrics'.
+            hoys: An optional numbers or list of numbers to select the hours of
+                the year (HOYs) for which results will be computed. Defaults to [].
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+            res_type: Type of results to load. Defaults to 'total'.
+        """
         folder = Path(target_folder)
         folder.mkdir(parents=True, exist_ok=True)
 
@@ -482,22 +607,24 @@ class Results(_ResultsFolder):
 
     def cumulative_values(
             self, hoys: list = [], states: dict = None, grids_filter: str = '*',
-            res_type: str = 'total'):
+            res_type: str = 'total') -> Tuple[list, list]:
         """Get cumulative values for each sensor over a given period.
 
-        The hoys input can be used to filter the data for a particular time period.
+        The hoys input can be used to filter the data for a particular time
+        period.
 
         Args:
-            hoys: An optional numbers or list of numbers to select the hours of the year
-                (HOYs) for which results will be computed.
-            states: A dictionary of states.
+            hoys: An optional numbers or list of numbers to select the hours of
+                the year (HOYs) for which results will be computed. Defaults to [].
+            states: A dictionary of states. Defaults to None.
             grids_filter: The name of a grid or a pattern to filter the grids.
-            res_type: Type of results to load.
+                Defaults to '*'.
+            res_type: Type of results to load. Defaults to 'total'.
 
         Returns:
-            Cumulative value for each sensor.
+            Tuple: A tuple with the cumulative value for each sensor and grid
+                information.
         """
-
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         mask = hoys_mask(self.sun_up_hours, hoys, self.timestep)
@@ -519,7 +646,19 @@ class Results(_ResultsFolder):
     def cumulative_values_to_folder(
             self, target_folder: str, hoys: list = [], states: dict = None,
             grids_filter: str = '*', res_type: str = 'total'):
+        """Get cumulative values for each sensor over a given period and write
+        the values to a folder.
 
+        Args:
+            target_folder: Folder path to write annual metrics in. Usually this
+                folder is called 'metrics'.
+            hoys: An optional numbers or list of numbers to select the hours of
+                the year (HOYs) for which results will be computed. Defaults to [].
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+            res_type: Type of results to load. Defaults to 'total'.
+        """
         folder = Path(target_folder)
         folder.mkdir(parents=True, exist_ok=True)
 
@@ -540,26 +679,27 @@ class Results(_ResultsFolder):
 
     def peak_values(
             self, hoys: list = [], states: dict = None, grids_filter: str = '*',
-            coincident: bool = False, res_type: str = 'total'):
+            coincident: bool = False, res_type: str = 'total') -> Tuple[list, list]:
         """Get peak values for each sensor over a given period.
 
-        The hoys input can be used to filter the data for a particular time period.
+        The hoys input can be used to filter the data for a particular time
+        period.
 
         Args:
-            hoys: An optional numbers or list of numbers to select the hours of the year
-                (HOYs) for which results will be computed.
-            states: A dictionary of states.
+            hoys: An optional numbers or list of numbers to select the hours of
+                the year (HOYs) for which results will be computed. Defaults to [].
+            states: A dictionary of states. Defaults to None.
             grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
             coincident: Boolean to indicate whether output values represent the peak
                 value for each sensor throughout the entire analysis (False) or they
                 represent the highest overall value across each sensor grid at a
-                particular timestep (True).
-            res_type: Type of results to load.
+                particular timestep (True). Defaults to False.
+            res_type: Type of results to load. Defaults to 'total'.
 
         Returns:
-            Peak value for each sensor.
+            Tuple: A tuple with the peak value for each sensor and grid information.
         """
-
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         mask = hoys_mask(self.sun_up_hours, hoys, self.timestep)
@@ -586,7 +726,22 @@ class Results(_ResultsFolder):
     def peak_values_to_folder(
             self, target_folder: str, hoys: list = [], states: dict = None,
             grids_filter: str = '*', coincident: bool = False, res_type='total'):
+        """Get peak values for each sensor over a given period and write the
+        values to a folder.
 
+        Args:
+            target_folder: Folder path to write annual metrics in. Usually this
+                folder is called 'metrics'.
+            hoys: An optional numbers or list of numbers to select the hours of
+                the year (HOYs) for which results will be computed. Defaults to [].
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+            coincident: Boolean to indicate whether output values represent the peak
+                value for each sensor throughout the entire analysis (False) or they
+                represent the highest overall value across each sensor grid at a
+                particular timestep (True). Defaults to False.
+            res_type: Type of results to load. Defaults to 'total'.
+        """
         folder = Path(target_folder)
         folder.mkdir(parents=True, exist_ok=True)
 
@@ -608,8 +763,21 @@ class Results(_ResultsFolder):
 
     def annual_data(
             self, states: dict = None, grids_filter: str = '*',
-            sensor_index: dict = None, res_type: str = 'total'):
+            sensor_index: dict = None, res_type: str = 'total') -> Tuple[list, list, dict]:
+        """Get annual data for one or multiple sensors.
 
+        Args:
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+            sensor_index: A dictionary with grids as keys and a list of sensor
+                indices as values. Defaults to None.
+            res_type: Type of results to load. Defaults to 'total'.
+
+        Returns:
+            Tuple: A tuple with Data Collections for each sensor, grid information,
+                and a dictionary of the sensors.
+        """
         grids_info = self._filter_grids(grids_filter=grids_filter)
         analysis_period = AnalysisPeriod(timestep=self.timestep)
 
@@ -642,7 +810,19 @@ class Results(_ResultsFolder):
     def annual_data_to_folder(
             self, target_folder: str, states: dict = None, grids_filter: str = '*',
             sensor_index: dict = None, res_type: str = 'total'):
+        """Get annual data for one or multiple sensors and write the data to a
+        folder as Data Collections.
 
+        Args:
+            target_folder: Folder path to write annual metrics in. Usually this
+                folder is called 'metrics'.
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+            sensor_index: A dictionary with grids as keys and a list of sensor
+                indices as values. Defaults to None.
+            res_type: Type of results to load. Defaults to 'total'.
+        """
         folder = Path(target_folder)
         folder.mkdir(parents=True, exist_ok=True)
 
@@ -658,12 +838,29 @@ class Results(_ResultsFolder):
                 grid_id = grid_info['full_id']
                 sensor_id = data_collection.header.metadata['sensor index']
                 data_dict = data_collection.to_dict()
-                data_file = metric_folder.joinpath('%s_%s.json' % (grid_id, sensor_id))
+                data_file = metric_folder.joinpath(f'{grid_id}_{sensor_id}.json')
                 data_file.parent.mkdir(parents=True, exist_ok=True)
                 data_file.write_text(json.dumps(data_dict))
 
     @staticmethod
-    def sun_up_hours_to_annual(sun_up_hours, values, timestep):
+    def sun_up_hours_to_annual(
+            sun_up_hours: Union[list[float], np.ndarray], values: np.ndarray,
+            timestep: float) -> np.ndarray:
+        """Map a 1D NumPy array based on sun up hours to annual array.
+
+        This method creates an array with zeros of length 8760 and replaces the
+        zeros with the input 'values' at the indices of the input
+        'sun_up_hours'.
+
+        Args:
+            sun_up_hours: A list of sun up hours. This can be a regular list or
+                a 1D NumPy array.
+            values: A 1D NumPy array.
+            timestep: Timestep of the simulation.
+
+        Returns:
+            np.ndarray: A 1D NumPy array.
+        """
         check_array_dim(values, 1)
         sun_up_hours = np.array(sun_up_hours).astype(int)
         assert sun_up_hours.shape == values.shape
@@ -673,16 +870,20 @@ class Results(_ResultsFolder):
 
         return annual_array
 
-    def _index_from_datetime(self, datetime: DateTime):
-        """Returns the index of the input datetime in the list of datetimes from the
-        datetimes property.
+    def _index_from_datetime(self, datetime: DateTime) -> Union[int, None]:
+        """Returns the index of the input datetime in the list of datetimes
+        from the datetimes property.
+
         If the DateTime is not in the list, the function will return None.
 
         Args:
             datetime: A DateTime object.
+
+        Returns:
+            Index as an integer or None.
         """
         assert isinstance(datetime, DateTime), \
-            'Expected Ladybug DateTime input but received %s' % type(datetime)
+            f'Expected DateTime object but received {type(datetime)}'
         try:
             index = self.datetimes.index(datetime)
         except Exception:
@@ -691,8 +892,25 @@ class Results(_ResultsFolder):
 
         return index
 
-    def _get_array(self, grid_info: dict, light_path: str, state: int = 0,
-                   res_type: str = 'total', extension: str = '.npy') -> np.ndarray:
+    def _get_array(
+            self, grid_info: dict, light_path: str, state: int = 0,
+            res_type: str = 'total', extension: str = '.npy') -> np.ndarray:
+        """Get an array for a given grid, light path, and state.
+
+        The array will be fetched from the 'arrays' property if it has been
+        loaded already.
+
+        Args:
+            grid_info: Grid information.
+            light_path: Identifier of the light path.
+            state: State as an integer. E.g., 0 for the default state.
+                Defaults to 0.
+            res_type: Type of results to load. Defaults to 'total'.
+            extension: File extension of the array to load. Defaults to '.npy'.
+
+        Returns:
+            np.ndarray: A NumPy array of a given grid, light path, and state.
+        """
         grid_id = grid_info['identifier']
 
         state_identifier = self._state_identifier(grid_id, light_path, state=state)
@@ -704,24 +922,28 @@ class Results(_ResultsFolder):
                 grid_info, light_path, state=state, res_type=res_type,
                 extension=extension
             )
+
         return array
 
-    def _load_array(self, grid_info: dict, light_path: str, state: int = 0,
-                    res_type: str = 'total', extension: str = '.npy') -> np.ndarray:
+    def _load_array(
+            self, grid_info: dict, light_path: str, state: int = 0,
+            res_type: str = 'total', extension: str = '.npy') -> np.ndarray:
         """Load a NumPy file to an array.
 
         This method will also update the arrays property value.
 
         Args:
             grid_info: Grid information.
-            light_path: Light path identifier.
-            state: Integer of the state. E.g., 0 for the default state
+            light_path: Identifier of the light path.
+            state: State as an integer. E.g., 0 for the default state.
+                Defaults to 0.
             res_type: Which type of result to return a file for. E.g., 'total' for total
                 illuminance or 'direct' for direct illuminance.
-            extension: File extension. (Default: .npy).
+            extension: File extension of the array to load. Defaults to '.npy'.
 
         Returns:
-            A NumPy array from a NumPy file.
+            np.ndarray: A NumPy array of a given grid, light path, and state
+                from a NumPy file.
         """
         grid_id = grid_info['identifier']
         full_id = grid_info['full_id']
@@ -746,19 +968,21 @@ class Results(_ResultsFolder):
 
         return array
 
-    def _state_identifier(self, grid_id: str, light_path: str, state: int = 0) -> str:
+    def _state_identifier(
+            self, grid_id: str, light_path: str, state: int = 0) -> Union[str, None]:
         """Get the state identifier from a light path and state integer.
 
         Args:
             grid_id: Grid identifier.
-            light_path: Light path identifier.
-            state: Integer of the state. E.g., 0 for the default state. State integer
-                must be minimum 0, or in case of -1 it will return None.
+            light_path: Identifier of the light path.
+            state: State as an integer. E.g., 0 for the default state.
+                Defaults to 0.
 
         Returns:
-            State identifier. For static apertures the identifier is
-            'default', and for other light paths it is the light path
-            identifier preceded by the state integer, e.g., '0_light_path'.
+            State identifier. For static apertures the identifier is 'default',
+            and for other light paths it is the light path identifier preceded
+            by the state integer, e.g., '0_light_path'. If the state is -1 the
+            state identifier will be None.
         """
         # TODO: Figure out if there is a better way to handle the states.
         # I.e., state integer <--> state identifier.
@@ -772,21 +996,24 @@ class Results(_ResultsFolder):
         elif state == -1:
             return None
         else:
-            raise ValueError(
-                'State of %s must be any of %s for on or -1 for off. '
-                'Received state %s.' % (light_path, valid_states, state))
+            error_message = (
+                f'State of {light_path} must be any of {valid_states} for on '
+                f'or -1 for off. Received state {state}.'
+            )
+            raise ValueError(error_message)
 
-    def _get_file(self, grid_id: str, light_path: str, state_identifier: str,
-                  res_type: str = 'total', extension: str = '.npy') -> Path:
+    def _get_file(
+            self, grid_id: str, light_path: str, state_identifier: str,
+            res_type: str = 'total', extension: str = '.npy') -> Path:
         """Return the path of a results file.
 
         Args:
             grid_id: Grid identifier.
-            light_path: Light path identifier.
+            light_path: Identifier of the light path.
             state_identifier: State identifier.
             res_type: Which type of result to return a file for. E.g., 'total' for total
                 illuminance or 'direct' for direct illuminance.
-            extension: File extension. (Default: .npy).
+            extension: File extension of the array to load. Defaults to '.npy'.
 
         Returns:
             Path to a NumPy file.
@@ -796,56 +1023,90 @@ class Results(_ResultsFolder):
 
         return file
 
-    def _static_states(self, states: dict):
+    def _static_states(self, states: dict) -> bool:
+        """Return True if states dictionary is static only."""
         if all(len(values) == 1 for values in states.values()):
             return True
         else:
             return False
 
-    def _dynamic_states(self, states: dict):
+    def _dynamic_states(self, states: dict) -> bool:
+        """Return True if states dictionary is dynamic."""
         if any(len(values) != 1 for values in states.values()):
             return True
         else:
             return False
 
-    def _validate_dynamic_states(self, states: dict):
+    def _validate_dynamic_states(self, states: dict) -> dict:
+        """Validate dynamic states and return states dictionary.
+
+        If all light paths in the dictionary have 8760 values, the states
+        dictionary is returned as is. If some light paths have less than 8760
+        values, pattern of values will be repeated until it reaches a length of
+        8760.
+
+        Args:
+            states: A dictionary of states.
+
+        Returns:
+            dict: A dictionary of states.
+        """
         if all(len(values) == 8760 for values in states.values()):
             return states
         for light_path, values in states.items():
-            if len(values) < 8670:
+            if len(values) < 8760:
                 states[light_path] = list(islice(cycle(values), 8760))
             elif len(values) > 8760:
-                raise ValueError(
-                    'The light path %s has %s values in its states schedule. Maximum '
-                    'allowed number of values is 8760.' % (light_path, len(values))
+                error_message = (
+                    f'The light path {light_path} has {len(values)} values in '
+                    f'its states schedule. Maximum allowed number of values '
+                    f'is 8760.'
                 )
+                raise ValueError(error_message)
+
         return states
 
-    def _validate_states(self, states: dict):
+    def _validate_states(self, states: dict) -> dict:
+        """Validate states and return states dictionary.
+
+        If all light paths in the dictionary have integers only as values, the
+        states dictionary is returned as is. If some light paths have values
+        that are not integers, these values will be mapped as integers if
+        possible, e.g., if the values are strings ('0', '1', etc.) instead of
+        integers.
+
+        Args:
+            states: A dictionary of states.
+
+        Returns:
+            dict: A dictionary of states.
+        """
         if all(isinstance(v, int) for values in states.values() for v in values):
             return states
         for light_path, values in states.items():
             try:
                 states[light_path] = list(map(int, values))
-            except ValueError as e:
-                raise ValueError(
-                    'Failed to convert states schedule for light path %s to '
-                    'integers: %s.' % (light_path, str(e))
+            except ValueError as err:
+                error_message = (
+                    f'Failed to convert states schedule for light path '
+                    f'{light_path} to integers.'
                 )
+                raise ValueError(error_message) from err
+
         return states
 
-    def _filter_grid_states(self, grid_info, states: dict = None):
-        """Filter a dictionary of states by grid. Only light paths relevant to the given
-        grid will be returned.
+    def _filter_grid_states(self, grid_info, states: dict = None) -> dict:
+        """Filter a dictionary of states by grid. Only light paths relevant to
+        the given grid will be returned.
 
         Args:
-            grid_info: Grid information of the grid.
-            states: A dictionary of states. Light paths as keys and lists of 8760 values
-                for each key. The values should be integers matching the states or -1 for
-                off.
+            grid_info: Grid information.
+            states: A dictionary of states. Light paths as keys and lists of
+                8760 values for each key. The values should be integers
+                matching the states or -1 for off. Default to None.
 
         Returns:
-            A filtered states dictionary.
+            dict: A filtered states dictionary.
         """
         light_paths = [lp[0] for lp in grid_info['light_path']]
         if states:
@@ -918,8 +1179,16 @@ class Results(_ResultsFolder):
             filter_schedule_by_hours(sun_up_hours=sun_up_hours, schedule=schedule)
         self._occ_mask = np.array(self.occ_pattern)
 
-    def _filter_grids(self, grids_filter: str = '*'):
-        """Return grids information."""
+    def _filter_grids(self, grids_filter: str = '*') -> list:
+        """Return grids information.
+        
+        Args:
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+        
+        Returns:
+            list: List of grid information for filtered grids.
+        """
         if grids_filter != '*':
             grids_info, _ = _process_input_folder(self.folder, grids_filter)
         else:
@@ -927,22 +1196,22 @@ class Results(_ResultsFolder):
 
         return grids_info
 
-    def _load_arrays(self):
+    def _load_arrays(self) -> dict:
         """Load all the NumPy arrays in the results folder."""
-        arrays = dict()
+        arrays = {}
         grids_info = self.grids_info
 
         for grid_info in grids_info:
             grid_id = grid_info['identifier']
             light_paths = grid_info['light_path']
-            arrays[grid_id] = dict()
+            arrays[grid_id] = {}
             for light_path in light_paths:
                 light_path = light_path[0]
-                arrays[grid_id][light_path] = dict()
+                arrays[grid_id][light_path] = {}
                 light_path_folder = Path(self.folder, light_path)
                 for state_folder in Path(light_path_folder).iterdir():
                     state = state_folder.name
-                    arrays[grid_id][light_path][state] = dict()
+                    arrays[grid_id][light_path][state] = {}
                     for res_type_folder in Path(state_folder).iterdir():
                         res_type = res_type_folder.name
                         file = Path(res_type_folder, grid_id + '.npy')
@@ -954,8 +1223,8 @@ class Results(_ResultsFolder):
     def _get_valid_states(self) -> dict:
         """Returns a dictionary with valid states for each light path.
 
-        For each light path there will be a key (identifier of the light path) and its
-        value will be a list of valid states as integers.
+        For each light path there will be a key (identifier of the light path)
+        and its value will be a list of valid states as integers.
 
         Example of output format:
         {
@@ -965,8 +1234,11 @@ class Results(_ResultsFolder):
             'Room2_North1': [0, 1],
             'Room2_North2': [0, 1]
         }
+
+        Returns:
+            dict: Valid states integers for each light path.
         """
-        valid_states = dict()
+        valid_states = {}
         grid_states = self.grid_states
         if '__static_apertures__' in self.light_paths:
             valid_states['__static_apertures__'] = [0]
