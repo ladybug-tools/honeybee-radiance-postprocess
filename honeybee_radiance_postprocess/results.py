@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 from itertools import islice, cycle
-from typing import Tuple, Union
+from typing import Tuple, Union, List
 import numpy as np
 
 from ladybug.analysisperiod import AnalysisPeriod
@@ -844,7 +844,7 @@ class Results(_ResultsFolder):
 
     @staticmethod
     def sun_up_hours_to_annual(
-            sun_up_hours: Union[list[float], np.ndarray], values: np.ndarray,
+            sun_up_hours: Union[List[float], np.ndarray], values: np.ndarray,
             timestep: float) -> np.ndarray:
         """Map a 1D NumPy array based on sun up hours to annual array.
 
