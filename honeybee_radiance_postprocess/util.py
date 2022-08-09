@@ -22,10 +22,12 @@ def binary_mtx_dimension(filepath: str) -> Tuple[int, int, int, int]:
     try:
         first_line = next(inf).rstrip().decode('utf-8')
         if first_line[:10] != '#?RADIANCE':
-            raise ValueError(
-                'File with Radiance header must start with #?RADIANCE '
-                'not {}.'.format(first_line)
+            error_message = (
+                f'File with Radiance header must start with #?RADIANCE not '
+                f'{first_line}.'
             )
+            raise ValueError(error_message)
+
         header_lines = [first_line]
         nrows = ncols = ncomp = None
         for line in inf:
@@ -41,10 +43,12 @@ def binary_mtx_dimension(filepath: str) -> Tuple[int, int, int, int]:
                 break
 
         if not nrows or not ncols:
-            raise ValueError(
-                'NROWS or NCOLS was not found in the Radiance header. NROWS is %s and '
-                'NCOLS is %s. The header must have both elements.' % (nrows, ncols)
+            error_message = (
+                f'NROWS or NCOLS was not found in the Radiance header. NROWS '
+                f'is {nrows} and NCOLS is {ncols}. The header must have both '
+                f'elements.'
             )
+            raise ValueError(error_message)
         return nrows, ncols, ncomp, len(header_lines) + 1
     finally:
         inf.close()
@@ -58,12 +62,12 @@ def check_array_dim(array: np.ndarray, dim: int):
         dim: The dimension to check against.
     """
     assert array.ndim == dim, \
-        'Expected {}-dimensional array. Dimension of array is {}'.format(dim, array.ndim)
+        f'Expected {dim}-dimensional array. Dimension of array is {array.ndim}'
 
 
 def filter_array(array: np.ndarray, mask: np.ndarray) -> np.ndarray:
-    """Filter a NumPy array by a masking array. The array will be passed as is if the
-    mask is None.
+    """Filter a NumPy array by a masking array. The array will be passed as is
+    if the mask is None.
 
     Args:
         array: A NumPy array to filter.
@@ -74,12 +78,10 @@ def filter_array(array: np.ndarray, mask: np.ndarray) -> np.ndarray:
     """
     if mask is not None:
         return array[mask.astype(bool)]
-    else:
-        return array
+    return array
 
 
-def hoys_mask(
-        sun_up_hours: list, hoys: list, timestep: int) -> np.ndarray:
+def hoys_mask(sun_up_hours: list, hoys: list, timestep: int) -> np.ndarray:
     """Create a NumPy masking array from a list of hoys.
 
     Args:
@@ -93,7 +95,7 @@ def hoys_mask(
     """
     if len(hoys) != 0:
         schedule = [False] * (8760 * timestep)
-        for hr in hoys:
-            schedule[int(hr * timestep)] = True
-        su_pattern = [schedule[int(h * timestep)] for h in sun_up_hours]
+        for hoy in hoys:
+            schedule[int(hoy * timestep)] = True
+        su_pattern = [schedule[int(hoy * timestep)] for hoy in sun_up_hours]
         return np.array(su_pattern)
