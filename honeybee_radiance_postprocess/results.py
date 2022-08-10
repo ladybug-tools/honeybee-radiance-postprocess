@@ -40,7 +40,7 @@ class _ResultsFolder(object):
     __slots__ = ('_folder', '_grids_info', '_sun_up_hours', '_datetimes', '_light_paths',
                  '_default_states', '_grid_states', '_timestep')
 
-    def __init__(self, folder):
+    def __init__(self, folder: Union[str, Path]):
         """Initialize ResultsFolder."""
         self._folder = Path(folder).absolute().as_posix()
         self._grids_info, self._sun_up_hours = _process_input_folder(self.folder, '*')
@@ -167,11 +167,11 @@ class Results(_ResultsFolder):
     __slots__ = ('_schedule', '_occ_pattern', '_total_occ', '_sun_down_occ_hours',
                  '_occ_mask', '_arrays', '_valid_states')
 
-    def __init__(self, folder, schedule=None, load_arrays=False):
+    def __init__(self, folder, schedule: list = None, load_arrays: bool = False):
         """Initialize Results."""
         _ResultsFolder.__init__(self, folder)
         self.schedule = schedule
-        self._arrays = self._load_arrays() if load_arrays else dict()
+        self._arrays = self._load_arrays() if load_arrays else {}
         self._valid_states = self._get_valid_states()
 
     @property
@@ -223,8 +223,9 @@ class Results(_ResultsFolder):
         of valid states, e.g., [0, 1, 2, ...]."""
         return self._valid_states
 
-    def daylight_autonomy(self, threshold: float = 300, states: dict = None,
-                          grids_filter: str = '*') -> Tuple[list, list]:
+    def daylight_autonomy(
+            self, threshold: float = 300, states: dict = None,
+            grids_filter: str = '*') -> Tuple[list, list]:
         """Calculate daylight autonomy.
 
         Args:
@@ -427,7 +428,7 @@ class Results(_ResultsFolder):
                 udi_upper_results = udi_upper_array2d(
                     array_filter, total_occ=self.total_occ, max_t=max_t)
             else:
-                da_results = cda_results = udi_results, udi_lower_results = \
+                da_results = cda_results = udi_results = udi_lower_results = \
                     udi_upper_results = np.zeros(grid_info['count'])
             da.append(da_results)
             cda.append(cda_results)
