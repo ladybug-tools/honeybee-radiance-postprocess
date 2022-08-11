@@ -99,3 +99,44 @@ def hoys_mask(sun_up_hours: list, hoys: list, timestep: int) -> np.ndarray:
             schedule[int(hoy * timestep)] = True
         su_pattern = [schedule[int(hoy * timestep)] for hoy in sun_up_hours]
         return np.array(su_pattern)
+
+
+def array_memory_size(
+    sensors: int, sun_up_hours: int, ncomp: int = None,
+    dtype: np.dtype = np.float32, gigabyte: bool = True) -> float:
+    """Calculate the memory size of an array before creating or loading an
+    array.
+
+    Args:
+        sensors: Number of sensors in the array.
+        sun_up_hours: Number of sun up hours in the array.
+        ncomp: Optional number of components for each element in the array,
+            e.g., if the data is in RGB format then this value must be set
+            to 3. Defaults to None.
+        dtype: The data type of the array. Defaults to np.float32.
+        gigabyte: Boolean toggle to output the memory size in gigabytes.
+            Defaults to True.
+
+    Returns:
+        float: The memory size of an array.
+    """
+    # check if dtype is valid
+    dtypes = tuple(np.sctypes['float'])
+    if not isinstance(dtype, dtypes):
+        try:
+            dtype = dtype()
+        except TypeError as err:
+            error_message = (
+                f'Unable to instantiate input dtype. Expected any of the '
+                f'following: {dtypes}. Received: {type(dtype)}.'
+            )
+            raise TypeError(error_message) from err
+
+    # calculate memory size
+    size = sensors * sun_up_hours * dtype.itemsize
+    if ncomp:
+        size *= ncomp
+    if gigabyte:
+        size /= (1024 ** 3)
+
+    return size
