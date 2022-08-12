@@ -4,6 +4,7 @@ import itertools
 from pathlib import Path
 from itertools import islice, cycle
 from typing import Tuple, Union, List
+from collections import defaultdict
 import numpy as np
 
 from ladybug.analysisperiod import AnalysisPeriod
@@ -923,6 +924,60 @@ class Results(_ResultsFolder):
                 data_file = metric_folder.joinpath(f'{grid_id}_{sensor_id}.json')
                 data_file.parent.mkdir(parents=True, exist_ok=True)
                 data_file.write_text(json.dumps(data_dict))
+
+    def leed_schedule(self, grids_filter: str = '*'):
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+
+        states_schedule = defaultdict(list)
+        for grid_info in grids_info:
+            grid_id = grid_info['identifier']
+            grid_count = grid_info['count']
+            grid_valid_states = self._filter_grid_states(grid_info, states=self.valid_states)
+
+            # get all combinations of states
+            keys, values = zip(*grid_valid_states.items())
+            states_combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
+
+            array_list_combs = []
+            for comb in states_combinations:
+                arrays = []
+                for light_path, state in comb.items():
+                    array = self._get_array(grid_id, light_path, state, res_type='direct_sunlight')
+                    # find the percentage of sensors that receive 1000 lux or more
+                    array = (array >= 1000).sum(axis=0) / grid_count
+                    arrays.append(array)
+                array_list_combs.append(sum(arrays))
+            array_combs = np.array(array_list_combs)
+            # set values above 2 percent to negative infinity
+            array_combs[array_combs > 0.02] = np.NINF
+            # get the indices of the max value along axis 0
+            # (max value = highest percentage below 2%), not necessarily the combination
+            # with the most light, ideally should cross check with 'total' results to
+            # check which combination below 2% direct sunlight has the most 'total'
+            # daylight
+            max_indices = array_combs.argmax(axis=0)
+            # select the combination for each hour
+            combinations = [states_combinations[idx] for idx in max_indices]
+
+            # merge the combinations of dicts
+            for comb in combinations:
+                for light_path, state in comb.items():
+                    if light_path == 'static_apertures':
+                        # we do not need static apertures as it defaults to 0
+                        continue
+                    states_schedule[light_path].append(state)
+
+        # convert to regular dict
+        states_schedule = dict(states_schedule)
+
+        # map states to 8760 values
+        for light_path, states in states_schedule.items():
+            mapped_states = [0 for i in range(8760)]
+            for state, idx in zip(states, list(map(int, self.sun_up_hours))):
+                mapped_states[idx] = state
+            states_schedule[light_path] = mapped_states
+
+        return states_schedule
 
     def daylight_control_schedules(
             self, states: dict = None, grids_filter: str = '*',
