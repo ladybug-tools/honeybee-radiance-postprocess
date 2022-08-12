@@ -930,7 +930,7 @@ class Results(_ResultsFolder):
 
         states_schedule = defaultdict(list)
         for grid_info in grids_info:
-            grid_id = grid_info['identifier']
+            grid_id = grid_info['full_id']
             grid_count = grid_info['count']
             grid_valid_states = self._filter_grid_states(grid_info, states=self.valid_states)
 
@@ -942,7 +942,7 @@ class Results(_ResultsFolder):
             for comb in states_combinations:
                 arrays = []
                 for light_path, state in comb.items():
-                    array = self._get_array(grid_id, light_path, state, res_type='direct_sunlight')
+                    array = self._get_array(grid_info, light_path, state, res_type='direct')
                     # find the percentage of sensors that receive 1000 lux or more
                     array = (array >= 1000).sum(axis=0) / grid_count
                     arrays.append(array)
@@ -954,7 +954,7 @@ class Results(_ResultsFolder):
             # (max value = highest percentage below 2%), not necessarily the combination
             # with the most light, ideally should cross check with 'total' results to
             # check which combination below 2% direct sunlight has the most 'total'
-            # daylight
+            # daylight or contributes most to sDA.
             max_indices = array_combs.argmax(axis=0)
             # select the combination for each hour
             combinations = [states_combinations[idx] for idx in max_indices]
@@ -962,7 +962,7 @@ class Results(_ResultsFolder):
             # merge the combinations of dicts
             for comb in combinations:
                 for light_path, state in comb.items():
-                    if light_path == 'static_apertures':
+                    if light_path == '__static_apertures__':
                         # we do not need static apertures as it defaults to 0
                         continue
                     states_schedule[light_path].append(state)
@@ -972,9 +972,8 @@ class Results(_ResultsFolder):
 
         # map states to 8760 values
         for light_path, states in states_schedule.items():
-            mapped_states = [0 for i in range(8760)]
-            for state, idx in zip(states, list(map(int, self.sun_up_hours))):
-                mapped_states[idx] = state
+            mapped_states = Results.sun_up_hours_to_annual(self.sun_up_hours,
+                np.array(states), self.timestep)
             states_schedule[light_path] = mapped_states
 
         return states_schedule
@@ -1162,6 +1161,8 @@ class Results(_ResultsFolder):
         Returns:
             np.ndarray: A 1D NumPy array.
         """
+        if not isinstance(values, np.ndarray):
+            values = np.array(values)
         check_array_dim(values, 1)
         sun_up_hours = np.array(sun_up_hours).astype(int)
         assert sun_up_hours.shape == values.shape
@@ -1212,7 +1213,7 @@ class Results(_ResultsFolder):
         Returns:
             np.ndarray: A NumPy array of a given grid, light path, and state.
         """
-        grid_id = grid_info['identifier']
+        grid_id = grid_info['full_id']
 
         state_identifier = self._state_identifier(grid_id, light_path, state=state)
 
