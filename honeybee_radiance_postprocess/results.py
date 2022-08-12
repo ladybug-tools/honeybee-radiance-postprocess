@@ -1106,6 +1106,8 @@ class Results(_ResultsFolder):
         Returns:
             np.ndarray: A 1D NumPy array.
         """
+        if not isinstance(values, np.ndarray):
+            values = np.array(values)
         check_array_dim(values, 1)
         sun_up_hours = np.array(sun_up_hours).astype(int)
         assert sun_up_hours.shape == values.shape
