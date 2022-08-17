@@ -1,20 +1,20 @@
 """Type hints for honeybee-radiance-postprocess."""
-from typing import Tuple
+from typing import Tuple, List
 import numpy as np
 from ladybug.datacollection import HourlyContinuousCollection
 
-annual_metric = Tuple[list[np.ndarray], list[dict]]
+annual_metric = Tuple[List[np.ndarray], List[dict]]
 annual_metrics = Tuple[
-    list[np.ndarray],
-    list[np.ndarray],
-    list[np.ndarray],
-    list[np.ndarray],
-    list[np.ndarray],
-    list[dict]
+    List[np.ndarray],
+    List[np.ndarray],
+    List[np.ndarray],
+    List[np.ndarray],
+    List[np.ndarray],
+    List[dict]
 ]
 
-point_in_time = Tuple[list[np.ndarray], list[dict]]
-average_values = Tuple[list[np.ndarray], list[dict]]
-cumulative_values = Tuple[list[np.ndarray], list[dict]]
-peak_values = Tuple[list[np.ndarray], list[dict]]
-annual_data = Tuple[list[list[HourlyContinuousCollection]], list[dict], dict]
+point_in_time = Tuple[List[np.ndarray], List[dict]]
+average_values = Tuple[List[np.ndarray], List[dict]]
+cumulative_values = Tuple[List[np.ndarray], List[dict]]
+peak_values = Tuple[List[np.ndarray], List[dict]]
+annual_data = Tuple[List[List[HourlyContinuousCollection]], List[dict], dict]
