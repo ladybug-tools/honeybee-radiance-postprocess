@@ -788,7 +788,7 @@ class Results(_ResultsFolder):
 
         # if no sensor_index, create dict with all sensors
         if not sensor_index:
-            sensor_index = dict()
+            sensor_index = {}
             for grid_info in grids_info:
                 sensor_index[grid_info['full_id']] = \
                     [i for i in range(grid_info['count'])]
