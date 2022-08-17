@@ -1,4 +1,5 @@
 """Functions to calculate various metrics for 1D and 2D NumPy arrays."""
+from typing import Tuple, Union
 import numpy as np
 
 from .util import check_array_dim
@@ -311,7 +312,8 @@ def cumulative_values_array1d(array: np.ndarray, timestep: int = 1) -> np.float6
 
 
 def peak_values_array2d(
-        array: np.ndarray, coincident: bool = False) -> np.ndarray:
+        array: np.ndarray, coincident: bool = False
+        )-> Tuple[np.ndarray, Union[int, None]]:
     """Calculate peak values for a 2D NumPy array.
 
     Args:
