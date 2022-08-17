@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 from itertools import islice, cycle
-from typing import Tuple, Union, List
+from typing import Union, List
 import numpy as np
 
 from ladybug.analysisperiod import AnalysisPeriod
@@ -17,6 +17,7 @@ from .metrics import da_array2d, cda_array2d, udi_array2d, \
     cumulative_values_array2d, peak_values_array2d
 from .util import filter_array, hoys_mask, check_array_dim
 from .annualdaylight import _annual_daylight_config
+from . import type_hints
 
 
 class _ResultsFolder(object):
@@ -225,7 +226,7 @@ class Results(_ResultsFolder):
 
     def daylight_autonomy(
             self, threshold: float = 300, states: dict = None,
-            grids_filter: str = '*') -> Tuple[list, list]:
+            grids_filter: str = '*') -> type_hints.annual_metric:
         """Calculate daylight autonomy.
 
         Args:
@@ -255,7 +256,7 @@ class Results(_ResultsFolder):
 
     def continuous_daylight_autonomy(
             self, threshold: float = 300, states: dict = None,
-            grids_filter: str = '*') -> Tuple[list, list]:
+            grids_filter: str = '*') -> type_hints.annual_metric:
         """Calculate continuous daylight autonomy.
 
         Args:
@@ -286,7 +287,7 @@ class Results(_ResultsFolder):
 
     def useful_daylight_illuminance(
             self, min_t: float = 100, max_t: float = 3000, states: dict = None,
-            grids_filter: str = '*') -> Tuple[list, list]:
+            grids_filter: str = '*') -> type_hints.annual_metric:
         """Calculate useful daylight illuminance.
 
         Args:
@@ -317,7 +318,7 @@ class Results(_ResultsFolder):
 
     def useful_daylight_illuminance_lower(
             self, min_t: float = 100, states: dict = None,
-            grids_filter: str = '*') -> Tuple[list, list]:
+            grids_filter: str = '*') -> type_hints.annual_metric:
         """Calculate lower than useful daylight illuminance.
 
         Args:
@@ -350,7 +351,7 @@ class Results(_ResultsFolder):
 
     def useful_daylight_illuminance_upper(
             self, max_t: float = 3000, states: dict = None,
-            grids_filter: str = '*') -> Tuple[list, list]:
+            grids_filter: str = '*') -> type_hints.annual_metric:
         """Calculate higher than useful daylight illuminance.
 
         Args:
@@ -382,7 +383,7 @@ class Results(_ResultsFolder):
     def annual_metrics(
             self, threshold: float = 300, min_t: float = 100,
             max_t: float = 3000, states: dict = None,
-            grids_filter: str = '*') -> Tuple[list, list, list, list, list, list]:
+            grids_filter: str = '*') -> type_hints.annual_metrics:
         """Calculate multiple annual daylight metrics.
 
         This method will calculate the following metrics:
@@ -493,7 +494,8 @@ class Results(_ResultsFolder):
 
     def point_in_time(
             self, datetime: Union[int, DateTime], states: dict = None,
-            grids_filter: str = '*', res_type: str = 'total') -> Tuple[list, list]:
+            grids_filter: str = '*', res_type: str = 'total'
+            )-> type_hints.point_in_time:
         """Get point in time values.
 
         Args:
@@ -535,7 +537,7 @@ class Results(_ResultsFolder):
 
     def average_values(
             self, hoys: list = [], states: dict = None, grids_filter: str = '*',
-            res_type: str = 'total') -> Tuple[list, list]:
+            res_type: str = 'total') -> type_hints.average_values:
         """Get average values for each sensor over a given period.
 
         The hoys input can be used to filter the data for a particular time
@@ -608,7 +610,7 @@ class Results(_ResultsFolder):
 
     def cumulative_values(
             self, hoys: list = [], states: dict = None, grids_filter: str = '*',
-            res_type: str = 'total') -> Tuple[list, list]:
+            res_type: str = 'total') -> type_hints.cumulative_values:
         """Get cumulative values for each sensor over a given period.
 
         The hoys input can be used to filter the data for a particular time
@@ -680,7 +682,8 @@ class Results(_ResultsFolder):
 
     def peak_values(
             self, hoys: list = [], states: dict = None, grids_filter: str = '*',
-            coincident: bool = False, res_type: str = 'total') -> Tuple[list, list]:
+            coincident: bool = False, res_type: str = 'total'
+            ) -> type_hints.peak_values:
         """Get peak values for each sensor over a given period.
 
         The hoys input can be used to filter the data for a particular time
@@ -764,7 +767,8 @@ class Results(_ResultsFolder):
 
     def annual_data(
             self, states: dict = None, grids_filter: str = '*',
-            sensor_index: dict = None, res_type: str = 'total') -> Tuple[list, list, dict]:
+            sensor_index: dict = None, res_type: str = 'total'
+            ) -> type_hints.annual_data:
         """Get annual data for one or multiple sensors.
 
         Args:
@@ -845,7 +849,8 @@ class Results(_ResultsFolder):
 
     @staticmethod
     def sun_up_hours_to_annual(
-            sun_up_hours: Union[List[float], np.ndarray], values: np.ndarray,
+            sun_up_hours: Union[List[float], np.ndarray],
+            values: Union[List[float], np.ndarray],
             timestep: float) -> np.ndarray:
         """Map a 1D NumPy array based on sun up hours to annual array.
 
@@ -856,7 +861,8 @@ class Results(_ResultsFolder):
         Args:
             sun_up_hours: A list of sun up hours. This can be a regular list or
                 a 1D NumPy array.
-            values: A 1D NumPy array.
+            values: A list of values to map to an annual array. This can be a
+                regular list or a 1D NumPy array.
             timestep: Timestep of the simulation.
 
         Returns:
@@ -1122,7 +1128,8 @@ class Results(_ResultsFolder):
         return states
 
     def _array_from_states(
-            self, grid_info, states: dict = None, res_type: str = 'total') -> np.ndarray:
+            self, grid_info, states: dict = None, res_type: str = 'total'
+            ) -> np.ndarray:
         """Create an array for a given grid by the states settings.
 
         Args:
@@ -1182,11 +1189,11 @@ class Results(_ResultsFolder):
 
     def _filter_grids(self, grids_filter: str = '*') -> list:
         """Return grids information.
-        
+
         Args:
             grids_filter: The name of a grid or a pattern to filter the grids.
                 Defaults to '*'.
-        
+
         Returns:
             list: List of grid information for filtered grids.
         """
