@@ -12,9 +12,9 @@ from ladybug.dt import DateTime
 from ladybug.header import Header
 from honeybee_radiance.postprocess.annual import _process_input_folder, \
     filter_schedule_by_hours, generate_default_schedule
-from .metrics import da_array2d, cda_array2d, udi_array2d, \
-    udi_lower_array2d, udi_upper_array2d, average_values_array2d, \
-    cumulative_values_array2d, peak_values_array2d
+from .metrics import (da_array2d, cda_array2d, udi_array2d, udi_lower_array2d,
+    udi_upper_array2d, ase_array2d, average_values_array2d,
+    cumulative_values_array2d, peak_values_array2d)
 from .util import filter_array, hoys_mask, check_array_dim
 from .annualdaylight import _annual_daylight_config
 from . import type_hints
@@ -493,8 +493,9 @@ class Results(_ResultsFolder):
         config_file.write_text(json.dumps(config))
 
     def spatial_daylight_autonomy(
-            self, threshold: float = 300, states: dict = None,
-            grids_filter: str = '*') -> type_hints.spatial_daylight_autonomy:
+            self, threshold: float = 300, target_time: float = 50,
+            states: dict = None, grids_filter: str = '*'
+            ) -> type_hints.spatial_daylight_autonomy:
         """Calculate spatial daylight autonomy.
 
         Note: This component will only output a LEED compliant sDA if you've
@@ -503,6 +504,9 @@ class Results(_ResultsFolder):
 
         Args:
             threshold: Threshold value for daylight autonomy. Defaults to 300.
+            target_time: A minimum threshold of occupied time (eg. 50% of the
+                time), above which a given sensor passes and contributes to the
+                spatial daylight autonomy. Defaults to 50.
             states: A dictionary of states. Defaults to None.
             grids_filter: The name of a grid or a pattern to filter the grids.
                 Defaults to '*'.
@@ -512,13 +516,52 @@ class Results(_ResultsFolder):
                 information.
         """
         da, grids_info = self.daylight_autonomy(
-            threshold=threshold, states=states, grids_filter=grids_filter)
+           threshold=threshold, states=states, grids_filter=grids_filter)
 
         sda = []
         for array in da:
-            sda.append(array.mean())
+            sda.append((array > target_time).mean())
 
         return sda, grids_info
+
+    def annual_sunlight_exposure(
+            self, direct_threshold: float = 300, occ_hours: int = 250,
+            grids_filter: str = '*') -> type_hints.annual_sunlight_exposure:
+        """Calculate annual sunlight exposure.
+
+        Args:
+            direct_threshold: The threshold that determines if a sensor is
+                overlit. Defaults to 1000.
+            occ_hours: The number of occupied hours that cannot receive more
+                than the direct_threshold. Defaults to 250.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+
+        Returns:
+            Tuple: A tuple with the annual sunlight exposure, the number of
+                hours that exceeds the direct threshold for each sensor, and
+                grid information.
+        """
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+
+        ase = []
+        hours_above = []
+        for grid_info in grids_info:
+            array = self._array_from_states(
+                grid_info, states=None, res_type='direct')
+            if np.any(array):
+                array_filter = np.apply_along_axis(
+                    filter_array, 1, array, mask=self.occ_mask)
+                results, h_above = ase_array2d(
+                    array_filter, occ_hours=occ_hours,
+                    direct_threshold=direct_threshold)
+            else:
+                results = np.float64(0)
+                h_above = np.zeros(grid_info['count'])
+            ase.append(results)
+            hours_above.append(h_above)
+
+        return ase, hours_above, grids_info
 
     def point_in_time(
             self, datetime: Union[int, DateTime], states: dict = None,

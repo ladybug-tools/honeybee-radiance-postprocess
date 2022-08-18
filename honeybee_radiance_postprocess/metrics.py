@@ -6,13 +6,16 @@ from .util import check_array_dim
 
 
 def da_array2d(
-        array: np.ndarray, total_occ: int = None, threshold: float = 300) -> np.ndarray:
+        array: np.ndarray, total_occ: int = None,
+        threshold: float = 300) -> np.ndarray:
     """Calculate daylight autonomy for a 2D NumPy array.
 
     Args:
         array: A 2D NumPy array.
-        total_occ: Integer indicating the number of occupied hours. If not given any
-            input the number of occupied hours will be found by the array shape.
+        total_occ: Integer indicating the number of occupied hours. If not
+            given any input the number of occupied hours will be found by the
+            array shape, i.e., it is assumed that the array is filtered by
+            occupied hours.
         threshold: Threshold value for daylight autonomy. Default: 300.
 
     Returns:
@@ -31,7 +34,8 @@ def da_array2d(
 
 
 def da_array1d(
-        array: np.ndarray, total_occ: int = None, threshold: float = 300) -> np.float64:
+        array: np.ndarray, total_occ: int = None,
+        threshold: float = 300) -> np.float64:
     """Calculate daylight autonomy for a 1D NumPy array.
 
     Args:
@@ -52,7 +56,8 @@ def da_array1d(
 
 
 def cda_array2d(
-        array: np.ndarray, total_occ: int = None, threshold: float = 300) -> np.ndarray:
+        array: np.ndarray, total_occ: int = None,
+        threshold: float = 300) -> np.ndarray:
     """Calculate continuos daylight autonomy for a 2D NumPy array.
 
     Args:
@@ -77,7 +82,8 @@ def cda_array2d(
 
 
 def cda_array1d(
-        array: np.ndarray, total_occ: int = None, threshold: float = 300) -> np.float64:
+        array: np.ndarray, total_occ: int = None,
+        threshold: float = 300) -> np.float64:
     """Calculate continuos daylight autonomy for a 1D NumPy array.
 
     Args:
@@ -98,8 +104,9 @@ def cda_array1d(
         np.where(array >= threshold, 1, array / threshold).sum() / total_occ * 100)
 
 
-def udi_array2d(array: np.ndarray, total_occ: int = None, min_t: float = 100,
-                max_t: float = 3000) -> np.ndarray:
+def udi_array2d(
+        array: np.ndarray, total_occ: int = None, min_t: float = 100,
+        max_t: float = 3000) -> np.ndarray:
     """Calculate useful daylight illuminance for a 2D NumPy array.
 
     Args:
@@ -124,8 +131,9 @@ def udi_array2d(array: np.ndarray, total_occ: int = None, min_t: float = 100,
     return udi
 
 
-def udi_array1d(array: np.ndarray, total_occ: int = None, min_t: float = 100,
-                max_t: float = 3000) -> np.float64:
+def udi_array1d(
+        array: np.ndarray, total_occ: int = None, min_t: float = 100,
+        max_t: float = 3000) -> np.float64:
     """Calculate useful daylight illuminance for a 1D NumPy array.
 
     Args:
@@ -146,8 +154,9 @@ def udi_array1d(array: np.ndarray, total_occ: int = None, min_t: float = 100,
     return np.float64(((array >= min_t) & (array <= max_t)).sum() / total_occ * 100)
 
 
-def udi_lower_array2d(array: np.ndarray, total_occ: int = None, min_t: float = 100,
-                      sun_down_occ_hours: int = 0) -> np.ndarray:
+def udi_lower_array2d(
+        array: np.ndarray, total_occ: int = None, min_t: float = 100,
+        sun_down_occ_hours: int = 0) -> np.ndarray:
     """Calculate lower than useful daylight illuminance for a 2D NumPy array.
 
     Args:
@@ -197,7 +206,8 @@ def udi_lower_array1d(
 
 
 def udi_upper_array2d(
-        array: np.ndarray, total_occ: int = None, max_t: float = 3000) -> np.ndarray:
+        array: np.ndarray, total_occ: int = None,
+        max_t: float = 3000) -> np.ndarray:
     """Calculate higher than useful daylight illuminance for a 2D NumPy array.
 
     Args:
@@ -222,7 +232,8 @@ def udi_upper_array2d(
 
 
 def udi_upper_array1d(
-        array: np.ndarray, total_occ: int = None, max_t: float = 3000) -> np.float64:
+        array: np.ndarray, total_occ: int = None,
+        max_t: float = 3000) -> np.float64:
     """Calculate higher than useful daylight illuminance for a 1D NumPy array.
 
     Args:
@@ -242,6 +253,50 @@ def udi_upper_array1d(
 
     return np.float64((array > max_t).sum() / total_occ * 100)
 
+def sda_array2d(
+        array: np.ndarray, target_time: float = 50, threshold: float = 300,
+        total_occ: int = None) -> np.ndarray:
+    """Calculate spatial daylight autonomy for a 2D NumPy array.
+
+    Args:
+        array: A 2D NumPy array.
+        target_time: A minimum threshold of occupied time (eg. 50% of the
+            time), above which a given sensor passes and contributes to the
+            spatial daylight autonomy. Defaults to 50.
+        threshold: Threshold value for daylight autonomy. Default: 300.
+        total_occ: Integer indicating the number of occupied hours. If not
+            given any input the number of occupied hours will be found by the
+            array shape, i.e., it is assumed that the array is filtered by
+            occupied hours.
+
+    Returns:
+        A NumPy float of the sDA as a percentage (decimal)
+    """
+    da = da_array2d(array, total_occ=total_occ, threshold=threshold)
+    sda = (da > target_time).mean()
+
+    return sda
+
+def ase_array2d(
+        array: np.ndarray, occ_hours: int = 250,
+        direct_threshold: float = 1000) -> Tuple[np.ndarray, np.ndarray]:
+    """Calculate annual sunlight exposure for a 2D NumPy array.
+
+    Args:
+        array: A 2D NumPy array.
+        occ_hours: The number of occupied hours that cannot receive more than
+            the direct_threshold. Defaults to 250.
+        direct_threshold: The threshold that determines if a sensor is overlit.
+            Defaults to 1000.
+
+    Returns:
+        A NumPy float of the ASE as a percentage (decimal).
+    """
+    check_array_dim(array, 2)
+    h_above = (array > direct_threshold).sum(axis=1)
+    ase = (h_above > occ_hours).sum() / array.shape[0]
+
+    return ase, h_above
 
 def average_values_array2d(
         array: np.ndarray, full_length: int = 8760) -> np.ndarray:
@@ -262,7 +317,8 @@ def average_values_array2d(
     return avg_values
 
 
-def average_values_array1d(array: np.ndarray, full_length: int = 8760) -> np.float64:
+def average_values_array1d(
+        array: np.ndarray, full_length: int = 8760) -> np.float64:
     """Calculate average value for a 1D NumPy array.
 
     Args:
@@ -296,7 +352,8 @@ def cumulative_values_array2d(
     return cumulative_values
 
 
-def cumulative_values_array1d(array: np.ndarray, timestep: int = 1) -> np.float64:
+def cumulative_values_array1d(
+        array: np.ndarray, timestep: int = 1) -> np.float64:
     """Calculate daylight autonomy for a 1D NumPy array.
 
     Args:
@@ -313,7 +370,7 @@ def cumulative_values_array1d(array: np.ndarray, timestep: int = 1) -> np.float6
 
 def peak_values_array2d(
         array: np.ndarray, coincident: bool = False
-        )-> Tuple[np.ndarray, Union[int, None]]:
+        ) -> Tuple[np.ndarray, Union[int, None]]:
     """Calculate peak values for a 2D NumPy array.
 
     Args:
