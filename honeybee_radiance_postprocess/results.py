@@ -492,10 +492,38 @@ class Results(_ResultsFolder):
         config_file = folder.joinpath('config.json')
         config_file.write_text(json.dumps(config))
 
+    def spatial_daylight_autonomy(
+            self, threshold: float = 300, states: dict = None,
+            grids_filter: str = '*') -> type_hints.spatial_daylight_autonomy:
+        """Calculate spatial daylight autonomy.
+
+        Note: This component will only output a LEED compliant sDA if you've
+        run the simulation with blinds and blinds schedules as per the
+        IES-LM-83-12. Use the states option to calculate a LEED compliant sDA.
+
+        Args:
+            threshold: Threshold value for daylight autonomy. Defaults to 300.
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+
+        Returns:
+            Tuple: A tuple with the spatial daylight autonomy and grid
+                information.
+        """
+        da, grids_info = self.daylight_autonomy(
+            threshold=threshold, states=states, grids_filter=grids_filter)
+
+        sda = []
+        for array in da:
+            sda.append(array.mean())
+
+        return sda, grids_info
+
     def point_in_time(
             self, datetime: Union[int, DateTime], states: dict = None,
             grids_filter: str = '*', res_type: str = 'total'
-            )-> type_hints.point_in_time:
+            ) -> type_hints.point_in_time:
         """Get point in time values.
 
         Args:

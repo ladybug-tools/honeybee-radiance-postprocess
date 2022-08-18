@@ -12,7 +12,7 @@ annual_metrics = Tuple[
     List[np.ndarray],
     List[dict]
 ]
-
+spatial_daylight_autonomy = Tuple[List[np.floating], List[dict]]
 point_in_time = Tuple[List[np.ndarray], List[dict]]
 average_values = Tuple[List[np.ndarray], List[dict]]
 cumulative_values = Tuple[List[np.ndarray], List[dict]]
