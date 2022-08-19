@@ -879,7 +879,7 @@ class Results(_ResultsFolder):
             indices = sensor_index[grid_id]
             for idx in indices:
                 values = array[idx, :]
-                annual_array = Results.sun_up_hours_to_annual(
+                annual_array = Results.values_to_annual(
                     self.sun_up_hours, values, self.timestep)
                 header = Header(Illuminance(), 'lux', analysis_period)
                 header.metadata['sensor grid'] = grid_id
@@ -925,40 +925,92 @@ class Results(_ResultsFolder):
                 data_file.parent.mkdir(parents=True, exist_ok=True)
                 data_file.write_text(json.dumps(data_dict))
 
-    def leed_schedule(self, grids_filter: str = '*'):
+    def leed_option_one(
+            self, grids_filter: str = '*', threshold: float = 300,
+            direct_threshold: float = 1000, occ_hours: int = 250,
+            check_total: bool = False):
+
+        states_schedule, fail_compy = self.leed_schedule(
+            grids_filter=grids_filter, threshold=threshold,
+            check_total=check_total
+        )
+
+        ase, hours_above, grids_info = self.annual_sunlight_exposure(
+            direct_threshold=direct_threshold, occ_hours=occ_hours,
+            grids_filter=grids_filter)
+
+        sda, grids_info = self.spatial_daylight_autonomy(
+            threshold=threshold, states=states_schedule,
+            grids_filter=grids_filter)
+
+        return None
+
+    def leed_schedule(
+            self, grids_filter: str = '*', threshold: float = 300,
+            max_t: float = np.inf, check_total: bool = False):
+
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
+        fail_to_comply = {}
         states_schedule = defaultdict(list)
         for grid_info in grids_info:
             grid_id = grid_info['full_id']
             grid_count = grid_info['count']
-            grid_valid_states = self._filter_grid_states(grid_info, states=self.valid_states)
+            grid_valid_states = self._filter_grid_states(
+                grid_info, states=self.valid_states)
 
             # get all combinations of states
             keys, values = zip(*grid_valid_states.items())
-            states_combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
+            states_combinations = \
+                [dict(zip(keys, v)) for v in itertools.product(*values)]
 
             array_list_combs = []
             for comb in states_combinations:
-                arrays = []
+                comb_arrays = []
                 for light_path, state in comb.items():
-                    array = self._get_array(grid_info, light_path, state, res_type='direct')
-                    # find the percentage of sensors that receive 1000 lux or more
-                    array = (array >= 1000).sum(axis=0) / grid_count
-                    arrays.append(array)
-                array_list_combs.append(sum(arrays))
+                    array = self._get_array(
+                        grid_info, light_path, state, res_type='direct')
+                    comb_arrays.append(array)
+                comb_array = sum(comb_arrays)
+                # find the percentage of sensors that receive 1000 lux or more
+                comb_percentage = (comb_array >= 1000).sum(axis=0) / grid_count
+                array_list_combs.append(comb_percentage)
             array_combs = np.array(array_list_combs)
             # set values above 2 percent to negative infinity
             array_combs[array_combs > 0.02] = np.NINF
-            # get the indices of the max value along axis 0
-            # (max value = highest percentage below 2%), not necessarily the combination
-            # with the most light, ideally should cross check with 'total' results to
-            # check which combination below 2% direct sunlight has the most 'total'
-            # daylight or contributes most to sDA.
-            max_indices = array_combs.argmax(axis=0)
+            # check if all hours have a state combination that comply with the
+            # 2 percent, 1000 lux requirement
+            grid_comply = np.where(np.all(array_combs==np.NINF, axis=0))[0]
+            if grid_comply.size != 0:
+                fail_to_comply[grid_id] = \
+                    [self.datetimes[hoy] for hoy in grid_comply]
+
+            if check_total:
+                total_array_list_combs = []
+                threshold_list = []
+                for comb in states_combinations:
+                    total_comb_arrays = []
+                    for light_path, state in comb.items():
+                        array = self._get_array(
+                            grid_info, light_path, state, res_type='total')
+                        total_comb_arrays.append(array)
+                    total_comb_array = sum(total_comb_arrays)
+                    array_filter = np.apply_along_axis(
+                        filter_array, 1, total_comb_array, mask=self.occ_mask)
+                    array_threshold = ((array_filter >= threshold)
+                                       & (array_filter < max_t)).sum(axis=0)
+                    total_array_list_combs.append(total_comb_array)
+                    threshold_list.append(array_threshold)
+                total_array_combs = np.array(threshold_list, dtype=np.float32)
+                array_combs_filter = np.apply_along_axis(
+                    filter_array, 1, array_combs, mask=self.occ_mask)
+                total_array_combs[array_combs_filter == np.NINF] = np.NINF
+                max_indices = total_array_combs.argmax(axis=0)
+            else:
+                max_indices = array_combs.argmax(axis=0)
+
             # select the combination for each hour
             combinations = [states_combinations[idx] for idx in max_indices]
-
             # merge the combinations of dicts
             for comb in combinations:
                 for light_path, state in comb.items():
@@ -970,13 +1022,15 @@ class Results(_ResultsFolder):
         # convert to regular dict
         states_schedule = dict(states_schedule)
 
+        hours = np.arange(0.5, 8760.5, 1.0)
+        occ_hours = filter_array(hours, np.array(self.schedule))
         # map states to 8760 values
         for light_path, states in states_schedule.items():
-            mapped_states = Results.sun_up_hours_to_annual(self.sun_up_hours,
-                np.array(states), self.timestep)
+            mapped_states = Results.values_to_annual(occ_hours,
+                states, self.timestep)
             states_schedule[light_path] = mapped_states
 
-        return states_schedule
+        return states_schedule, fail_to_comply
 
     def daylight_control_schedules(
             self, states: dict = None, grids_filter: str = '*',
@@ -1141,19 +1195,19 @@ class Results(_ResultsFolder):
         info_file.write_text(json.dumps(grids_info))
 
     @staticmethod
-    def sun_up_hours_to_annual(
-            sun_up_hours: Union[List[float], np.ndarray],
+    def values_to_annual(
+            hours: Union[List[float], np.ndarray],
             values: Union[List[float], np.ndarray],
             timestep: float) -> np.ndarray:
-        """Map a 1D NumPy array based on sun up hours to annual array.
+        """Map a 1D NumPy array based on a set of hours to an annual array.
 
         This method creates an array with zeros of length 8760 and replaces the
         zeros with the input 'values' at the indices of the input
-        'sun_up_hours'.
+        'hours'.
 
         Args:
-            sun_up_hours: A list of sun up hours. This can be a regular list or
-                a 1D NumPy array.
+            hours: A list of hours. This can be a regular list or a 1D NumPy
+                array.
             values: A list of values to map to an annual array. This can be a
                 regular list or a 1D NumPy array.
             timestep: Timestep of the simulation.
@@ -1164,11 +1218,10 @@ class Results(_ResultsFolder):
         if not isinstance(values, np.ndarray):
             values = np.array(values)
         check_array_dim(values, 1)
-        sun_up_hours = np.array(sun_up_hours).astype(int)
-        assert sun_up_hours.shape == values.shape
-
-        annual_array = np.zeros(8760 * timestep)
-        annual_array[sun_up_hours] = values
+        hours = np.array(hours).astype(int)
+        assert hours.shape == values.shape
+        annual_array = np.zeros(8760 * timestep).astype(int)
+        annual_array[hours] = values
 
         return annual_array
 
