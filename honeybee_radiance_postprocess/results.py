@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 from itertools import islice, cycle
-from typing import Union, List
+from typing import Tuple, Union, List
 import numpy as np
 
 from ladybug.analysisperiod import AnalysisPeriod
@@ -17,6 +17,7 @@ from .metrics import (da_array2d, cda_array2d, udi_array2d, udi_lower_array2d,
     cumulative_values_array2d, peak_values_array2d)
 from .util import filter_array, hoys_mask, check_array_dim
 from .annualdaylight import _annual_daylight_config
+from .electriclight import array_to_dimming_fraction
 from . import type_hints
 
 
@@ -917,6 +918,93 @@ class Results(_ResultsFolder):
                 data_file = metric_folder.joinpath(f'{grid_id}_{sensor_id}.json')
                 data_file.parent.mkdir(parents=True, exist_ok=True)
                 data_file.write_text(json.dumps(data_dict))
+
+    def daylight_control_schedules(
+            self, states: dict = None, grids_filter: str = '*',
+            base_schedule: list = None, ill_setpoint: float = 300,
+            min_power_in: float = 0.3, min_light_out: float = 0.2,
+            off_at_min: bool = False) -> Tuple[List[np.ndarray], List[str]]:
+        """Generate electric lighting schedules from annual daylight results.
+
+        Such controls will dim the lights according to whether the illuminance values
+        at the sensor locations are at a target illuminance setpoint. The results can be
+        used to account for daylight controls in energy simulations.
+
+        This function will generate one schedule per sensor grid in the simulation. Each
+        grid should have sensors at the locations in space where daylight dimming sensors
+        are located. Grids with one, two, or more sensors can be used to model setups
+        where fractions of each room are controlled by different sensors. If the sensor
+        grids are distributed over the entire floor of the rooms, the resulting schedules
+        will be idealized, where light dimming has been optimized to supply the minimum
+        illuminance setpoint everywhere in the room.
+
+        Args:
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+            base_schedule: A list of 8760 fractional values for the lighting schedule
+                representing the usage of lights without any daylight controls. The
+                values of this schedule will be multiplied by the hourly dimming
+                fraction to yield the output lighting schedules. If None, a schedule
+                from 9AM to 5PM on weekdays will be used. (Default: None).
+            ill_setpoint: A number for the illuminance setpoint in lux beyond which
+                electric lights are dimmed if there is sufficient daylight.
+                Some common setpoints are listed below. (Default: 300 lux).
+
+                * 50 lux - Corridors and hallways.
+                * 150 lux - Computer work spaces (screens provide illumination).
+                * 300 lux - Paper work spaces (reading from surfaces that need illumination).
+                * 500 lux - Retail spaces or museums illuminating merchandise/artifacts.
+                * 1000 lux - Operating rooms and workshops where light is needed for safety.
+
+            min_power_in: A number between 0 and 1 for the the lowest power the lighting
+                system can dim down to, expressed as a fraction of maximum
+                input power. (Default: 0.3).
+            min_light_out: A number between 0 and 1 the lowest lighting output the lighting
+                system can dim down to, expressed as a fraction of maximum light
+                output. Note that setting this to 1 means lights aren't dimmed at
+                all until the illuminance setpoint is reached. This can be used to
+                approximate manual light-switching behavior when used in conjunction
+                with the off_at_min input below. (Default: 0.2).
+            off_at_min: Boolean to note whether lights should switch off completely when
+                they get to the minimum power input. (Default: False).
+
+        Returns:
+            A tuple with two values.
+
+            -   schedules: A list of lists where each sub-list represents an electric
+                lighting dimming schedule for a sensor grid.
+
+            -   schedule_ids: A list of text strings for the recommended names of the
+                electric lighting schedules.
+        """
+        # process the base schedule input into a list of values
+        if base_schedule is None:
+            base_schedule = generate_default_schedule()
+        base_schedule = np.array(base_schedule)
+
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+        sun_up_hours = [int(h) for h in self.sun_up_hours]
+
+        dim_fracts = []
+        for grid_info in grids_info:
+            array = self._array_from_states(
+                grid_info, states=states, res_type='total')
+            fract_list = array_to_dimming_fraction(
+                array, sun_up_hours, ill_setpoint, min_power_in,
+                min_light_out, off_at_min
+            )
+            dim_fracts.append(fract_list)
+
+        schedules, schedule_ids = [], []
+        for grid_info, dim_fract in zip(grids_info, dim_fracts):
+            grid_id = grid_info['full_id']
+            sch_vals = base_schedule * dim_fract
+            sch_id = f'{grid_id} Daylight Control'
+            schedules.append(sch_vals)
+            schedule_ids.append(sch_id)
+
+        return schedules, schedule_ids
 
     @staticmethod
     def sun_up_hours_to_annual(
