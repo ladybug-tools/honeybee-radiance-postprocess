@@ -1004,7 +1004,82 @@ class Results(_ResultsFolder):
             schedules.append(sch_vals)
             schedule_ids.append(sch_id)
 
-        return schedules, schedule_ids
+        return schedules, schedule_ids, grids_info
+
+    def daylight_control_schedules_to_folder(
+            self, target_folder: str, states: dict = None,
+            grids_filter: str = '*', base_schedule: list = None,
+            ill_setpoint: float = 300, min_power_in: float = 0.3,
+            min_light_out: float = 0.2, off_at_min: bool = False):
+        """Generate electric lighting schedules from annual daylight results and
+        write the schedules to a folder.
+
+        Such controls will dim the lights according to whether the illuminance values
+        at the sensor locations are at a target illuminance setpoint. The results can be
+        used to account for daylight controls in energy simulations.
+
+        This function will generate one schedule per sensor grid in the simulation. Each
+        grid should have sensors at the locations in space where daylight dimming sensors
+        are located. Grids with one, two, or more sensors can be used to model setups
+        where fractions of each room are controlled by different sensors. If the sensor
+        grids are distributed over the entire floor of the rooms, the resulting schedules
+        will be idealized, where light dimming has been optimized to supply the minimum
+        illuminance setpoint everywhere in the room.
+
+        Args:
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+            base_schedule: A list of 8760 fractional values for the lighting schedule
+                representing the usage of lights without any daylight controls. The
+                values of this schedule will be multiplied by the hourly dimming
+                fraction to yield the output lighting schedules. If None, a schedule
+                from 9AM to 5PM on weekdays will be used. (Default: None).
+            ill_setpoint: A number for the illuminance setpoint in lux beyond which
+                electric lights are dimmed if there is sufficient daylight.
+                Some common setpoints are listed below. (Default: 300 lux).
+
+                * 50 lux - Corridors and hallways.
+                * 150 lux - Computer work spaces (screens provide illumination).
+                * 300 lux - Paper work spaces (reading from surfaces that need illumination).
+                * 500 lux - Retail spaces or museums illuminating merchandise/artifacts.
+                * 1000 lux - Operating rooms and workshops where light is needed for safety.
+
+            min_power_in: A number between 0 and 1 for the the lowest power the lighting
+                system can dim down to, expressed as a fraction of maximum
+                input power. (Default: 0.3).
+            min_light_out: A number between 0 and 1 the lowest lighting output the lighting
+                system can dim down to, expressed as a fraction of maximum light
+                output. Note that setting this to 1 means lights aren't dimmed at
+                all until the illuminance setpoint is reached. This can be used to
+                approximate manual light-switching behavior when used in conjunction
+                with the off_at_min input below. (Default: 0.2).
+            off_at_min: Boolean to note whether lights should switch off completely when
+                they get to the minimum power input. (Default: False).
+        """
+        folder = Path(target_folder)
+        folder.mkdir(parents=True, exist_ok=True)
+
+        schedules, schedule_ids, grids_info = self.daylight_control_schedules(
+            states=states, grids_filter=grids_filter,
+            base_schedule=base_schedule, ill_setpoint=ill_setpoint,
+            min_power_in=min_power_in, min_light_out=min_light_out,
+            off_at_min=off_at_min)
+
+        schedule_folder = folder.joinpath('control_schedules')
+
+        for count, grid_info in enumerate(grids_info):
+            d = schedules[count]
+            full_id = grid_info['full_id']
+            output_file = schedule_folder.joinpath(f'{full_id}.txt')
+            output_file.parent.mkdir(parents=True, exist_ok=True)
+            np.savetxt(output_file, d, fmt='%.2f')
+
+            id_file = schedule_folder.joinpath(f'{full_id}.id')
+            id_file.write_text(schedule_ids[count])
+
+        info_file = schedule_folder.joinpath('grids_info.json')
+        info_file.write_text(json.dumps(grids_info))
 
     @staticmethod
     def sun_up_hours_to_annual(
