@@ -927,7 +927,8 @@ class Results(_ResultsFolder):
             self, states: dict = None, grids_filter: str = '*',
             base_schedule: list = None, ill_setpoint: float = 300,
             min_power_in: float = 0.3, min_light_out: float = 0.2,
-            off_at_min: bool = False) -> Tuple[List[np.ndarray], List[str]]:
+            off_at_min: bool = False
+            ) -> Tuple[List[np.ndarray], List[str], List[dict]]:
         """Generate electric lighting schedules from annual daylight results.
 
         Such controls will dim the lights according to whether the illuminance values
