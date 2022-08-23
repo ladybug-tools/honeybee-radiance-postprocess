@@ -928,7 +928,7 @@ class Results(_ResultsFolder):
             base_schedule: list = None, ill_setpoint: float = 300,
             min_power_in: float = 0.3, min_light_out: float = 0.2,
             off_at_min: bool = False
-            ) -> Tuple[List[np.ndarray], List[str], List[dict]]:
+            ) -> Tuple[List[np.ndarray], List[dict]]:
         """Generate electric lighting schedules from annual daylight results.
 
         Such controls will dim the lights according to whether the illuminance values
@@ -980,8 +980,7 @@ class Results(_ResultsFolder):
             -   schedules: A list of lists where each sub-list represents an electric
                 lighting dimming schedule for a sensor grid.
 
-            -   schedule_ids: A list of text strings for the recommended names of the
-                electric lighting schedules.
+            -   grids_info: A list of grid information.
         """
         # process the base schedule input into a list of values
         if base_schedule is None:
@@ -1001,15 +1000,12 @@ class Results(_ResultsFolder):
             )
             dim_fracts.append(fract_list)
 
-        schedules, schedule_ids = [], []
+        schedules = []
         for grid_info, dim_fract in zip(grids_info, dim_fracts):
-            grid_id = grid_info['full_id']
             sch_vals = base_schedule * dim_fract
-            sch_id = f'{grid_id} Daylight Control'
             schedules.append(sch_vals)
-            schedule_ids.append(sch_id)
 
-        return schedules, schedule_ids, grids_info
+        return schedules, grids_info
 
     def daylight_control_schedules_to_folder(
             self, target_folder: str, states: dict = None,
@@ -1065,7 +1061,7 @@ class Results(_ResultsFolder):
         folder = Path(target_folder)
         folder.mkdir(parents=True, exist_ok=True)
 
-        schedules, schedule_ids, grids_info = self.daylight_control_schedules(
+        schedules, grids_info = self.daylight_control_schedules(
             states=states, grids_filter=grids_filter,
             base_schedule=base_schedule, ill_setpoint=ill_setpoint,
             min_power_in=min_power_in, min_light_out=min_light_out,
@@ -1079,9 +1075,6 @@ class Results(_ResultsFolder):
             output_file = schedule_folder.joinpath(f'{full_id}.txt')
             output_file.parent.mkdir(parents=True, exist_ok=True)
             np.savetxt(output_file, d, fmt='%.2f')
-
-            id_file = schedule_folder.joinpath(f'{full_id}.id')
-            id_file.write_text(schedule_ids[count])
 
         info_file = schedule_folder.joinpath('grids_info.json')
         info_file.write_text(json.dumps(grids_info))
