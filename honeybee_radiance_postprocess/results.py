@@ -98,7 +98,11 @@ class _ResultsFolder(object):
         """Find all light paths in grids_info."""
         lp = []
         for grid_info in self.grids_info:
-            light_paths = grid_info['light_path']
+            try:
+                light_paths = grid_info['light_path']
+            except KeyError:
+                grid_info['light_path'] = [['__static_apertures__']]
+                light_paths = grid_info['light_path']
             for light_path in light_paths:
                 light_path = light_path[0]
                 if light_path in lp:
