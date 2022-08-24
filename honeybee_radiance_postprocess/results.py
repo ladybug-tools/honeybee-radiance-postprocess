@@ -925,30 +925,40 @@ class Results(_ResultsFolder):
                 data_file.parent.mkdir(parents=True, exist_ok=True)
                 data_file.write_text(json.dumps(data_dict))
 
-    def leed_option_one(
-            self, grids_filter: str = '*', threshold: float = 300,
-            direct_threshold: float = 1000, occ_hours: int = 250,
-            check_total: bool = False):
-
-        states_schedule, fail_compy = self.leed_schedule(
-            grids_filter=grids_filter, threshold=threshold,
-            check_total=check_total
-        )
-
-        ase, hours_above, grids_info = self.annual_sunlight_exposure(
-            direct_threshold=direct_threshold, occ_hours=occ_hours,
-            grids_filter=grids_filter)
-
-        sda, grids_info = self.spatial_daylight_autonomy(
-            threshold=threshold, states=states_schedule,
-            grids_filter=grids_filter)
-
-        return None
-
     def leed_schedule(
             self, grids_filter: str = '*', threshold: float = 300,
-            max_t: float = np.inf, check_total: bool = False):
+            max_t: float = np.inf, check_total: bool = False
+            ) -> Tuple[dict, dict]:
+        """Generate a schedule that can be used in a LEED compliant sDA
+        calculation.
 
+        The schedule is based on the requirement that a maximum of two percent
+        of the sensors in a grid may receive more than 1000 direct lux for each
+        hour. Each possible combination of states is tested against this
+        requirement for each hour.
+
+        Args:
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+            threshold: Threshold value for daylight autonomy. Defaults to 300.
+            max_t: Maximum threshold for useful daylight illuminance. This is
+                only used if 'check_total' is set to True. This value can be
+                used to exclude illuminance values above the maximum threshold.
+                By default this is set to infinity to include all illuminance
+                values. Defaults to infinity.
+            check_total: If set to True the state combination for each hour
+                will be chosen as the one with the most number of sensors above
+                the 'threshold' and below 'max_t'. If that state combination
+                does not meet the requirement that restricts two percent of the
+                sensors of receiving more than 1000 direct lux, it will select
+                the next highest state combination until the direct requirement
+                is met. Defaults to False.
+
+        Returns:
+            Tuple: A tuple with a LEED compliant states schedule and a
+                dictionary of the hours that failed to meet the direct
+                requirement (if any hours).
+        """
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         fail_to_comply = {}
