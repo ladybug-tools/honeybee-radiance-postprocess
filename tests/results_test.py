@@ -159,5 +159,5 @@ def test_results_sun_up_hours_to_annual():
     results = Results(folder)
     sun_up_hours = results.sun_up_hours
     values = np.random.rand(len(sun_up_hours))
-    annual_array = Results.sun_up_hours_to_annual(sun_up_hours, values, 1)
+    annual_array = Results.values_to_annual(sun_up_hours, values, 1)
     assert annual_array.size == 8760

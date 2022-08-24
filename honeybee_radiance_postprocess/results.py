@@ -532,7 +532,7 @@ class Results(_ResultsFolder):
         return sda, grids_info
 
     def annual_sunlight_exposure(
-            self, direct_threshold: float = 300, occ_hours: int = 250,
+            self, direct_threshold: float = 1000, occ_hours: int = 250,
             grids_filter: str = '*') -> type_hints.annual_sunlight_exposure:
         """Calculate annual sunlight exposure.
 
