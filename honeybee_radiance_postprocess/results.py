@@ -14,6 +14,7 @@ from ladybug.dt import DateTime
 from ladybug.header import Header
 from honeybee_radiance.postprocess.annual import _process_input_folder, \
     filter_schedule_by_hours, generate_default_schedule
+from .annual import leed_occupancy_schedule, schedule_to_hoys
 from .metrics import (da_array2d, cda_array2d, udi_array2d, udi_lower_array2d,
     udi_upper_array2d, ase_array2d, average_values_array2d,
     cumulative_values_array2d, peak_values_array2d)
@@ -963,6 +964,12 @@ class Results(_ResultsFolder):
 
         fail_to_comply = {}
         states_schedule = defaultdict(list)
+
+        schedule = leed_occupancy_schedule(as_list=True)
+        occ_pattern = \
+            filter_schedule_by_hours(self.sun_up_hours, schedule=schedule)[0]
+        occ_mask = np.array(occ_pattern)
+
         for grid_info in grids_info:
             grid_id = grid_info['full_id']
             grid_count = grid_info['count']
@@ -1006,18 +1013,20 @@ class Results(_ResultsFolder):
                         total_comb_arrays.append(array)
                     total_comb_array = sum(total_comb_arrays)
                     array_filter = np.apply_along_axis(
-                        filter_array, 1, total_comb_array, mask=self.occ_mask)
+                        filter_array, 1, total_comb_array, mask=occ_mask)
                     array_threshold = ((array_filter >= threshold)
                                        & (array_filter < max_t)).sum(axis=0)
                     total_array_list_combs.append(total_comb_array)
                     threshold_list.append(array_threshold)
                 total_array_combs = np.array(threshold_list, dtype=np.float32)
                 array_combs_filter = np.apply_along_axis(
-                    filter_array, 1, array_combs, mask=self.occ_mask)
+                    filter_array, 1, array_combs, mask=occ_mask)
                 total_array_combs[array_combs_filter == np.NINF] = np.NINF
                 max_indices = total_array_combs.argmax(axis=0)
             else:
-                max_indices = array_combs.argmax(axis=0)
+                array_combs_filter = np.apply_along_axis(
+                    filter_array, 1, array_combs, mask=occ_mask)
+                max_indices = array_combs_filter.argmax(axis=0)
 
             # select the combination for each hour
             combinations = [states_combinations[idx] for idx in max_indices]
@@ -1032,11 +1041,10 @@ class Results(_ResultsFolder):
         # convert to regular dict
         states_schedule = dict(states_schedule)
 
-        hours = np.arange(0.5, 8760.5, 1.0)
-        occ_hours = filter_array(hours, np.array(self.schedule))
+        occ_hoys = schedule_to_hoys(schedule, self.sun_up_hours)
         # map states to 8760 values
         for light_path, states in states_schedule.items():
-            mapped_states = Results.values_to_annual(occ_hours,
+            mapped_states = Results.values_to_annual(occ_hoys,
                 states, self.timestep)
             states_schedule[light_path] = mapped_states
 
@@ -1208,12 +1216,12 @@ class Results(_ResultsFolder):
     def values_to_annual(
             hours: Union[List[float], np.ndarray],
             values: Union[List[float], np.ndarray],
-            timestep: float) -> np.ndarray:
+            timestep: float, base_value: int = 0) -> np.ndarray:
         """Map a 1D NumPy array based on a set of hours to an annual array.
 
-        This method creates an array with zeros of length 8760 and replaces the
-        zeros with the input 'values' at the indices of the input
-        'hours'.
+        This method creates an array with a base value of length 8760 and
+        replaces the base value with the input 'values' at the indices of the
+        input 'hours'.
 
         Args:
             hours: A list of hours. This can be a regular list or a 1D NumPy
@@ -1221,6 +1229,7 @@ class Results(_ResultsFolder):
             values: A list of values to map to an annual array. This can be a
                 regular list or a 1D NumPy array.
             timestep: Timestep of the simulation.
+            base_value: A value that will be applied for all the base array.
 
         Returns:
             np.ndarray: A 1D NumPy array.
@@ -1230,7 +1239,7 @@ class Results(_ResultsFolder):
         check_array_dim(values, 1)
         hours = np.array(hours).astype(int)
         assert hours.shape == values.shape
-        annual_array = np.zeros(8760 * timestep).astype(int)
+        annual_array = np.repeat(base_value, 8760 * timestep).astype(int)
         annual_array[hours] = values
 
         return annual_array
