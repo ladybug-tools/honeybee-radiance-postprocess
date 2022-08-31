@@ -926,6 +926,24 @@ class Results(_ResultsFolder):
                 data_file.parent.mkdir(parents=True, exist_ok=True)
                 data_file.write_text(json.dumps(data_dict))
 
+    def leed_option_one(
+            self, grids_filter: str = '*', states: dict = None,
+            threshold: float = 300, direct_threshold: float = 1000,
+            occ_hours: int = 250, target_time: float = 50,
+            check_total: bool = False):
+        if not states:
+            states, fail_to_comply = self.leed_schedule(
+                grids_filter=grids_filter, threshold=threshold,
+                check_total=check_total)
+
+        ase, hours_above, grids_info = self.annual_sunlight_exposure(
+            grids_filter=grids_filter,direct_threshold=direct_threshold,
+            occ_hours=occ_hours)
+
+        sda, grids_info = self.spatial_daylight_autonomy(
+            grids_filter=grids_filter, states=states, threshold=threshold,
+            target_time=target_time)
+
     def leed_schedule(
             self, grids_filter: str = '*', threshold: float = 300,
             max_t: float = np.inf, check_total: bool = False
