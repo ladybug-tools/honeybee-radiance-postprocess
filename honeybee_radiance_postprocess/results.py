@@ -931,6 +931,34 @@ class Results(_ResultsFolder):
             threshold: float = 300, direct_threshold: float = 1000,
             occ_hours: int = 250, target_time: float = 50,
             check_total: bool = False):
+        """Run a full LEED daylight option 1 analysis.
+
+        This methods includes the calculation of ASE and sDA. If the user
+        provides schedules for the states of aperture groups, one should make
+        sure that the schedules are valid according to IES LM-83-12 Section 2.2.6.
+        If the user leaves the states option empty, a method to calculate
+        schedules for the aperture groups is invoked.
+
+        Args:
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+            states: A dictionary of states. Defaults to None.
+            threshold: Threshold value for daylight autonomy. Defaults to 300.
+            direct_threshold: The threshold that determines if a sensor is
+                overlit. Defaults to 1000.
+            occ_hours: The number of occupied hours that cannot receive more
+                than the direct_threshold. Defaults to 250.
+            target_time: A minimum threshold of occupied time (eg. 50% of the
+                time), above which a given sensor passes and contributes to the
+                spatial daylight autonomy. Defaults to 50.
+            check_total: If set to True the state combination for each hour
+                will be chosen as the one with the most number of sensors above
+                the 'threshold' and below 'max_t'. If that state combination
+                does not meet the requirement that restricts two percent of the
+                sensors of receiving more than 1000 direct lux, it will select
+                the next highest state combination until the direct requirement
+                is met. Defaults to False.
+        """
         if not states:
             states, fail_to_comply = self.leed_schedule(
                 grids_filter=grids_filter, threshold=threshold,
