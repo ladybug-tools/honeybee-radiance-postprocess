@@ -534,7 +534,8 @@ class Results(_ResultsFolder):
 
     def annual_sunlight_exposure(
             self, direct_threshold: float = 1000, occ_hours: int = 250,
-            grids_filter: str = '*') -> type_hints.annual_sunlight_exposure:
+            states: dict = None, grids_filter: str = '*'
+            ) -> type_hints.annual_sunlight_exposure:
         """Calculate annual sunlight exposure.
 
         Args:
@@ -542,6 +543,7 @@ class Results(_ResultsFolder):
                 overlit. Defaults to 1000.
             occ_hours: The number of occupied hours that cannot receive more
                 than the direct_threshold. Defaults to 250.
+            states: A dictionary of states. Defaults to None.
             grids_filter: The name of a grid or a pattern to filter the grids.
                 Defaults to '*'.
 
@@ -556,7 +558,7 @@ class Results(_ResultsFolder):
         hours_above = []
         for grid_info in grids_info:
             array = self._array_from_states(
-                grid_info, states=None, res_type='direct')
+                grid_info, states=states, res_type='direct')
             if np.any(array):
                 array_filter = np.apply_along_axis(
                     filter_array, 1, array, mask=self.occ_mask)
@@ -965,7 +967,7 @@ class Results(_ResultsFolder):
                 check_total=check_total)
 
         ase, hours_above, grids_info = self.annual_sunlight_exposure(
-            grids_filter=grids_filter,direct_threshold=direct_threshold,
+            grids_filter=grids_filter, direct_threshold=direct_threshold,
             occ_hours=occ_hours)
 
         sda, grids_info = self.spatial_daylight_autonomy(
@@ -1067,7 +1069,9 @@ class Results(_ResultsFolder):
                 total_array_combs = np.array(threshold_list, dtype=np.float32)
                 array_combs_filter = np.apply_along_axis(
                     filter_array, 1, array_combs, mask=occ_mask)
+                assert False, total_array_combs
                 total_array_combs[array_combs_filter == np.NINF] = np.NINF
+                assert False, total_array_combs
                 max_indices = total_array_combs.argmax(axis=0)
             else:
                 array_combs_filter = np.apply_along_axis(
