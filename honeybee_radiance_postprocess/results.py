@@ -1289,7 +1289,7 @@ class Results(_ResultsFolder):
         check_array_dim(values, 1)
         hours = np.array(hours).astype(int)
         assert hours.shape == values.shape
-        annual_array = np.repeat(base_value, 8760 * timestep).astype(int)
+        annual_array = np.repeat(base_value, 8760 * timestep).astype(np.float32)
         annual_array[hours] = values
 
         return annual_array
