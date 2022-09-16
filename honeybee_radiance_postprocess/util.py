@@ -140,3 +140,18 @@ def array_memory_size(
         size /= (1024 ** 3)
 
     return size
+
+
+def recursive_dict_merge(dict_1: dict, dict_2: dict):
+    """Recursive merging of two dictionaries.
+
+    Args:
+        dict_1: Original dictionary.
+        dict_2: Dictionary to merge with dict_1.
+    """
+    for k in dict_2:
+        if (k in dict_1 and isinstance(dict_1[k], dict) and
+            isinstance(dict_2[k], dict)):
+            recursive_dict_merge(dict_1[k], dict_2[k])
+        else:
+            dict_1[k] = dict_2[k]
