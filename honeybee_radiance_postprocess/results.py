@@ -528,7 +528,7 @@ class Results(_ResultsFolder):
 
         sda = []
         for array in da:
-            sda.append((array > target_time).mean())
+            sda.append((array >= target_time).mean())
 
         return sda, grids_info
 

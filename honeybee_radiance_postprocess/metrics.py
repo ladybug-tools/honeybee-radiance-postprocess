@@ -273,7 +273,7 @@ def sda_array2d(
         A NumPy float of the sDA as a percentage (decimal)
     """
     da = da_array2d(array, total_occ=total_occ, threshold=threshold)
-    sda = (da > target_time).mean()
+    sda = (da >= target_time).mean()
 
     return sda
 
