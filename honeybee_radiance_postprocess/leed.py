@@ -1,16 +1,90 @@
 """Functions for LEED post-processing."""
 from typing import Tuple, Union
+from pathlib import Path
 from collections import defaultdict
 import itertools
 import warnings
 import numpy as np
 
+from honeybee.model import Model
+from honeybee.units import conversion_factor_to_meters
+from honeybee_radiance.writer import _filter_by_pattern
 from honeybee_radiance.postprocess.annual import filter_schedule_by_hours
 from .metrics import da_array2d, ase_array2d
 from .annual import schedule_to_hoys, leed_occupancy_schedule
 from .results import Results
 from .util import filter_array, recursive_dict_merge
 
+
+def _leed_summary(
+    pass_ase_grids: list, pass_sda_grids: list, grid_areas: list,
+    grids_info: list) -> Tuple[dict, dict]:
+    summary = {}
+    summary_grid = {}
+
+    if grid_areas:
+        # weighted by mesh face area
+        total_area = total_area_pass_ase = total_area_pass_sda = 0
+        for (pass_ase, pass_sda, grid_area, grid_info) in \
+            zip(pass_ase_grids, pass_sda_grids, grid_areas, grids_info):
+            grid_id = grid_info['full_id']
+            total_grid_area = grid_area.sum()
+            area_pass_ase = grid_area[pass_ase].sum()
+            area_pass_sda = grid_area[pass_sda].sum()
+            # grid summary
+            grid_summary = {
+                grid_id: {
+                    'ase': area_pass_ase / total_grid_area,
+                    'sda': area_pass_sda / total_grid_area,
+                    'floor_area_passing_ase': area_pass_ase,
+                    'floor_area_passing_sda': area_pass_sda,
+                    'total_floor_area': total_grid_area
+                }
+            }
+            recursive_dict_merge(summary_grid, grid_summary)
+
+            total_area +=total_grid_area
+            total_area_pass_ase += area_pass_ase
+            total_area_pass_sda += area_pass_sda
+
+        summary['ase'] = total_area_pass_ase / total_area
+        summary['sda'] = total_area_pass_sda / total_area
+        summary['floor_area_passing_ase'] = total_area_pass_ase
+        summary['floor_area_passing_sda'] = total_area_pass_sda
+        summary['total_floor_area'] = total_area
+    else:
+        # assume all sensor points cover the same area
+        total_sensor_count = total_sensor_count_pass_ase = \
+            total_sensor_count_pass_sda = 0
+        for (pass_ase, pass_sda, grid_info) in \
+            zip(pass_ase_grids, pass_sda_grids, grids_info):
+            grid_id = grid_info['full_id']
+            grid_count = grid_info['count']
+            sensor_count_pass_ase = pass_ase.sum()
+            sensor_count_pass_sda = pass_sda.sum()
+            # grid summary
+            grid_summary = {
+                grid_id: {
+                    'ase': sensor_count_pass_ase / grid_count,
+                    'sda': sensor_count_pass_sda / grid_count,
+                    'sensor_count_passing_ase': sensor_count_pass_ase,
+                    'sensor_count_pass_sda': sensor_count_pass_sda,
+                    'total_sensor_count': grid_count
+                }
+            }
+            recursive_dict_merge(summary_grid, grid_summary)
+
+            total_sensor_count += grid_count
+            total_sensor_count_pass_ase += sensor_count_pass_ase
+            total_sensor_count_pass_sda += sensor_count_pass_sda
+
+        summary['ase'] = total_sensor_count_pass_ase / total_sensor_count
+        summary['sda'] = total_sensor_count_pass_sda / total_sensor_count
+        summary['sensor_count_passing_ase'] = total_sensor_count_pass_ase
+        summary['sensor_count_passing_sda'] = total_sensor_count_pass_sda
+        summary['total_sensor_count'] = total_sensor_count
+
+    return summary, summary_grid
 
 def shade_transmittance_per_light_path(
     light_paths: list, shade_transmittance: Union[float, dict]) -> dict:
@@ -34,7 +108,8 @@ def shade_transmittance_per_light_path(
             shade_transmittances[light_path] = [1]
             # add custom shade transmittance
             if light_path in shade_transmittance:
-                shade_transmittances[light_path].append(shade_transmittance[light_path])
+                shade_transmittances[light_path].append(
+                    shade_transmittance[light_path])
             # add default shade transmittance (0.2)
             elif light_path != '__static_apertures__':
                 shade_transmittances[light_path].append(0.2)
@@ -189,8 +264,6 @@ def leed_option_1(
         # set schedule to default leed schedule
         results.schedule = schedule
 
-    summary = {}
-    summary_grid = {}
     occ_mask = results.occ_mask
     total_occ = results.total_occ
 
@@ -215,9 +288,23 @@ def leed_option_1(
             )
         warnings.warn(warning_msg)
 
+    # next, check to see if there is a HBJSON with sensor grid meshes for areas
+    grid_areas, units_conversion = [], 1
+    for base_file in Path(results.folder).parent.iterdir():
+        if base_file.suffix in ('.hbjson', '.hbpkl') :
+            hb_model = Model.from_file(base_file)
+            units_conversion = conversion_factor_to_meters(hb_model.units)
+            filt_grids = _filter_by_pattern(
+                hb_model.properties.radiance.sensor_grids, filter=grids_filter)
+            for s_grid in filt_grids:
+                if s_grid.mesh is not None:
+                    grid_areas.append(s_grid.mesh.face_areas)
+            grid_areas = [np.array(grid) for grid in grid_areas]
+
     # annual sunlight exposure
     ase_grids = []
     hours_above = []
+    pass_ase_grids = []
     for grid_info in grids_info:
         grid_id = grid_info['full_id']
         light_paths = [lp[0] for lp in grid_info['light_path']]
@@ -242,28 +329,15 @@ def leed_option_1(
             warnings.warn(warning_msg)
         ase_grids.append(ase_grid)
         hours_above.append(h_above)
-        passing_ase_occ_hours = (h_above > occ_hours).sum()
-        # update summary
-        ase_summary = {
-            grid_id: {
-                'ase': ase_grid.round(decimals=4),
-                'passing_ase_occ_hours': passing_ase_occ_hours
-            }
-        }
-        recursive_dict_merge(summary_grid, ase_summary)
-    # calculate ase for all grids joined
-    full_hours_above = np.concatenate(hours_above, axis=0)
-    full_passing_ase_occ_hours = (full_hours_above > occ_hours).sum()
-    full_ase = full_passing_ase_occ_hours / full_hours_above.shape[0]
-    summary['ase'] = full_ase.round(decimals=4)
-    summary['passing_ase_occ_hours'] = full_passing_ase_occ_hours
+        pass_ase = (h_above > occ_hours)
+        pass_ase_grids.append(pass_ase)
 
     # spatial daylight autonomy
     da_grids = []
     sda_grids = []
+    pass_sda_grids = []
     for grid_info in grids_info:
         grid_id = grid_info['full_id']
-        grid_count = grid_info['count']
         light_paths = [lp[0] for lp in grid_info['light_path']]
         arrays = []
         # combine total array for all light paths
@@ -280,38 +354,27 @@ def leed_option_1(
         da_grid = da_array2d(array, total_occ=total_occ, threshold=threshold)
         da_grids.append(da_grid)
         # calculate sda per grid
-        passing_target_time = (da_grid >= target_time).sum()
-        sda_grid = passing_target_time / grid_count
-        sda_grids.append(sda_grid)
-        # update summary
-        sda_summary = {
-            grid_id: {
-                'sda': sda_grid.round(decimals=4),
-                'passing_target_time': passing_target_time
-            }
-        }
-        recursive_dict_merge(summary_grid, sda_summary)
-    # calculate da for all grids joined
-    full_da = np.concatenate(da_grids, axis=0)
-    passing_target_time = (full_da >= target_time).sum()
-    full_sda = passing_target_time / full_da.shape[0]
-    summary['sda'] = full_sda.round(decimals=4)
-    summary['passing_target_time'] = passing_target_time
+        pass_sda = (da_grid >= target_time)
+        pass_sda_grids.append(pass_sda)
+
+    # create summaries for all grids and each grid individually
+    summary, summary_grid = _leed_summary(
+        pass_ase_grids, pass_sda_grids, grid_areas, grids_info)
 
     # credits
-    if full_sda >= 0.75:
-        summary['credit'] = 3
-    elif full_sda >= 0.55:
-        summary['credit'] = 2
-    elif full_sda >= 0.40:
-        summary['credit'] = 1
+    if summary['sda'] >= 0.75:
+        summary['credits'] = 3
+    elif summary['sda'] >= 0.55:
+        summary['credits'] = 2
+    elif summary['sda'] >= 0.40:
+        summary['credits'] = 1
     else:
-        summary['credit'] = 0
+        summary['credits'] = 0
 
     if (np.array(sda_grids) >= 0.55).all():
-        if summary['credit'] <= 2:
-            summary['credit'] += 1
+        if summary['credits'] <= 2:
+            summary['credits'] += 1
         else:
-            summary['credit'] = 'Exemplary performance'
+            summary['credits'] = 'Exemplary performance'
 
-    return summary, summary_grid
+    return summary, summary_grid, da_grids, ase_grids, grids_info
