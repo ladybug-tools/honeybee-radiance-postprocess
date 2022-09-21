@@ -252,7 +252,7 @@ def leed_option_1(
             time), above which a given sensor passes and contributes to the
             spatial daylight autonomy. Defaults to 50.
         sub_folder: Relative path for a subfolder to write the output. If None,
-            the files will not be written.
+            the files will not be written. Defaults to None.
 
     Returns:
         Tuple:
