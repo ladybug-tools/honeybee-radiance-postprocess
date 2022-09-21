@@ -2,6 +2,7 @@
 from typing import Tuple, Union
 from pathlib import Path
 from collections import defaultdict
+import json
 import itertools
 import warnings
 import numpy as np
@@ -225,7 +226,7 @@ def leed_option_1(
         shade_transmittance: Union[float, dict] = 0.2,
         states_schedule: dict = None, threshold: float = 300,
         direct_threshold: float = 1000, occ_hours: int = 250,
-        target_time: float = 50):
+        target_time: float = 50, sub_folder: str = None):
     """Calculate credits for LEED v4.1 Daylight Option 1.
 
     Args:
@@ -240,7 +241,7 @@ def leed_option_1(
             Defaults to 0.2.
         states_schedule: A custom dictionary of shading states. In case this is
             left empty, the function will calculate a shading schedule by using
-            the shade_transmittance input If a states schedule is provided it
+            the shade_transmittance input. If a states schedule is provided it
             will check that it is complying with the 2% rule. Defaults to None.
         threshold: Threshold value for daylight autonomy. Default: 300.
         direct_threshold: The threshold that determines if a sensor is overlit.
@@ -250,10 +251,21 @@ def leed_option_1(
         target_time: A minimum threshold of occupied time (eg. 50% of the
             time), above which a given sensor passes and contributes to the
             spatial daylight autonomy. Defaults to 50.
+        sub_folder: Relative path for a subfolder to write the output. If None,
+            the files will not be written.
 
     Returns:
-        Tuple: A tuple with a summary of all grids combined and a summary of
-            each grid individually.
+        Tuple:
+        -   summary: Summary of all grids combined.
+        -   summary_grid: Summary of each grid individually.
+        -   da_grids: List of daylight autonomy values for each grid. Each item
+                in the list is a NumPy array of DA values.
+        -   hours_above: List of hours above 1000 direct illuminance (with
+                default states) for each grid. Each item in the list is a NumPy
+                array of hours above 1000 lux.
+        -   states_schedule: A dictionary of annual shading schedules for each
+                aperture group.
+        -   grids_info: Grid information.
     """
     # use default leed occupancy schedule
     schedule = leed_occupancy_schedule(as_list=True)
@@ -288,7 +300,7 @@ def leed_option_1(
             )
         warnings.warn(warning_msg)
 
-    # next, check to see if there is a HBJSON with sensor grid meshes for areas
+    # check to see if there is a HBJSON with sensor grid meshes for areas
     grid_areas, units_conversion = [], 1
     for base_file in Path(results.folder).parent.iterdir():
         if base_file.suffix in ('.hbjson', '.hbpkl') :
@@ -377,4 +389,30 @@ def leed_option_1(
         else:
             summary['credits'] = 'Exemplary performance'
 
-    return summary, summary_grid, da_grids, ase_grids, grids_info
+    states_schedule = {k:v.tolist() for k, v in states_schedule.items()}
+
+    if sub_folder:
+        folder = Path(sub_folder)
+        folder.mkdir(parents=True, exist_ok=True)
+
+        summary_file = folder.joinpath('summary.json')
+        summary_file.write_text(json.dumps(summary, indent=2))
+        summary_grid_file = folder.joinpath('summary_grid.json')
+        summary_grid_file.write_text(json.dumps(summary_grid, indent=2))
+        states_schedule_file = folder.joinpath('states_schedule.json')
+        states_schedule_file.write_text(json.dumps(states_schedule))
+        grids_info_file = folder.joinpath('grids_info.json')
+        grids_info_file.write_text(json.dumps(grids_info, indent=2))
+
+        for da, h_above, grid_info in zip(da_grids, hours_above, grids_info):
+            grid_id = grid_info['full_id']
+            da_file = folder.joinpath('da', f'{grid_id}.da')
+            da_file.parent.mkdir(parents=True, exist_ok=True)
+            hours_above_file = folder.joinpath(
+                'ase_hours_above', f'{grid_id}.hours')
+            hours_above_file.parent.mkdir(parents=True, exist_ok=True)
+            np.savetxt(da_file, da, fmt='%.2f')
+            np.savetxt(hours_above_file, h_above, fmt='%.0f')
+
+    return (summary, summary_grid, da_grids, hours_above, states_schedule,
+            grids_info)
