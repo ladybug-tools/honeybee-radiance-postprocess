@@ -162,9 +162,6 @@ def leed_states_schedule(
         filter_schedule_by_hours(results.sun_up_hours, schedule=schedule)[0]
     occ_mask = np.array(occ_pattern)
 
-    if isinstance(shade_transmittance, dict):
-        pass
-
     states_schedule = defaultdict(list)
     fail_to_comply = {}
 
