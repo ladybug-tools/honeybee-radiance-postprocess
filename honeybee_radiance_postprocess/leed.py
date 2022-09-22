@@ -68,8 +68,8 @@ def _leed_summary(
                 grid_id: {
                     'ase': sensor_count_pass_ase / grid_count,
                     'sda': sensor_count_pass_sda / grid_count,
-                    'sensor_count_passing_ase': sensor_count_pass_ase,
-                    'sensor_count_pass_sda': sensor_count_pass_sda,
+                    'sensor_count_passing_ase': int(sensor_count_pass_ase),
+                    'sensor_count_pass_sda': int(sensor_count_pass_sda),
                     'total_sensor_count': grid_count
                 }
             }
@@ -81,8 +81,8 @@ def _leed_summary(
 
         summary['ase'] = total_sensor_count_pass_ase / total_sensor_count
         summary['sda'] = total_sensor_count_pass_sda / total_sensor_count
-        summary['sensor_count_passing_ase'] = total_sensor_count_pass_ase
-        summary['sensor_count_passing_sda'] = total_sensor_count_pass_sda
+        summary['sensor_count_passing_ase'] = int(total_sensor_count_pass_ase)
+        summary['sensor_count_passing_sda'] = int(total_sensor_count_pass_sda)
         summary['total_sensor_count'] = total_sensor_count
 
     return summary, summary_grid

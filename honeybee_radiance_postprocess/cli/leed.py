@@ -1,8 +1,9 @@
 """honeybee radiance daylight leed postprocessing commands."""
 import json
-import click
 import sys
 import logging
+import os
+import click
 
 from ..leed import leed_option_1
 
@@ -50,7 +51,7 @@ def daylight_option_1(
         folder: Results folder. This folder is an output folder of annual daylight
             recipe. The daylight simulation must include aperture groups.
     """
-    if shade_transmittance_file:
+    if shade_transmittance_file and os.path.isfile(shade_transmittance_file):
         with open(shade_transmittance_file) as json_file:
             shade_transmittance = json.load(json_file)
 
