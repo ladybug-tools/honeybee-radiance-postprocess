@@ -7,6 +7,8 @@ import logging
 
 from honeybee_radiance_postprocess.results import Results
 
+from .leed import leed
+
 _logger = logging.getLogger(__name__)
 
 
@@ -16,6 +18,7 @@ _logger = logging.getLogger(__name__)
 def post_process():
     pass
 
+post_process.add_command(leed)
 
 @post_process.command('annual-daylight')
 @click.argument(
