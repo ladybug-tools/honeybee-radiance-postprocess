@@ -135,7 +135,7 @@ class _ResultsFolder(object):
             return data
         else:
             # only static results
-            return None
+            return {}
 
     def _set_timestep(self) -> float:
         """Set timestep."""
