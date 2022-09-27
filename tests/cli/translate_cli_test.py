@@ -50,7 +50,7 @@ def test_binary_to_npy():
     assert result.exit_code == 0
     assert os.path.isfile(output_file)
     array = np.load(output_file)
-    assert array.shape == (208, 4393, 3)
+    assert array.shape == (24, 4393, 3)
     nukedir(output_folder)
 
 
@@ -70,5 +70,5 @@ def test_binary_to_npy_conversion():
     assert result.exit_code == 0
     assert os.path.isfile(output_file)
     array = np.load(output_file)
-    assert array.shape == (208, 4393)
+    assert array.shape == (24, 4393)
     nukedir(output_folder)
