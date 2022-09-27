@@ -1,22 +1,22 @@
 {
   "TestRoom_1": {
-    "Room1_North": [
-      "0_Room1_North",
-      "1_Room1_North"
-    ],
     "Room1_South": [
       "0_Room1_South",
       "1_Room1_South"
+    ],
+    "Room1_North": [
+      "0_Room1_North",
+      "1_Room1_North"
     ]
   },
   "TestRoom_2": {
-    "Room2_North2": [
-      "0_Room2_North2",
-      "1_Room2_North2"
-    ],
     "Room2_North1": [
       "0_Room2_North1",
       "1_Room2_North1"
+    ],
+    "Room2_North2": [
+      "0_Room2_North2",
+      "1_Room2_North2"
     ]
   }
 }
