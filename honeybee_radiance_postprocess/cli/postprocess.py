@@ -6,6 +6,7 @@ import os
 import logging
 
 from honeybee_radiance_postprocess.results import Results
+from ..en17037 import en17037_to_folder
 
 from .two_phase import two_phase
 from .leed import leed
@@ -73,10 +74,9 @@ def annual_metrics(
 
     \b
     Args:
-        folder: Results folder. This folder is an output folder of annual daylight
-            recipe. Folder should include grids_info.json and sun-up-hours.txt. The
-            command uses the list in grids_info.json to find the result files for each
-            sensor grid.
+        folder: Results folder. This folder is an output folder of annual
+            daylight recipe. Folder should include grids_info.json and
+            sun-up-hours.txt.
     """
     # optional input - only check if the file exist otherwise ignore
     if schedule and os.path.isfile(schedule):
@@ -97,6 +97,64 @@ def annual_metrics(
         )
     except Exception:
         _logger.exception('Failed to calculate annual metrics.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('annual-daylight-en17037')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.argument(
+    'schedule',
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--states', '-st', help='A JSON file with a dictionary of states. If states are not '
+    'provided the default states will be used for any aperture groups.', default=None,
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
+    show_default=True
+)
+@click.option(
+    '--sub_folder', '-sf', help='Optional relative path for subfolder to write output '
+    'metric files.', default='en17037'
+)
+def annual_en17037_metrics(
+    folder, schedule, states, grids_filter, sub_folder
+):
+    """Compute annual EN 17037 metrics in a folder and write them in a subfolder.
+
+    \b
+    This command generates multiple files for each input grid. Files for target
+    illuminance and minimum illuminance will be calculated for three levels of
+    recommendation: minimum, medium, high.
+
+    \b
+    Args:
+        folder: Results folder. This folder is an output folder of annual
+            daylight recipe. Folder should include grids_info.json and
+            sun-up-hours.txt.
+        schedule: Path to an annual schedule file. Values should be 0-1
+            separated by new line. This should be a daylight hours schedule.
+    """
+    with open(schedule) as hourly_schedule:
+        schedule = [int(float(v)) for v in hourly_schedule]
+
+    if states:
+        with open(states) as json_file:
+            states = json.load(json_file)
+
+    try:
+        en17037_to_folder(
+            folder, schedule, states=states, grids_filter=grids_filter,
+            sub_folder=sub_folder)
+    except Exception:
+        _logger.exception('Failed to calculate annual EN 17037 metrics.')
         sys.exit(1)
     else:
         sys.exit(0)
