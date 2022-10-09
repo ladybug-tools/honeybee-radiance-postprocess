@@ -1,10 +1,8 @@
 """Post-processing Results class."""
 import json
-import itertools
 from pathlib import Path
 from itertools import islice, cycle
 from typing import Tuple, Union, List
-from collections import defaultdict
 import numpy as np
 
 from ladybug.analysisperiod import AnalysisPeriod
@@ -14,7 +12,6 @@ from ladybug.dt import DateTime
 from ladybug.header import Header
 from honeybee_radiance.postprocess.annual import _process_input_folder, \
     filter_schedule_by_hours, generate_default_schedule
-from .annual import leed_occupancy_schedule, schedule_to_hoys
 from .metrics import (da_array2d, cda_array2d, udi_array2d, udi_lower_array2d,
     udi_upper_array2d, ase_array2d, average_values_array2d,
     cumulative_values_array2d, peak_values_array2d)
@@ -1238,6 +1235,11 @@ class Results(_ResultsFolder):
         """
         # TODO: Figure out if there is a better way to handle the states.
         # I.e., state integer <--> state identifier.
+
+        # This is to get around a bug in honeybee-radiance library that uses the
+        # identifier and not the full_id to create the grid_states.json file.
+        # we should fix this in the source. cc: Mikkel
+        grid_id = grid_id.split('/')[-1]
         valid_states = self.valid_states[light_path]
         if state in valid_states:
             if light_path == '__static_apertures__':
