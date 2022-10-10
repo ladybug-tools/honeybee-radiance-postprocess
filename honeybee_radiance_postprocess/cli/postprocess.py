@@ -7,17 +7,17 @@ import logging
 
 from honeybee_radiance_postprocess.results import Results
 
+from .two_phase import two_phase
 from .leed import leed
 
 _logger = logging.getLogger(__name__)
 
 
-# we will import this from inside honeybee-radiance and expose it from honeybee-radiance
-# cli
 @click.group(help='Commands to post-process Radiance results.')
 def post_process():
     pass
 
+post_process.add_command(two_phase)
 post_process.add_command(leed)
 
 @post_process.command('annual-daylight')
