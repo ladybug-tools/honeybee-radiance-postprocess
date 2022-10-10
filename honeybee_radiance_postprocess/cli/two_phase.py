@@ -1,4 +1,4 @@
-"""Commands to work with annual daylight Radiance matrices using NumPy."""
+"""Commands to work with two phase Radiance matrices using NumPy."""
 import sys
 import logging
 from pathlib import Path
@@ -10,12 +10,12 @@ from ..reader import binary_to_array, ascii_to_array
 _logger = logging.getLogger(__name__)
 
 
-@click.group(help='Commands to work with annual daylight Radiance matrices using NumPy.')
-def annual_daylight():
+@click.group(help='Commands to work with two phase Radiance matrices using NumPy.')
+def two_phase():
     pass
 
 
-@annual_daylight.command('rgb-to-illuminance')
+@two_phase.command('rgb-to-illuminance')
 @click.argument(
     'total-mtx', type=click.Path(exists=True, dir_okay=False, resolve_path=True)
 )
@@ -43,9 +43,9 @@ def annual_daylight():
 )
 def rgb_to_illuminance(
     total_mtx, direct_mtx, direct_sunlight_mtx, binary, total_name,
-    direct_sunlight_name, output_folder
+    direct_name, output_folder
     ):
-    """Process results of annual daylight (total, direct, direct sunlight).
+    """Process results of two phase simulations (total, direct, direct sunlight).
 
     The function will replace the direct illuminance with the direct sunlight
     illuminance: total - direct + direct_sunlight.
@@ -82,7 +82,7 @@ def rgb_to_illuminance(
         np.save(total_output, total_illuminance)
 
         # save direct sunlight illuminance
-        direct_output = Path(output_folder, direct_sunlight_name)
+        direct_output = Path(output_folder, direct_name)
         direct_output.parent.mkdir(parents=True, exist_ok=True)
         np.save(direct_output, direct_sunlight_illuminance)
 
