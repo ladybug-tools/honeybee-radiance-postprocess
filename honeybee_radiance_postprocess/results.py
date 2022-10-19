@@ -570,6 +570,48 @@ class Results(_ResultsFolder):
 
         return ase, hours_above, grids_info
 
+    def annual_sunlight_exposure_to_folder(
+            self, target_folder: str, direct_threshold: float = 1000,
+            occ_hours: int = 250, states: dict = None,
+            grids_filter: str = '*'):
+        """Calculate and write annual sunlight exposure to a folder.
+
+        Args:
+            direct_threshold: The threshold that determines if a sensor is
+                overlit. Defaults to 1000.
+            occ_hours: The number of occupied hours that cannot receive more
+                than the direct_threshold. Defaults to 250.
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+        """
+        folder = Path(target_folder)
+        folder.mkdir(parents=True, exist_ok=True)
+
+        ase, hours_above, grids_info = self.annual_sunlight_exposure(
+            direct_threshold=direct_threshold, occ_hours=occ_hours,
+            states=states, grids_filter=grids_filter
+            )
+
+        pattern = {'ase': ase, 'hours_above': hours_above}
+        for metric, data in pattern.items():
+            metric_folder = folder.joinpath(metric)
+            extension = metric.split('_')[0]
+            #if metric == 'hours_above':
+            for count, grid_info in enumerate(grids_info):
+                d = data[count]
+                full_id = grid_info['full_id']
+                output_file = metric_folder.joinpath(f'{full_id}.{extension}')
+                output_file.parent.mkdir(parents=True, exist_ok=True)
+                if metric == 'hours_above':
+                    np.savetxt(output_file, d, fmt='%i')
+                elif metric == 'ase':
+                    output_file.write_text('%.2f' % d)
+
+        for metric in pattern.keys():
+            info_file = folder.joinpath(metric, 'grids_info.json')
+            info_file.write_text(json.dumps(grids_info))
+
     def point_in_time(
             self, datetime: Union[int, DateTime], states: dict = None,
             grids_filter: str = '*', res_type: str = 'total'

@@ -136,7 +136,7 @@ def _leed_summary(
             total_area_pass_ase += area_pass_ase
             total_area_pass_sda += area_pass_sda
 
-        summary['ase'] = round(total_area_pass_ase / total_area * 100, 2)
+        summary['ase'] = round(total_area_pass_ase / total_area, 2)
         summary['sda'] = round(total_area_pass_sda / total_area * 100, 2)
         summary['floor_area_passing_ase'] = total_area_pass_ase
         summary['floor_area_passing_sda'] = total_area_pass_sda
@@ -151,7 +151,7 @@ def _leed_summary(
             grid_count = grid_info['count']
             sensor_count_pass_ase = pass_ase.sum()
             sensor_count_pass_sda = pass_sda.sum()
-            ase_grid = sensor_count_pass_ase / grid_count * 100
+            ase_grid = sensor_count_pass_ase / grid_count
             sda_grid = sensor_count_pass_sda / grid_count * 100
             # grid summary
             grid_summary, sensor_count_pass_sda, sensor_count_pass_ase = \
@@ -166,7 +166,7 @@ def _leed_summary(
             total_sensor_count_pass_ase += sensor_count_pass_ase
             total_sensor_count_pass_sda += sensor_count_pass_sda
 
-        summary['ase'] = round(total_sensor_count_pass_ase / total_sensor_count * 100, 2)
+        summary['ase'] = round(total_sensor_count_pass_ase / total_sensor_count, 2)
         summary['sda'] = round(total_sensor_count_pass_sda / total_sensor_count * 100, 2)
         summary['sensor_count_passing_ase'] = int(total_sensor_count_pass_ase)
         summary['sensor_count_passing_sda'] = int(total_sensor_count_pass_sda)

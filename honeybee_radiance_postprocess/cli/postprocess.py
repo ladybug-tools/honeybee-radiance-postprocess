@@ -422,3 +422,77 @@ def annual_to_data(
         sys.exit(1)
     else:
         sys.exit(0)
+
+
+@post_process.command('annual-sunlight-exposure')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.option(
+    '--schedule', '-sch', help='Path to an annual schedule file. Values should be 0-1 '
+    'separated by new line. If not provided an 8-5 annual schedule will be created.',
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--direct-threshold', '-dt', help='The threshold that determines if a '
+    'sensor is overlit.',
+    default=1000, type=float, show_default=True
+)
+@click.option(
+    '--occ_hours', '-oh', help='The number of occupied hours that cannot '
+    'receive more than the direct_threshold.', default=250, type=int,
+    show_default=True
+)
+@click.option(
+    '--states', '-st', help='A JSON file with a dictionary of states. If states are not '
+    'provided the default states will be used for any aperture groups.', default=None,
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
+    show_default=True
+)
+@click.option(
+    '--sub-folder', '-sf', help='Optional relative path for subfolder to write output '
+    'metric files.', default='metrics'
+)
+def annual_sunlight_exposure(
+    folder, schedule, direct_threshold, occ_hours, states, grids_filter,
+    sub_folder
+):
+    """Compute annual sunlight exposure in a folder and write them in a subfolder.
+
+    \b
+    This command generates 2 files for each input grid.
+        ase/{grid-name}.ase -> Annual Sunlight Exposure
+        hours_above/{grid-name}.hours -> Number of overlit hours for each sensor
+
+    \b
+    Args:
+        folder: Results folder. This folder is an output folder of annual
+            daylight recipe. Folder should include grids_info.json and
+            sun-up-hours.txt.
+    """
+    # optional input - only check if the file exist otherwise ignore
+    if schedule and os.path.isfile(schedule):
+        with open(schedule) as hourly_schedule:
+            schedule = [int(float(v)) for v in hourly_schedule]
+    else:
+        schedule = None
+
+    if states:
+        with open(states) as json_file:
+            states = json.load(json_file)
+
+    try:
+        results = Results(folder, schedule=schedule)
+        results.annual_sunlight_exposure_to_folder(
+            sub_folder, direct_threshold=direct_threshold, occ_hours=occ_hours,
+            states=states, grids_filter=grids_filter
+        )
+    except Exception:
+        _logger.exception('Failed to calculate annual sunlight exposure.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
