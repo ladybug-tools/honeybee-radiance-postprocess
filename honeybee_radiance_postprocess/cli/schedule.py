@@ -83,7 +83,7 @@ def control_schedules(
     try:
         if base_schedule_file:
             with open(base_schedule_file) as base_schedule:
-                base_schedule = [float(h) for h in base_schedule.readlines()]
+                base_schedule = [int(float(h)) for h in base_schedule.readlines()]
         else:
             base_schedule = None
 

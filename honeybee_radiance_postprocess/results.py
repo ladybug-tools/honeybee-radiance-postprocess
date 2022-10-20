@@ -1038,10 +1038,13 @@ class Results(_ResultsFolder):
         for grid_info in grids_info:
             array = self._array_from_states(
                 grid_info, states=states, res_type='total')
-            fract_list = array_to_dimming_fraction(
-                array, sun_up_hours, ill_setpoint, min_power_in,
-                min_light_out, off_at_min
-            )
+            if np.any(array):
+                fract_list = array_to_dimming_fraction(
+                    array, sun_up_hours, ill_setpoint, min_power_in,
+                    min_light_out, off_at_min
+                )
+            else:
+                fract_list = np.ones(8760)
             dim_fracts.append(fract_list)
 
         schedules, schedule_ids = [], []
