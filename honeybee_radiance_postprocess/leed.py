@@ -426,10 +426,13 @@ def leed_option_1(
             array = results._get_array(grid_info, light_path, res_type='total')
             array_filter = np.apply_along_axis(
                 filter_array, 1, array, occ_mask)
-            sun_up_hours = np.array(results.sun_up_hours).astype(int)
-            shade_transmittance = states_schedule[light_path][sun_up_hours]
-            shade_transmittance = shade_transmittance[occ_mask.astype(bool)]
-            arrays.append(array_filter * shade_transmittance)
+            if light_path != '__static_apertures__':
+                sun_up_hours = np.array(results.sun_up_hours).astype(int)
+                shade_transmittance = states_schedule[light_path][sun_up_hours]
+                shade_transmittance = shade_transmittance[occ_mask.astype(bool)]
+                arrays.append(array_filter * shade_transmittance)
+            else:
+                arrays.append(array_filter)
         array = sum(arrays)
         # calculate da per grid
         da_grid = da_array2d(array, total_occ=total_occ, threshold=threshold)
