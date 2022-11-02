@@ -2,6 +2,8 @@
 from typing import Tuple
 import numpy as np
 
+from honeybee_radiance.writer import _filter_by_pattern
+
 
 def binary_mtx_dimension(filepath: str) -> Tuple[int, int, int, int]:
     """Return binary Radiance matrix dimensions if exist.
@@ -155,3 +157,18 @@ def recursive_dict_merge(dict_1: dict, dict_2: dict):
             recursive_dict_merge(dict_1[k], dict_2[k])
         else:
             dict_1[k] = dict_2[k]
+
+
+def _filter_grids_by_pattern(grids_info, filter_pattern):
+    """Filter grids_info by a pattern.
+
+    Args:
+        grids_info: Grid information.
+        filter_pattern: Pattern to filter grids by.
+
+    Returns:
+        A list of filtered grids.
+    """
+    grids = _filter_by_pattern(grids_info, filter=filter_pattern)
+
+    return grids
