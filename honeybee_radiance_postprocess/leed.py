@@ -63,7 +63,8 @@ def _create_grid_summary(
         grid_summary[grid_id] = {
             'ase_warning': ase_warning
         }
-        sda_grid = pass_sda = 0
+        sda_grid = 0
+        pass_sda = 0
 
     if area_weighted:
         _grid_summary = {
@@ -136,7 +137,7 @@ def _leed_summary(
             total_area_pass_ase += area_pass_ase
             total_area_pass_sda += area_pass_sda
 
-        summary['ase'] = round(total_area_pass_ase / total_area, 2)
+        summary['ase'] = round(total_area_pass_ase / total_area * 100, 2)
         summary['sda'] = round(total_area_pass_sda / total_area * 100, 2)
         summary['floor_area_passing_ase'] = total_area_pass_ase
         summary['floor_area_passing_sda'] = total_area_pass_sda
@@ -166,7 +167,7 @@ def _leed_summary(
             total_sensor_count_pass_ase += sensor_count_pass_ase
             total_sensor_count_pass_sda += sensor_count_pass_sda
 
-        summary['ase'] = round(total_sensor_count_pass_ase / total_sensor_count, 2)
+        summary['ase'] = round(total_sensor_count_pass_ase / total_sensor_count * 100, 2)
         summary['sda'] = round(total_sensor_count_pass_sda / total_sensor_count * 100, 2)
         summary['sensor_count_passing_ase'] = int(total_sensor_count_pass_ase)
         summary['sensor_count_passing_sda'] = int(total_sensor_count_pass_sda)
@@ -446,20 +447,30 @@ def leed_option_1(
         pass_ase_grids, pass_sda_grids, grids_info, grid_areas=grid_areas)
 
     # credits
-    if summary['sda'] >= 75:
-        summary['credits'] = 3
-    elif summary['sda'] >= 55:
-        summary['credits'] = 2
-    elif summary['sda'] >= 40:
-        summary['credits'] = 1
+    if not fail_to_comply:
+        if summary['sda'] >= 75:
+            summary['credits'] = 3
+        elif summary['sda'] >= 55:
+            summary['credits'] = 2
+        elif summary['sda'] >= 40:
+            summary['credits'] = 1
+        else:
+            summary['credits'] = 0
+
+        if all(grid_summary['sda'] >= 55 for grid_summary in summary_grid.values()):
+            if summary['credits'] <= 2:
+                summary['credits'] += 1
+            else:
+                summary['credits'] = 'Exemplary performance'
     else:
         summary['credits'] = 0
-
-    if all(grid_summary['sda'] >= 55 for grid_summary in summary_grid.values()):
-        if summary['credits'] <= 2:
-            summary['credits'] += 1
-        else:
-            summary['credits'] = 'Exemplary performance'
+        fail_to_comply_rooms = ', '.join(list(fail_to_comply.keys()))
+        note = (
+            '0 credits has been awarded. The following sensor grids have at '
+            'least one hour where 2% of the floor area receives direct '
+            f'illuminance of 1000 lux or more: {fail_to_comply_rooms}.'
+        )
+        summary['note'] = note
 
     states_schedule = {k:v.tolist() for k, v in states_schedule.items()}
 
