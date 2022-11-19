@@ -1240,8 +1240,7 @@ class Results(_ResultsFolder):
             np.ndarray: A NumPy array of a given grid, light path, and state
                 from a NumPy file.
         """
-        grid_id = grid_info['identifier']
-        full_id = grid_info['full_id']
+        grid_id = grid_info['full_id']
 
         def merge_dicts(array_dict, arrays):
             for key, value in array_dict.items():
@@ -1253,7 +1252,7 @@ class Results(_ResultsFolder):
             return arrays
 
         state_identifier = self._state_identifier(grid_id, light_path, state=state)
-        file = self._get_file(full_id, light_path, state_identifier, res_type,
+        file = self._get_file(grid_id, light_path, state_identifier, res_type,
                               extension=extension)
         array = np.load(file)
 
@@ -1282,10 +1281,6 @@ class Results(_ResultsFolder):
         # TODO: Figure out if there is a better way to handle the states.
         # I.e., state integer <--> state identifier.
 
-        # This is to get around a bug in honeybee-radiance library that uses the
-        # identifier and not the full_id to create the grid_states.json file.
-        # we should fix this in the source. cc: Mikkel
-        grid_id = grid_id.split('/')[-1]
         valid_states = self.valid_states[light_path]
         if state in valid_states:
             if light_path == '__static_apertures__':
@@ -1504,7 +1499,7 @@ class Results(_ResultsFolder):
         grids_info = self.grids_info
 
         for grid_info in grids_info:
-            grid_id = grid_info['identifier']
+            grid_id = grid_info['full_id']
             light_paths = grid_info['light_path']
             arrays[grid_id] = {}
             for light_path in light_paths:
