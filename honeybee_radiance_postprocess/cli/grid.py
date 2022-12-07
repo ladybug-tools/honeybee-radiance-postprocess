@@ -5,6 +5,7 @@ import os
 import logging
 import json
 import numpy as np
+from pathlib import Path
 
 _logger = logging.getLogger(__name__)
 
@@ -41,7 +42,7 @@ def merge_grid_folder(input_folder, output_folder, extension, dist_info):
     """
     try:
         # handle optional case for Functions input
-        if dist_info and not os.path.isfile(dist_info):
+        if dist_info and not Path(dist_info).is_file():
             dist_info = None
         restore_original_distribution(input_folder, output_folder, extension, dist_info)
     except Exception:
@@ -65,29 +66,30 @@ def restore_original_distribution(
             ``_redist_info.json`` file from inside the input_folder. (Default: None).
     """
     if not dist_info:
-        _redist_info_file = os.path.join(input_folder, '_redist_info.json')
+        _redist_info_file = Path(input_folder, '_redist_info.json')
     else:
-        _redist_info_file = dist_info
+        _redist_info_file = Path(dist_info)
 
-    assert os.path.isfile(_redist_info_file), 'Failed to find %s' % _redist_info_file
+    assert _redist_info_file.is_file(), 'Failed to find %s' % _redist_info_file
 
     with open(_redist_info_file) as inf:
         data = json.load(inf)
 
     # create output folder
-    if not os.path.isdir(output_folder):
-        os.mkdir(output_folder)
+    output_folder = Path(output_folder)
+    if not output_folder.is_dir():
+        output_folder.mkdir()
 
     for f in data:
-        out_file = os.path.join(output_folder, '%s.%s' % (f['identifier'], extension))
+        output_file = Path(output_folder, f['identifier'])
         # ensure the new folder is created. in case the identifier has a subfolder
-        parent_folder = os.path.dirname(out_file)
-        if not os.path.isdir(parent_folder):
-            os.mkdir(parent_folder)
+        parent_folder = output_file.parent
+        if not parent_folder.is_dir():
+            parent_folder.mkdir()
 
         out_arrays = []
         for src_info in f['dist_info']:
-            src_file = os.path.join(
+            src_file = Path(
                 input_folder, '%s.%s' % (src_info['identifier'], extension)
             )
             st = src_info['st_ln']
@@ -100,5 +102,4 @@ def restore_original_distribution(
 
         out_array = np.concatenate(out_arrays)
         # save numpy array, .npy extension is added automatically
-        output_file = os.path.join(output_folder, f['identifier'])
         np.save(output_file, out_array)
