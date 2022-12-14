@@ -492,7 +492,7 @@ def leed_option_1(
             da_file = folder.joinpath('da', f'{grid_id}.da')
             da_file.parent.mkdir(parents=True, exist_ok=True)
             hours_above_file = folder.joinpath(
-                'ase_hours_above', f'{grid_id}.hours')
+                'ase_hours_above', f'{grid_id}.hrs')
             hours_above_file.parent.mkdir(parents=True, exist_ok=True)
             np.savetxt(da_file, da, fmt='%.2f')
             np.savetxt(hours_above_file, h_above, fmt='%.0f')
