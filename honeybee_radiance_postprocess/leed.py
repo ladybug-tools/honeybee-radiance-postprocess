@@ -49,16 +49,16 @@ def _create_grid_summary(
     __pass_ase = pass_ase
     if 10 < ase_grid < 20:
         ase_note = (
-            'The Annual Sunlight Exposure is greater than 10% for grid: '
+            'The Annual Sunlight Exposure is greater than 10% for space: '
             f'{grid_id}. Identify in writing how the space is designed to '
             'address glare.'
         )
         grid_summary[grid_id]['ase_note'] = ase_note
     elif ase_grid >= 20:
         ase_warning = (
-            'The Annual Sunlight Exposure is 20% or larger. The space '
-            'does not qualify in the calculation of Spatial Daylight '
-            'Autonomy.'
+            'The Annual Sunlight Exposure is 20% or larger for space: '
+            f'{grid_id}. The space does not qualify in the calculation of '
+            'Spatial Daylight Autonomy.'
         )
         grid_summary[grid_id] = {
             'ase_warning': ase_warning
