@@ -497,6 +497,11 @@ def leed_option_1(
             np.savetxt(da_file, da, fmt='%.2f')
             np.savetxt(hours_above_file, h_above, fmt='%.0f')
 
+        da_grids_info_file = folder.joinpath('da', 'grids_info.json')
+        da_grids_info_file.write_text(json.dumps(grids_info, indent=2))
+        ase_grids_info_file = folder.joinpath('ase_hours_above', 'grids_info.json')
+        ase_grids_info_file.write_text(json.dumps(grids_info, indent=2))
+
         if fail_to_comply:
             states_schedule_err_file = folder.joinpath('states_schedule_err.json')
             states_schedule_err_file.write_text(json.dumps(fail_to_comply))
