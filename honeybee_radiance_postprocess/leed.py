@@ -281,6 +281,7 @@ def leed_states_schedule(
 
         grid_comply = np.where(np.all(array_combinations==np.NINF, axis=0))[0]
         if grid_comply.size != 0:
+            grid_comply = np.array(results.sun_up_hours)[grid_comply]
             fail_to_comply[grid_id] = \
                 [int(hoy) for hoy in grid_comply]
 
@@ -416,7 +417,6 @@ def leed_option_1(
 
     # spatial daylight autonomy
     da_grids = []
-    sda_grids = []
     pass_sda_grids = []
     for grid_info in grids_info:
         grid_id = grid_info['full_id']
