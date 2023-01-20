@@ -630,6 +630,37 @@ class Results(_ResultsFolder):
             info_file = folder.joinpath(metric, 'grids_info.json')
             info_file.write_text(json.dumps(grids_info))
 
+    def total(
+            self, states: dict = None, grids_filter: str = '*',
+            res_type: str = 'total'
+            ) -> type_hints.total:
+        """Get summed values for each sensor.
+
+        Args:
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+            res_type: Type of results to load. Defaults to 'total'.
+
+        Returns:
+            Tuple: A tuple with total values and grid information.
+        """
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+
+        total = []
+        for grid_info in grids_info:
+            array = self._array_from_states(grid_info, states=states, res_type=res_type)
+            if np.any(array):
+                array_filter = np.apply_along_axis(
+                    filter_array, 1, array, mask=self.occ_mask
+                )
+                array_total = array_filter.sum(axis=1)
+            else:
+                array_total = np.zeros(grid_info['count'])
+            total.append(array_total)
+
+        return total, grids_info
+
     def point_in_time(
             self, datetime: Union[int, DateTime], states: dict = None,
             grids_filter: str = '*', res_type: str = 'total'
@@ -846,7 +877,7 @@ class Results(_ResultsFolder):
 
         mask = hoys_mask(self.sun_up_hours, hoys, self.timestep)
 
-        cumulative_values = []
+        peak_values = []
         max_hoys = []
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type=res_type)
@@ -857,13 +888,13 @@ class Results(_ResultsFolder):
                     array_filter, coincident=coincident)
             else:
                 results = np.zeros(grid_info['count'])
-            cumulative_values.append(results)
+            peak_values.append(results)
             if max_i:
                 max_hoys.append(int(self.sun_up_hours[max_i]))
             else:
                 max_hoys.append(max_i)
 
-        return cumulative_values, max_hoys, grids_info
+        return peak_values, max_hoys, grids_info
 
     def peak_values_to_folder(
             self, target_folder: str, hoys: list = [], states: dict = None,
