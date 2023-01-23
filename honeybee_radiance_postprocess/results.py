@@ -17,7 +17,7 @@ from .metrics import (da_array2d, cda_array2d, udi_array2d, udi_lower_array2d,
     cumulative_values_array2d, peak_values_array2d)
 from .util import filter_array, hoys_mask, check_array_dim, \
     _filter_grids_by_pattern
-from .annualdaylight import _annual_daylight_config
+from .annualdaylight import _annual_daylight_vis_metadata
 from .electriclight import array_to_dimming_fraction
 from . import type_hints
 
@@ -448,7 +448,7 @@ class Results(_ResultsFolder):
     def annual_metrics_to_folder(
             self, target_folder: str, threshold: float = 300,
             min_t: float = 100, max_t: float = 3000, states: dict = None,
-            grids_filter: str = '*', config: dict = None):
+            grids_filter: str = '*'):
         """Calculate and write multiple annual daylight metrics to a folder.
 
         This method will calculate the following metrics:
@@ -467,7 +467,6 @@ class Results(_ResultsFolder):
             states: A dictionary of states. Defaults to None.
             grids_filter: The name of a grid or a pattern to filter the grids.
                 Defaults to '*'.
-            config: _description_. Defaults to None.
         """
         folder = Path(target_folder)
         folder.mkdir(parents=True, exist_ok=True)
@@ -494,9 +493,10 @@ class Results(_ResultsFolder):
             info_file = folder.joinpath(metric, 'grids_info.json')
             info_file.write_text(json.dumps(grids_info))
 
-        config = config or _annual_daylight_config()
-        config_file = folder.joinpath('config.json')
-        config_file.write_text(json.dumps(config))
+        metric_info_dict = _annual_daylight_vis_metadata()
+        for metric, data in metric_info_dict.items():
+            vis_metadata_file = folder.joinpath(metric, 'vis_metadata.json')
+            vis_metadata_file.write_text(json.dumps(data, indent=4))
 
     def spatial_daylight_autonomy(
             self, threshold: float = 300, target_time: float = 50,
