@@ -46,7 +46,7 @@ class _ResultsFolder(object):
     def __init__(self, folder: Union[str, Path]):
         """Initialize ResultsFolder."""
         self._folder = Path(folder).absolute().as_posix()
-        self._grids_info, self._sun_up_hours = _process_input_folder(self.folder, '*')
+        self.grids_info, self._sun_up_hours = _process_input_folder(self.folder, '*')
         self._datetimes = [
             DateTime.from_hoy(hoy) for hoy in list(map(float, self.sun_up_hours))
         ]
@@ -64,6 +64,23 @@ class _ResultsFolder(object):
     def grids_info(self):
         """Return grids information as list of dictionaries for each grid."""
         return self._grids_info
+
+    @grids_info.setter
+    def grids_info(self, grids_info):
+        assert isinstance(grids_info, list), \
+            f'Grids information must be a list. Got object of type: {type(grids_info)}.'
+        for grid_info in grids_info:
+            assert isinstance(grid_info, dict), \
+                'Object in grids information must be a dictionary. ' \
+                f'Got object of type {type(grid_info)}.'
+            if 'light_path' in grid_info.keys():
+                if not grid_info['light_path']:
+                    # if light path is empty
+                    grid_info['light_path'] = [['__static_apertures__']]
+            else:
+                # if light path key is nonexistent
+                grid_info['light_path'] = [['__static_apertures__']]
+        self._grids_info = grids_info
 
     @property
     def sun_up_hours(self):
