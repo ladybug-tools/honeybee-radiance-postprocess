@@ -6,6 +6,7 @@ import json
 import os
 import numpy as np
 
+from ladybug.color import Colorset
 from ladybug.datatype.fraction import Fraction
 from ladybug.legend import LegendParameters
 from honeybee_radiance.postprocess.annual import filter_schedule_by_hours, \
@@ -146,38 +147,42 @@ def metrics_to_folder(
 
 def _annual_daylight_vis_metadata():
     """Return visualization metadata for annual daylight."""
-    annual_daylight_lpar = LegendParameters(min=0, max=100)
+    udi_l_lpar = LegendParameters(min=0, max=100, colors=Colorset.nuanced())
+    udi_u_lpar = LegendParameters(min=0, max=100, colors=Colorset.glare_study())
+    udi_lpar = LegendParameters(min=0, max=100, colors=Colorset.annual_comfort())
+    cda_lpar = LegendParameters(min=0, max=100, colors=Colorset.annual_comfort())
+    da_lpar = LegendParameters(min=0, max=100, colors=Colorset.annual_comfort())
 
     metric_info_dict = {
         'udi_lower': {
             'type': 'VisualizationMetaData',
             'data_type': Fraction('Useful Daylight Illuminance Lower').to_dict(),
             'unit': '%',
-            'legend_parameters': annual_daylight_lpar.to_dict()
+            'legend_parameters': udi_l_lpar.to_dict()
         },
         'udi_upper': {
             'type': 'VisualizationMetaData',
             'data_type': Fraction('Useful Daylight Illuminance Upper').to_dict(),
             'unit': '%',
-            'legend_parameters': annual_daylight_lpar.to_dict()
+            'legend_parameters': udi_u_lpar.to_dict()
         },
         'udi': {
             'type': 'VisualizationMetaData',
             'data_type': Fraction('Useful Daylight Illuminance').to_dict(),
             'unit': '%',
-            'legend_parameters': annual_daylight_lpar.to_dict()
+            'legend_parameters': udi_lpar.to_dict()
         },
         'cda': {
             'type': 'VisualizationMetaData',
             'data_type': Fraction('Continuous Daylight Autonomy').to_dict(),
             'unit': '%',
-            'legend_parameters': annual_daylight_lpar.to_dict()
+            'legend_parameters': cda_lpar.to_dict()
         },
         'da': {
             'type': 'VisualizationMetaData',
             'data_type': Fraction('Daylight Autonomy').to_dict(),
             'unit': '%',
-            'legend_parameters': annual_daylight_lpar.to_dict()
+            'legend_parameters': da_lpar.to_dict()
         }
     }
 
