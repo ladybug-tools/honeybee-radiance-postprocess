@@ -5,7 +5,7 @@ import logging
 import os
 import click
 
-from ..leed import leed_option_1
+from ..leed import leed_option_one
 from ..results import Results
 
 _logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ def leed():
     pass
 
 
-@leed.command('daylight-option-1')
+@leed.command('daylight-option-one')
 @click.argument(
     'folder',
     type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
@@ -43,7 +43,7 @@ def leed():
     '--sub-folder', '-sf', help='Relative path for subfolder to write output '
     'files.', default='leed_summary'
 )
-def daylight_option_1(
+def daylight_option_one(
     folder, shade_transmittance, shade_transmittance_file, grids_filter,
     sub_folder
 ):
@@ -71,7 +71,7 @@ def daylight_option_1(
                 shd_trans[light_path] = shade_transmittance
         shade_transmittance = shd_trans
     try:
-        leed_option_1(
+        leed_option_one(
             folder, grids_filter=grids_filter,
             shade_transmittance=shade_transmittance, sub_folder=sub_folder
         )
