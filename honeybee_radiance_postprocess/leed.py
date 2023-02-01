@@ -307,7 +307,7 @@ def leed_states_schedule(
     return states_schedule, fail_to_comply
 
 
-def leed_option_1(
+def leed_option_one(
         results: Union[str, Results], grids_filter: str = '*',
         shade_transmittance: Union[float, dict] = 0.2,
         states_schedule: dict = None, threshold: float = 300,
