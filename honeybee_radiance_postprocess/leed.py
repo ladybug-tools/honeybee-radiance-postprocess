@@ -45,8 +45,8 @@ def _create_grid_summary(
     grid_summary = {
         grid_id: {}
     }
-    __pass_sda = pass_sda
-    __pass_ase = pass_ase
+    _pass_sda = pass_sda
+    _pass_ase = pass_ase
     if 10 < ase_grid < 20:
         ase_note = (
             'The Annual Sunlight Exposure is greater than 10% for space: '
@@ -71,8 +71,8 @@ def _create_grid_summary(
             grid_id: {
                 'ase': round(ase_grid, 2),
                 'sda': round(sda_grid, 2),
-                'floor_area_passing_ase': round(__pass_ase, 2),
-                'floor_area_passing_sda': round(__pass_sda, 2),
+                'floor_area_passing_ase': round(_pass_ase, 2),
+                'floor_area_passing_sda': round(_pass_sda, 2),
                 'total_floor_area': total_floor
             }
         }
@@ -81,8 +81,8 @@ def _create_grid_summary(
             grid_id: {
                 'ase': round(ase_grid, 2),
                 'sda': round(sda_grid, 2),
-                'sensor_count_passing_ase': int(round(__pass_ase, 2)),
-                'sensor_count_passing_sda': int(round(__pass_sda, 2)),
+                'sensor_count_passing_ase': int(round(_pass_ase, 2)),
+                'sensor_count_passing_sda': int(round(_pass_sda, 2)),
                 'total_sensor_count': total_floor
             }
         }
@@ -115,14 +115,16 @@ def _leed_summary(
 
     if grid_areas:
         # weighted by mesh face area
-        total_area = total_area_pass_ase = total_area_pass_sda = 0
+        total_area = 0
+        total_area_pass_ase = 0
+        total_area_pass_sda = 0
         for (pass_ase, pass_sda, grid_area, grid_info) in \
             zip(pass_ase_grids, pass_sda_grids, grid_areas, grids_info):
             grid_id = grid_info['full_id']
             total_grid_area = grid_area.sum()
             area_pass_ase = grid_area[pass_ase].sum()
             area_pass_sda = grid_area[pass_sda].sum()
-            ase_grid = area_pass_ase / total_grid_area * 100
+            ase_grid = (total_grid_area - area_pass_ase) / total_grid_area * 100
             sda_grid = area_pass_sda / total_grid_area * 100
             # grid summary
             grid_summary, area_pass_sda, area_pass_ase = \
@@ -133,26 +135,27 @@ def _leed_summary(
 
             recursive_dict_merge(summary_grid, grid_summary)
 
-            total_area +=total_grid_area
+            total_area += total_grid_area
             total_area_pass_ase += area_pass_ase
             total_area_pass_sda += area_pass_sda
 
-        summary['ase'] = round(total_area_pass_ase / total_area * 100, 2)
+        summary['ase'] = round((total_area - total_area_pass_ase) / total_area * 100, 2)
         summary['sda'] = round(total_area_pass_sda / total_area * 100, 2)
         summary['floor_area_passing_ase'] = total_area_pass_ase
         summary['floor_area_passing_sda'] = total_area_pass_sda
         summary['total_floor_area'] = total_area
     else:
         # assume all sensor points cover the same area
-        total_sensor_count = total_sensor_count_pass_ase = \
-            total_sensor_count_pass_sda = 0
+        total_sensor_count = 0
+        total_sensor_count_pass_ase = 0
+        total_sensor_count_pass_sda = 0
         for (pass_ase, pass_sda, grid_info) in \
             zip(pass_ase_grids, pass_sda_grids, grids_info):
             grid_id = grid_info['full_id']
             grid_count = grid_info['count']
             sensor_count_pass_ase = pass_ase.sum()
             sensor_count_pass_sda = pass_sda.sum()
-            ase_grid = sensor_count_pass_ase / grid_count
+            ase_grid = (grid_count - sensor_count_pass_ase) / grid_count
             sda_grid = sensor_count_pass_sda / grid_count * 100
             # grid summary
             grid_summary, sensor_count_pass_sda, sensor_count_pass_ase = \
@@ -167,7 +170,7 @@ def _leed_summary(
             total_sensor_count_pass_ase += sensor_count_pass_ase
             total_sensor_count_pass_sda += sensor_count_pass_sda
 
-        summary['ase'] = round(total_sensor_count_pass_ase / total_sensor_count * 100, 2)
+        summary['ase'] = round((total_sensor_count - total_sensor_count_pass_ase) / total_sensor_count * 100, 2)
         summary['sda'] = round(total_sensor_count_pass_sda / total_sensor_count * 100, 2)
         summary['sensor_count_passing_ase'] = int(total_sensor_count_pass_ase)
         summary['sensor_count_passing_sda'] = int(total_sensor_count_pass_sda)
@@ -412,7 +415,7 @@ def leed_option_one(
 
         ase_grids.append(ase_grid)
         hours_above.append(h_above)
-        pass_ase = (h_above > occ_hours)
+        pass_ase = (h_above < occ_hours)
         pass_ase_grids.append(pass_ase)
 
     # spatial daylight autonomy
