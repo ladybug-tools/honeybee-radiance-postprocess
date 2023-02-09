@@ -183,15 +183,22 @@ def _leed_summary(
     return summary, summary_grid
 
 def _ase_hourly_percentage(
-    array: np.ndarray, grid_info: dict, direct_threshold: float = 1000,
-    grid_area: Union[None, np.ndarray] = None) -> np.ndarray:
+    results: Union[str, Results], array: np.ndarray, grid_info: dict,
+    direct_threshold: float = 1000, grid_area: Union[None, np.ndarray] = None
+    ) -> np.ndarray:
     if grid_area is not None:
         grid_area_2d = np.array([grid_area] * array.shape[1]).transpose()
         area_above = \
             np.where((array > direct_threshold), grid_area_2d, 0).sum(axis=0)
         percentage_above = area_above / grid_area.sum() * 100
     else:
-        percentage_above= (array > direct_threshold).sum(axis=0) / grid_info['count'] * 100
+        percentage_above = \
+            (array > direct_threshold).sum(axis=0) / grid_info['count'] * 100
+
+    occupancy_hoys = schedule_to_hoys(results.schedule, results.sun_up_hours)
+    # map states to 8760 values
+    percentage_above = results.values_to_annual(
+        occupancy_hoys, percentage_above, results.timestep)
 
     return percentage_above
 
@@ -436,7 +443,7 @@ def leed_option_one(
         # calculate the number of sensor points above 1000 lux for each hour
         ase_hr_pct.append(
             _ase_hourly_percentage(
-                array, grid_info, direct_threshold=direct_threshold,
+                results, array, grid_info, direct_threshold=direct_threshold,
                 grid_area=grid_area
             )
         )
@@ -531,7 +538,7 @@ def leed_option_one(
             ase_hr_pct_file.parent.mkdir(parents=True, exist_ok=True)
             np.savetxt(da_file, da, fmt='%.2f')
             np.savetxt(hours_above_file, h_above, fmt='%.0f')
-            np.savetxt(ase_hr_pct_file, ase_hr_pct, fmt='%.0f')
+            np.savetxt(ase_hr_pct_file, ase_hr_pct, fmt='%.2f')
 
         da_grids_info_file = folder.joinpath('da', 'grids_info.json')
         da_grids_info_file.write_text(json.dumps(grids_info, indent=2))
