@@ -6,10 +6,13 @@ import json
 import itertools
 import numpy as np
 
+from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.color import Colorset
+from ladybug.datacollection import HourlyContinuousCollection
 from ladybug.datatype.fraction import Fraction
 from ladybug.datatype.time import Time
 from ladybug.legend import LegendParameters
+from ladybug.header import Header
 from honeybee.model import Model
 from honeybee.units import conversion_factor_to_meters
 from honeybee_radiance.writer import _filter_by_pattern
@@ -187,7 +190,7 @@ def _leed_summary(
     return summary, summary_grid
 
 def _ase_hourly_percentage(
-    results: Union[str, Results], array: np.ndarray, grid_info: dict,
+    results: Results, array: np.ndarray, grid_info: dict,
     direct_threshold: float = 1000, grid_area: Union[None, np.ndarray] = None
     ) -> np.ndarray:
     if grid_area is not None:
@@ -203,8 +206,10 @@ def _ase_hourly_percentage(
     # map states to 8760 values
     percentage_above = results.values_to_annual(
         occupancy_hoys, percentage_above, results.timestep)
+    header = Header(Fraction(), '%', AnalysisPeriod(results.timestep))
+    data_collection = HourlyContinuousCollection(header, percentage_above.tolist())
 
-    return percentage_above
+    return data_collection
 
 def shade_transmittance_per_light_path(
     light_paths: list, shade_transmittance: Union[float, dict]) -> dict:
@@ -529,30 +534,34 @@ def leed_option_one(
         grids_info_file = folder.joinpath('grids_info.json')
         grids_info_file.write_text(json.dumps(grids_info, indent=2))
 
-        for (da, h_above, ase_hr_pct, grid_info) in \
+        for (da, h_above, ase_hr_p, grid_info) in \
             zip(da_grids, hours_above, ase_hr_pct, grids_info):
             grid_id = grid_info['full_id']
-            da_file = folder.joinpath('da', f'{grid_id}.da')
+            da_file = folder.joinpath('results', 'da', f'{grid_id}.da')
             da_file.parent.mkdir(parents=True, exist_ok=True)
             hours_above_file = folder.joinpath(
-                'ase_hours_above', f'{grid_id}.hrs')
+                'results', 'ase_hours_above', f'{grid_id}.hrs')
             hours_above_file.parent.mkdir(parents=True, exist_ok=True)
-            ase_hr_pct_file = folder.joinpath(
-                'ase_percentage_above', f'{grid_id}.pct')
-            ase_hr_pct_file.parent.mkdir(parents=True, exist_ok=True)
+            ase_hr_p_file = folder.joinpath(
+                'datacollections', 'ase_percentage_above', f'{grid_id}.pct')
+            ase_hr_p_file.parent.mkdir(parents=True, exist_ok=True)
             np.savetxt(da_file, da, fmt='%.2f')
             np.savetxt(hours_above_file, h_above, fmt='%.0f')
-            np.savetxt(ase_hr_pct_file, ase_hr_pct, fmt='%.2f')
+            ase_hr_p_file.write_text(json.dumps(ase_hr_p.to_dict()))
 
-        da_grids_info_file = folder.joinpath('da', 'grids_info.json')
+        da_grids_info_file = folder.joinpath(
+            'results', 'da', 'grids_info.json')
         da_grids_info_file.write_text(json.dumps(grids_info, indent=2))
-        ase_grids_info_file = folder.joinpath('ase_hours_above', 'grids_info.json')
+        ase_grids_info_file = folder.joinpath(
+            'results', 'ase_hours_above', 'grids_info.json')
         ase_grids_info_file.write_text(json.dumps(grids_info, indent=2))
-        ase_hr_pct_info_file = folder.joinpath('ase_percentage_above', 'grids_info.json')
+        ase_hr_pct_info_file = folder.joinpath(
+            'datacollections', 'ase_percentage_above', 'grids_info.json')
         ase_hr_pct_info_file.write_text(json.dumps(grids_info, indent=2))
 
         if fail_to_comply:
-            states_schedule_err_file = folder.joinpath('states_schedule_err.json')
+            states_schedule_err_file = \
+                folder.joinpath('states_schedule_err.json')
             states_schedule_err_file.write_text(json.dumps(fail_to_comply))
 
     return (summary, summary_grid, da_grids, hours_above, states_schedule,
@@ -563,7 +572,6 @@ def _leed_daylight_option_one_vis_metadata():
     """Return visualization metadata for leed daylight option one."""
     da_lpar = LegendParameters(min=0, max=100, colors=Colorset.annual_comfort())
     ase_hrs_lpar = LegendParameters(min=0, max=250, colors=Colorset.original())
-    ase_pct_lpar = LegendParameters(min=0, max=100, colors=Colorset.original())
 
     metric_info_dict = {
         'da': {
@@ -577,13 +585,7 @@ def _leed_daylight_option_one_vis_metadata():
             'data_type': Time('Hours above direct threshold').to_dict(),
             'unit': 'hr',
             'legend_parameters': ase_hrs_lpar.to_dict()
-        },
-        'ase_percentage_above': {
-            'type': 'VisualizationMetaData',
-            'data_type': Fraction('Percentage above direct threshold').to_dict(),
-            'unit': '%',
-            'legend_parameters': ase_pct_lpar.to_dict()
-        },
+        }
     }
 
     return metric_info_dict
