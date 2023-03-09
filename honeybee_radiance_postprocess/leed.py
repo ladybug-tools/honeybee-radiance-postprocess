@@ -43,43 +43,25 @@ def _create_grid_summary(
     Returns:
         Tuple:
         -   summary_grid: Summary of each grid individually.
-        -   pass_sda: The percentage of the sensor points or floor area
-                that passes sDA. Note that this will be set to 0 if the
-                grid does not pass ASE.
-        -   pass_ase: The percentage of the sensor points or floor area
-                that passes ASE.
     """
     grid_summary = {
         grid_id: {}
     }
-    _pass_sda = pass_sda
-    _pass_ase = pass_ase
-    if 10 < ase_grid < 20:
+    if ase_grid > 10:
         ase_note = (
             'The Annual Sunlight Exposure is greater than 10% for space: '
             f'{grid_id}. Identify in writing how the space is designed to '
             'address glare.'
         )
         grid_summary[grid_id]['ase_note'] = ase_note
-    elif ase_grid >= 20:
-        ase_warning = (
-            'The Annual Sunlight Exposure is 20% or larger for space: '
-            f'{grid_id}. The space does not qualify in the calculation of '
-            'Spatial Daylight Autonomy.'
-        )
-        grid_summary[grid_id] = {
-            'ase_warning': ase_warning
-        }
-        sda_grid = 0
-        pass_sda = 0
 
     if area_weighted:
         _grid_summary = {
             grid_id: {
                 'ase': round(ase_grid, 2),
                 'sda': round(sda_grid, 2),
-                'floor_area_passing_ase': round(_pass_ase, 2),
-                'floor_area_passing_sda': round(_pass_sda, 2),
+                'floor_area_passing_ase': round(pass_ase, 2),
+                'floor_area_passing_sda': round(pass_sda, 2),
                 'total_floor_area': total_floor
             }
         }
@@ -88,19 +70,20 @@ def _create_grid_summary(
             grid_id: {
                 'ase': round(ase_grid, 2),
                 'sda': round(sda_grid, 2),
-                'sensor_count_passing_ase': int(round(_pass_ase, 2)),
-                'sensor_count_passing_sda': int(round(_pass_sda, 2)),
+                'sensor_count_passing_ase': int(round(pass_ase, 2)),
+                'sensor_count_passing_sda': int(round(pass_sda, 2)),
                 'total_sensor_count': total_floor
             }
         }
 
     recursive_dict_merge(grid_summary, _grid_summary)
 
-    return grid_summary, pass_sda, pass_ase
+    return grid_summary
+
 
 def _leed_summary(
     pass_ase_grids: list, pass_sda_grids: list, grids_info: list,
-    grid_areas: list = None) -> Tuple[dict, dict]:
+    grid_areas: list) -> Tuple[dict, dict]:
     """_summary_
 
     Args:
@@ -109,8 +92,8 @@ def _leed_summary(
         pass_sda_grids: A list where each sublist is a list of True/False that
             tells if each sensor point passes sDA.
         grids_info: A list of grid information.
-        grid_areas: An optional list where each sublist is the area of each
-            sensor point.
+        grid_areas: A list where each sublist is the area of each sensor point.
+            The alternative is a list of None values for each grid information.
 
     Returns:
         Tuple:
@@ -120,68 +103,66 @@ def _leed_summary(
     summary = {}
     summary_grid = {}
 
-    for (pass_ase, pass_sda, grid_area, grid_info) in \
-        zip(pass_ase_grids, pass_sda_grids, grid_areas, grids_info):
-        grid_id = grid_info['full_id']
-        if grid_area is not None:
-            # weighted by mesh face area
-            total_area = 0
-            total_area_pass_ase = 0
-            total_area_pass_sda = 0
-            for (pass_ase, pass_sda, grid_area, grid_info) in \
-                zip(pass_ase_grids, pass_sda_grids, grid_areas, grids_info):
-                grid_id = grid_info['full_id']
-                total_grid_area = grid_area.sum()
-                area_pass_ase = grid_area[pass_ase].sum()
-                area_pass_sda = grid_area[pass_sda].sum()
-                ase_grid = (total_grid_area - area_pass_ase) / total_grid_area * 100
-                sda_grid = area_pass_sda / total_grid_area * 100
-                # grid summary
-                grid_summary, area_pass_sda, area_pass_ase = \
-                    _create_grid_summary(
-                        grid_id, sda_grid, ase_grid, area_pass_sda, area_pass_ase,
-                        total_grid_area, area_weighted=True
-                    )
-
-                recursive_dict_merge(summary_grid, grid_summary)
-
-                total_area += total_grid_area
-                total_area_pass_ase += area_pass_ase
-                total_area_pass_sda += area_pass_sda
-        else:
-            # assume all sensor points cover the same area
-            total_sensor_count = 0
-            total_sensor_count_pass_ase = 0
-            total_sensor_count_pass_sda = 0
-            for (pass_ase, pass_sda, grid_info) in \
-                zip(pass_ase_grids, pass_sda_grids, grids_info):
-                grid_id = grid_info['full_id']
-                grid_count = grid_info['count']
-                sensor_count_pass_ase = pass_ase.sum()
-                sensor_count_pass_sda = pass_sda.sum()
-                ase_grid = (grid_count - sensor_count_pass_ase) / grid_count * 100
-                sda_grid = sensor_count_pass_sda / grid_count * 100
-                # grid summary
-                grid_summary, sensor_count_pass_sda, sensor_count_pass_ase = \
-                    _create_grid_summary(
-                        grid_id, sda_grid, ase_grid, sensor_count_pass_sda,
-                        sensor_count_pass_ase, grid_count, area_weighted=False
-                    )
-
-                recursive_dict_merge(summary_grid, grid_summary)
-
-                total_sensor_count += grid_count
-                total_sensor_count_pass_ase += sensor_count_pass_ase
-                total_sensor_count_pass_sda += sensor_count_pass_sda
-
     if all(grid_area is not None for grid_area in grid_areas):
+        # weighted by mesh face area
+        total_area = 0
+        total_area_pass_ase = 0
+        total_area_pass_sda = 0
+        for (pass_ase, pass_sda, grid_area, grid_info) in \
+            zip(pass_ase_grids, pass_sda_grids, grid_areas, grids_info):
+            grid_id = grid_info['full_id']
+            total_grid_area = grid_area.sum()
+            area_pass_ase = grid_area[pass_ase].sum()
+            area_pass_sda = grid_area[pass_sda].sum()
+            ase_grid = (total_grid_area - area_pass_ase) / total_grid_area * 100
+            sda_grid = area_pass_sda / total_grid_area * 100
+            # grid summary
+            grid_summary = \
+                _create_grid_summary(
+                    grid_id, sda_grid, ase_grid, area_pass_sda, area_pass_ase,
+                    total_grid_area, area_weighted=True
+                )
+
+            recursive_dict_merge(summary_grid, grid_summary)
+
+            total_area += total_grid_area
+            total_area_pass_ase += area_pass_ase
+            total_area_pass_sda += area_pass_sda
+
         summary['ase'] = round((total_area - total_area_pass_ase) / total_area * 100, 2)
         summary['sda'] = round(total_area_pass_sda / total_area * 100, 2)
         summary['floor_area_passing_ase'] = total_area_pass_ase
         summary['floor_area_passing_sda'] = total_area_pass_sda
         summary['total_floor_area'] = total_area
     else:
-        summary['ase'] = round((total_sensor_count - total_sensor_count_pass_ase) / total_sensor_count * 100, 2)
+        # assume all sensor points cover the same area
+        total_sensor_count = 0
+        total_sensor_count_pass_ase = 0
+        total_sensor_count_pass_sda = 0
+        for (pass_ase, pass_sda, grid_info) in \
+            zip(pass_ase_grids, pass_sda_grids, grids_info):
+            grid_id = grid_info['full_id']
+            grid_count = grid_info['count']
+            sensor_count_pass_ase = pass_ase.sum()
+            sensor_count_pass_sda = pass_sda.sum()
+            ase_grid = (grid_count - sensor_count_pass_ase) / grid_count * 100
+            sda_grid = sensor_count_pass_sda / grid_count * 100
+            # grid summary
+            grid_summary = \
+                _create_grid_summary(
+                    grid_id, sda_grid, ase_grid, sensor_count_pass_sda,
+                    sensor_count_pass_ase, grid_count, area_weighted=False
+                )
+
+            recursive_dict_merge(summary_grid, grid_summary)
+
+            total_sensor_count += grid_count
+            total_sensor_count_pass_ase += sensor_count_pass_ase
+            total_sensor_count_pass_sda += sensor_count_pass_sda
+
+        summary['ase'] = round((total_sensor_count - total_sensor_count_pass_ase) /
+            total_sensor_count * 100, 2
+        )
         summary['sda'] = round(total_sensor_count_pass_sda / total_sensor_count * 100, 2)
         summary['sensor_count_passing_ase'] = int(total_sensor_count_pass_ase)
         summary['sensor_count_passing_sda'] = int(total_sensor_count_pass_sda)
@@ -189,10 +170,27 @@ def _leed_summary(
 
     return summary, summary_grid
 
+
 def _ase_hourly_percentage(
     results: Results, array: np.ndarray, grid_info: dict,
     direct_threshold: float = 1000, grid_area: Union[None, np.ndarray] = None
     ) -> np.ndarray:
+    """Calculate the percentage of floor area that receives greater than 1000
+    direct lux for each hour.
+
+    Args:
+        results: A Results object.
+        array: A NumPy array of the grid to process.
+        grid_info: Grid information of the grid to process..
+        direct_threshold: Direct threshold.
+        grid_area: Grid area as a NumPy array with a area value for each sensor
+            point, or a None value if there is no area associated with the
+            sensor point.
+
+    Returns:
+        A hourly data collection of the percentage of floor area that receives
+        greater than 1000 direct lux.
+    """
     if grid_area is not None:
         grid_area_2d = np.array([grid_area] * array.shape[1]).transpose()
         area_above = \
