@@ -18,13 +18,28 @@ class ApertureGroupSchedule(object):
     Properties:
         * identifier
         * schedule
+        * is_static
     """
-    __slots__ = ('_identifier', '_schedule')
+    __slots__ = ('_identifier', '_schedule', '_is_static')
 
-    def __init__(self, identifier, schedule):
+    def __init__(self, identifier, schedule, is_static=None):
         """Initialize ApertureGroupSchedule."""
         self._identifier = identifier
         self.schedule = schedule
+        self.is_static = is_static
+
+    @classmethod
+    def from_dict(cls, data):
+        """Initialize a ApertureGroupSchedule from a dictionary.
+
+        Args:
+            data: A dictionary representation of an ApertureGroupSchedule
+                object.
+        """
+        identifier = data['identifier']
+        schedule = data['schedule']
+        is_static = data['is_static']
+        return cls(identifier, schedule, is_static)
 
     @property
     def identifier(self):
@@ -44,6 +59,30 @@ class ApertureGroupSchedule(object):
         if isinstance(schedule, tuple):
             schedule = list(schedule)
         self._schedule = schedule
+
+    @property
+    def is_static(self):
+        """Return True if schedule is static."""
+        return self._is_static
+
+    @is_static.setter
+    def is_static(self, value):
+        if value is not None:
+            assert isinstance(value, bool)
+            self._is_static = value
+        else:
+            if len(set(self.schedule)) == 1:
+                self._is_static = True
+            else:
+                self._is_static = False
+
+    def to_dict(self):
+        """Return ApertureGroupSchedule as a dictionary."""
+        base = {}
+        base['identifier'] = self.identifier
+        base['schedule'] = self.schedule
+        base['is_static'] = self.is_static
+        return base
 
     def ToString(self):
         """Overwrite .NET ToString."""
@@ -79,8 +118,10 @@ class DynamicSchedule(object):
         Args:
             data: A dictionary representation of a DynamicSchedule objects.
         """
-        new_obj = cls(data)
-        return new_obj
+        dynamic_schedule = {}
+        for identifier, group in data.items():
+            dynamic_schedule[identifier] = ApertureGroupSchedule.from_dict(group)
+        return cls(dynamic_schedule)
 
     @classmethod
     def from_json(cls, json_file):
@@ -107,7 +148,7 @@ class DynamicSchedule(object):
     def dynamic_schedule(self, dynamic_schedule):
         if not dynamic_schedule:
             dynamic_schedule = {}
-        assert isinstance(dynamic_schedule, dict), 'values is wrong type!'
+        assert isinstance(dynamic_schedule, dict), 'value is wrong type!'
         self._dynamic_schedule = dynamic_schedule
 
     def add_aperture_group_schedule(self, aperture_group_schedule):
@@ -121,33 +162,72 @@ class DynamicSchedule(object):
             '%s. Expected input of type: ApertureGroupSchedule.' \
             % type(aperture_group_schedule))
         identifier = aperture_group_schedule.identifier
-        schedule = aperture_group_schedule.schedule
-        self.dynamic_schedule[identifier] = schedule
+        self.dynamic_schedule[identifier] = aperture_group_schedule
 
-    def to_json(self, folder=None, file_name=None):
-        """Write a DynamicSchedule to a JSON file.
+    def filter_by_identifiers(self, identifiers):
+        """Filter the DynamicSchedule by identifiers.
+
+        This method returns a filtered DynamicSchedule object.
+
+        Args:
+            identifiers: A list of identifiers.
+
+        Returns:
+            A filtered DynamicSchedule object.
+        """
+        filter_dyn_sch = DynamicSchedule()
+        for identifier, group in self.dynamic_schedule.items():
+            if identifier in identifiers:
+                filter_dyn_sch.add_aperture_group_schedule(group)
+        return filter_dyn_sch
+
+    def to_dict(self):
+        """Return DynamicSchedule as a dictionary."""
+        base = {}
+        for identifier, group in self.dynamic_schedule.items():
+            base[identifier] = group.to_dict()
+        return base
+
+    def to_json(self, folder=None, file_name=None, indent=None):
+        """Write a DynamicSchedule to JSON.
 
         Args:
             folder: A text string for the directory where the JSON file will be
                 written. If unspecified, the default simulation folder will be
                 used. This is usually at "C:\\Users\\USERNAME\\simulation."
             file_name (_type_, optional): _description_. Defaults to None.
+            indent: A positive integer to set the indentation used in the
+                resulting JSON file. (Default: None).
 
         Returns:
             json_file: Path to JSON file.
         """
+        # create dictionary of the DynamicSchedule
+        dyn_sch_dict = self.to_dict()
+
+        # set up name and folder for the JSON
         file_name = file_name if file_name else 'dynamic_schedule'
         if not file_name.endswith('.json'):
             file_name += '.json'
         folder = folder if folder is not None else folders.default_simulation_folder
         json_file = os.path.join(folder, file_name)
+
+        # write JSON
         with open(json_file, 'w') as fp:
-            json.dump(self.dynamic_schedule, fp, indent=2)
+            json.dump(dyn_sch_dict, fp, indent=indent)
         return json_file
+
+    def duplicate(self):
+        """Get a copy of this object."""
+        return self.__copy__()
 
     def ToString(self):
         """Overwrite .NET ToString."""
         return self.__repr__()
+
+    def __copy__(self):
+        new_dyn_sch = DynamicSchedule(self.dynamic_schedule)
+        return new_dyn_sch
 
     def __repr__(self):
         return '{}'.format(self.__class__.__name__)
