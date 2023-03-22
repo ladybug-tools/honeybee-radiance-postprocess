@@ -7,6 +7,7 @@ import json
 import click
 import numpy as np
 
+from ..dynamic import DynamicSchedule
 from honeybee_radiance_postprocess.results import Results
 from honeybee_radiance_postprocess.metrics import da_array2d, cda_array2d, \
     udi_array2d, udi_lower_array2d, udi_upper_array2d
@@ -95,8 +96,7 @@ def annual_metrics(
         schedule = None
 
     if states:
-        with open(states) as json_file:
-            states = json.load(json_file)
+        states = DynamicSchedule.from_json(states)
 
     try:
         results = Results(folder, schedule=schedule)

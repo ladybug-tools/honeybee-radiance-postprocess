@@ -20,6 +20,7 @@ from .util import filter_array, hoys_mask, check_array_dim, \
 from .annualdaylight import _annual_daylight_vis_metadata
 from .electriclight import array_to_dimming_fraction
 from . import type_hints
+from .dynamic import DynamicSchedule, ApertureGroupSchedule
 
 
 class _ResultsFolder(object):
@@ -424,7 +425,7 @@ class Results(_ResultsFolder):
 
     def annual_metrics(
             self, threshold: float = 300, min_t: float = 100,
-            max_t: float = 3000, states: dict = None,
+            max_t: float = 3000, states: DynamicSchedule = None,
             grids_filter: str = '*') -> type_hints.annual_metrics:
         """Calculate multiple annual daylight metrics.
 
@@ -483,7 +484,7 @@ class Results(_ResultsFolder):
 
     def annual_metrics_to_folder(
             self, target_folder: str, threshold: float = 300,
-            min_t: float = 100, max_t: float = 3000, states: dict = None,
+            min_t: float = 100, max_t: float = 3000, states: DynamicSchedule = None,
             grids_filter: str = '*'):
         """Calculate and write multiple annual daylight metrics to a folder.
 
@@ -1547,7 +1548,7 @@ class Results(_ResultsFolder):
 
         return states
 
-    def _filter_grid_states(self, grid_info, states: dict = None) -> dict:
+    def _filter_grid_states(self, grid_info, states: DynamicSchedule = None) -> DynamicSchedule:
         """Filter a dictionary of states by grid. Only light paths relevant to
         the given grid will be returned.
 
@@ -1562,18 +1563,19 @@ class Results(_ResultsFolder):
         """
         light_paths = [lp[0] for lp in grid_info['light_path']]
         if states:
-            for light_path in light_paths:
-                if light_path not in states:
-                    states[light_path] = self.default_states[light_path]
-            states = {lp: states[lp] for lp in light_paths if lp in states}
+            states = states.filter_by_identifiers(light_paths)
         else:
-            states = self.default_states
-            states = {lp: states[lp] for lp in light_paths if lp in states}
+            default_states = self.default_states
+            states = DynamicSchedule()
+            for light_path in light_paths:
+                ap_group_schedule = ApertureGroupSchedule(
+                    light_path, default_states[light_path], is_static=True)
+                states.add_aperture_group_schedule(ap_group_schedule)
 
         return states
 
     def _array_from_states(
-            self, grid_info, states: dict = None, res_type: str = 'total'
+            self, grid_info, states: DynamicSchedule = None, res_type: str = 'total'
             ) -> np.ndarray:
         """Create an array for a given grid by the states settings.
 
@@ -1591,34 +1593,30 @@ class Results(_ResultsFolder):
         grid_count = grid_info['count']
         # get states that are relevant for the grid
         states = self._filter_grid_states(grid_info, states=states)
-        states = self._validate_states(states)
 
         arrays = []
-        if self._static_states(states):
-            for light_path, state in states.items():
-                state = state[0]
+        for light_path, gr_schedule in states.dynamic_schedule.items():
+            if gr_schedule.is_static:
+                state = gr_schedule.schedule[0]
                 if state == -1:
                     continue
                 array = self._get_array(
                     grid_info, light_path, state=state, res_type=res_type)
                 arrays.append(array)
-            array = sum(arrays)
-        else:
-            states = self._validate_dynamic_states(states)
-            for light_path, lp_states in states.items():
+            else:
                 # create default 0 array
-                light_path_array = np.zeros((grid_count, len(self.sun_up_hours)))
+                array = np.zeros((grid_count, len(self.sun_up_hours)))
                 # slice states to match sun up hours
-                states_array = np.array(lp_states)[list(map(int, self.sun_up_hours))]
+                states_array = np.array(gr_schedule.schedule)[list(map(int, self.sun_up_hours))]
                 for state in set(states_array.tolist()):
                     if state == -1:
                         continue
-                    array = self._get_array(
+                    _array = self._get_array(
                         grid_info, light_path, state=state, res_type=res_type)
                     conds = [states_array == state, states_array != state]
-                    light_path_array = np.select(conds, [array, light_path_array])
-                arrays.append(light_path_array)
-            array = sum(arrays)
+                    array = np.select(conds, [_array, array])
+                arrays.append(array)
+        array = sum(arrays)
 
         if not np.any(array):
             array = np.array([])
