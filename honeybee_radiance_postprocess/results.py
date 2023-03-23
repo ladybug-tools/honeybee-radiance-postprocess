@@ -268,7 +268,7 @@ class Results(_ResultsFolder):
         return self._valid_states
 
     def daylight_autonomy(
-            self, threshold: float = 300, states: dict = None,
+            self, threshold: float = 300, states: DynamicSchedule = None,
             grids_filter: str = '*') -> type_hints.annual_metric:
         """Calculate daylight autonomy.
 
@@ -298,7 +298,7 @@ class Results(_ResultsFolder):
         return da, grids_info
 
     def continuous_daylight_autonomy(
-            self, threshold: float = 300, states: dict = None,
+            self, threshold: float = 300, states: DynamicSchedule = None,
             grids_filter: str = '*') -> type_hints.annual_metric:
         """Calculate continuous daylight autonomy.
 
@@ -329,7 +329,7 @@ class Results(_ResultsFolder):
         return cda, grids_info
 
     def useful_daylight_illuminance(
-            self, min_t: float = 100, max_t: float = 3000, states: dict = None,
+            self, min_t: float = 100, max_t: float = 3000, states: DynamicSchedule = None,
             grids_filter: str = '*') -> type_hints.annual_metric:
         """Calculate useful daylight illuminance.
 
@@ -360,7 +360,7 @@ class Results(_ResultsFolder):
         return udi, grids_info
 
     def useful_daylight_illuminance_lower(
-            self, min_t: float = 100, states: dict = None,
+            self, min_t: float = 100, states: DynamicSchedule = None,
             grids_filter: str = '*') -> type_hints.annual_metric:
         """Calculate lower than useful daylight illuminance.
 
@@ -393,7 +393,7 @@ class Results(_ResultsFolder):
         return udi_lower, grids_info
 
     def useful_daylight_illuminance_upper(
-            self, max_t: float = 3000, states: dict = None,
+            self, max_t: float = 3000, states: DynamicSchedule = None,
             grids_filter: str = '*') -> type_hints.annual_metric:
         """Calculate higher than useful daylight illuminance.
 
@@ -537,7 +537,7 @@ class Results(_ResultsFolder):
 
     def spatial_daylight_autonomy(
             self, threshold: float = 300, target_time: float = 50,
-            states: dict = None, grids_filter: str = '*'
+            states: DynamicSchedule = None, grids_filter: str = '*'
             ) -> type_hints.spatial_daylight_autonomy:
         """Calculate spatial daylight autonomy.
 
@@ -569,7 +569,7 @@ class Results(_ResultsFolder):
 
     def annual_sunlight_exposure(
             self, direct_threshold: float = 1000, occ_hours: int = 250,
-            states: dict = None, grids_filter: str = '*'
+            states: DynamicSchedule = None, grids_filter: str = '*'
             ) -> type_hints.annual_sunlight_exposure:
         """Calculate annual sunlight exposure.
 
@@ -610,7 +610,7 @@ class Results(_ResultsFolder):
 
     def annual_sunlight_exposure_to_folder(
             self, target_folder: str, direct_threshold: float = 1000,
-            occ_hours: int = 250, states: dict = None,
+            occ_hours: int = 250, states: DynamicSchedule = None,
             grids_filter: str = '*'):
         """Calculate and write annual sunlight exposure to a folder.
 
@@ -653,7 +653,7 @@ class Results(_ResultsFolder):
             info_file.write_text(json.dumps(grids_info))
 
     def total(
-            self, states: dict = None, grids_filter: str = '*',
+            self, states: DynamicSchedule = None, grids_filter: str = '*',
             res_type: str = 'total'
             ) -> type_hints.total:
         """Get summed values for each sensor.
@@ -684,7 +684,7 @@ class Results(_ResultsFolder):
         return total, grids_info
 
     def point_in_time(
-            self, datetime: Union[int, DateTime], states: dict = None,
+            self, datetime: Union[int, DateTime], states: DynamicSchedule = None,
             grids_filter: str = '*', res_type: str = 'total'
             ) -> type_hints.point_in_time:
         """Get point in time values.
@@ -727,7 +727,7 @@ class Results(_ResultsFolder):
         return pit_values, grids_info
 
     def average_values(
-            self, hoys: list = [], states: dict = None, grids_filter: str = '*',
+            self, hoys: list = [], states: DynamicSchedule = None, grids_filter: str = '*',
             res_type: str = 'total') -> type_hints.average_values:
         """Get average values for each sensor over a given period.
 
@@ -765,7 +765,7 @@ class Results(_ResultsFolder):
         return average_values, grids_info
 
     def average_values_to_folder(
-            self, target_folder: str, hoys: list = [], states: dict = None,
+            self, target_folder: str, hoys: list = [], states: DynamicSchedule = None,
             grids_filter: str = '*', res_type: str = 'total'):
         """Get average values for each sensor over a given period and write the
         values to a folder.
@@ -886,7 +886,7 @@ class Results(_ResultsFolder):
         info_file.write_text(json.dumps(grids_info))
 
     def cumulative_values(
-            self, hoys: list = [], states: dict = None, grids_filter: str = '*',
+            self, hoys: list = [], states: DynamicSchedule = None, grids_filter: str = '*',
             res_type: str = 'total') -> type_hints.cumulative_values:
         """Get cumulative values for each sensor over a given period.
 
@@ -924,7 +924,7 @@ class Results(_ResultsFolder):
         return cumulative_values, grids_info
 
     def cumulative_values_to_folder(
-            self, target_folder: str, hoys: list = [], states: dict = None,
+            self, target_folder: str, hoys: list = [], states: DynamicSchedule = None,
             grids_filter: str = '*', res_type: str = 'total'):
         """Get cumulative values for each sensor over a given period and write
         the values to a folder.
@@ -958,7 +958,7 @@ class Results(_ResultsFolder):
         info_file.write_text(json.dumps(grids_info))
 
     def peak_values(
-            self, hoys: list = [], states: dict = None, grids_filter: str = '*',
+            self, hoys: list = [], states: DynamicSchedule = None, grids_filter: str = '*',
             coincident: bool = False, res_type: str = 'total'
             ) -> type_hints.peak_values:
         """Get peak values for each sensor over a given period.
@@ -1005,7 +1005,7 @@ class Results(_ResultsFolder):
         return peak_values, max_hoys, grids_info
 
     def peak_values_to_folder(
-            self, target_folder: str, hoys: list = [], states: dict = None,
+            self, target_folder: str, hoys: list = [], states: DynamicSchedule = None,
             grids_filter: str = '*', coincident: bool = False, res_type='total'):
         """Get peak values for each sensor over a given period and write the
         values to a folder.
@@ -1046,7 +1046,7 @@ class Results(_ResultsFolder):
         info_file.write_text(json.dumps(grids_info))
 
     def annual_data(
-            self, states: dict = None, grids_filter: str = '*',
+            self, states: DynamicSchedule = None, grids_filter: str = '*',
             sensor_index: dict = None, res_type: str = 'total'
             ) -> type_hints.annual_data:
         """Get annual data for one or multiple sensors.
@@ -1096,7 +1096,7 @@ class Results(_ResultsFolder):
         return data_collections, grids_info, sensor_index
 
     def annual_data_to_folder(
-            self, target_folder: str, states: dict = None, grids_filter: str = '*',
+            self, target_folder: str, states: DynamicSchedule = None, grids_filter: str = '*',
             sensor_index: dict = None, res_type: str = 'total'):
         """Get annual data for one or multiple sensors and write the data to a
         folder as Data Collections.
@@ -1131,7 +1131,7 @@ class Results(_ResultsFolder):
                 data_file.write_text(json.dumps(data_dict))
 
     def daylight_control_schedules(
-            self, states: dict = None, grids_filter: str = '*',
+            self, states: DynamicSchedule = None, grids_filter: str = '*',
             base_schedule: list = None, ill_setpoint: float = 300,
             min_power_in: float = 0.3, min_light_out: float = 0.2,
             off_at_min: bool = False
@@ -1218,7 +1218,7 @@ class Results(_ResultsFolder):
         return schedules, grids_info
 
     def daylight_control_schedules_to_folder(
-            self, target_folder: str, states: dict = None,
+            self, target_folder: str, states: DynamicSchedule = None,
             grids_filter: str = '*', base_schedule: list = None,
             ill_setpoint: float = 300, min_power_in: float = 0.3,
             min_light_out: float = 0.2, off_at_min: bool = False):
@@ -1309,7 +1309,7 @@ class Results(_ResultsFolder):
             base_value: A value that will be applied for all the base array.
 
         Returns:
-            np.ndarray: A 1D NumPy array.
+            A 1D NumPy array.
         """
         if not isinstance(values, np.ndarray):
             values = np.array(values)
@@ -1475,20 +1475,6 @@ class Results(_ResultsFolder):
             raise FileNotFoundError(f'File {file} not found in the results folder.')
 
         return file
-
-    def _static_states(self, states: dict) -> bool:
-        """Return True if states dictionary is static only."""
-        if all(len(values) == 1 for values in states.values()):
-            return True
-        else:
-            return False
-
-    def _dynamic_states(self, states: dict) -> bool:
-        """Return True if states dictionary is dynamic."""
-        if any(len(values) != 1 for values in states.values()):
-            return True
-        else:
-            return False
 
     def _validate_dynamic_states(self, states: dict) -> dict:
         """Validate dynamic states and return states dictionary.
