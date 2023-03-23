@@ -2,6 +2,7 @@
 import json
 import os
 import sys
+from itertools import islice, cycle
 
 from honeybee.config import folders
 
@@ -38,7 +39,7 @@ class ApertureGroupSchedule(object):
         """
         identifier = data['identifier']
         schedule = data['schedule']
-        is_static = data['is_static']
+        is_static = data['is_static'] if 'is_static' in data else None
         return cls(identifier, schedule, is_static)
 
     @property
@@ -58,6 +59,15 @@ class ApertureGroupSchedule(object):
             '%s. Expected input of type: list or tuple.' % type(schedule))
         if isinstance(schedule, tuple):
             schedule = list(schedule)
+        if len(schedule) < 8760:
+            schedule = list(islice(cycle(schedule), 8760))
+        elif len(schedule) > 8760:
+            error_message = (
+                'The light path %s has %s values in '
+                'its states schedule. Maximum allowed number of values '
+                'is 8760.' % (self.identifier, len(schedule))
+            )
+            raise ValueError(error_message)
         self._schedule = schedule
 
     @property

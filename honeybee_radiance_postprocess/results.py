@@ -614,8 +614,10 @@ class Results(_ResultsFolder):
         pattern = {'ase': ase, 'hours_above': hours_above}
         for metric, data in pattern.items():
             metric_folder = folder.joinpath(metric)
-            extension = metric.split('_')[0]
-            #if metric == 'hours_above':
+            if metric == 'hours_above':
+                extension = 'res'
+            else:
+                extension = 'ase'
             for count, grid_info in enumerate(grids_info):
                 d = data[count]
                 full_id = grid_info['full_id']
