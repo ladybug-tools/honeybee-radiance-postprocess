@@ -5,7 +5,7 @@
 
 # honeybee-radiance-postprocess
 
-Postprocessing of Radiance results and matrices
+Library and CLI for postprocessing of Radiance results and matrices.
 
 ## Installation
 ```console
