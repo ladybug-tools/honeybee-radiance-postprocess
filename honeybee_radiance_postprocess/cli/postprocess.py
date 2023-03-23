@@ -555,8 +555,7 @@ def annual_sunlight_exposure(
         schedule = None
 
     if states:
-        with open(states) as json_file:
-            states = json.load(json_file)
+        states = DynamicSchedule.from_json(states)
 
     try:
         results = Results(folder, schedule=schedule)

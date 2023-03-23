@@ -4,6 +4,7 @@ import numpy as np
 
 from ladybug.futil import nukedir
 from honeybee_radiance_postprocess.results import Results
+from honeybee_radiance_postprocess.dynamic import DynamicSchedule
 
 
 def test_results_sample_creation():
@@ -26,7 +27,13 @@ def test_results_sample_annual_metrics_static_states():
     light_paths = results.light_paths
     states = {}
     for light_path in light_paths:
-        states[light_path] = [0]
+        states[light_path] = {
+            'identifier': light_path,
+            'schedule': [0] * 8760
+            }
+    states = DynamicSchedule.from_dict(states)
+    for identifier, ap_gr_sch in states.dynamic_schedule.items():
+        assert ap_gr_sch.is_static == True
     da, cda, udi, udi_lower, udi_upper, grids_info = results.annual_metrics(states=states)
     # length should be two because there are two grids
     elements = [da, cda, udi, udi_lower, udi_upper, grids_info]
@@ -39,7 +46,13 @@ def test_results_sample_annual_metrics_dynamic_states():
     light_paths = results.light_paths
     states = {}
     for light_path in light_paths:
-        states[light_path] = [0] * 8760
+        states[light_path] = {
+            'identifier': light_path,
+            'schedule': [0] * 4380 + [-1] * 4380
+            }
+    states = DynamicSchedule.from_dict(states)
+    for identifier, ap_gr_sch in states.dynamic_schedule.items():
+        assert ap_gr_sch.is_static == False
     da, cda, udi, udi_lower, udi_upper, grids_info = results.annual_metrics(states=states)
     # length should be two because there are two grids
     elements = [da, cda, udi, udi_lower, udi_upper, grids_info]
@@ -53,7 +66,13 @@ def test_results_sample_annual_metrics_dynamic_states_off():
     light_paths = results.light_paths
     states = {}
     for light_path in light_paths:
-        states[light_path] = [-1] * 8760
+        states[light_path] = {
+            'identifier': light_path,
+            'schedule': [-1] * 8760
+            }
+    states = DynamicSchedule.from_dict(states)
+    for identifier, ap_gr_sch in states.dynamic_schedule.items():
+        assert ap_gr_sch.is_static == True
     da, cda, udi, udi_lower, udi_upper, grids_info = results.annual_metrics(states=states)
     # length should be two because there are two grids
     elements = [da, cda, udi, udi_lower, udi_upper, grids_info]
