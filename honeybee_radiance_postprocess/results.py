@@ -1359,6 +1359,8 @@ class Results(_ResultsFolder):
         """
         file = Path(self.folder, light_path, state_identifier,
                     res_type, grid_id + extension)
+        if not file.is_file():
+            raise FileNotFoundError(f'File {file} not found in the results folder.')
 
         return file
 
