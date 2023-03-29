@@ -154,6 +154,7 @@ class _ResultsFolder(object):
 
     def _set_timestep(self) -> float:
         """Set timestep."""
+        # timestep has no use until sub-annual annual-daylight is supported
         timestep_file = Path(self.folder, 'timestep.txt')
         if timestep_file.is_file():
             with open(timestep_file) as file:
