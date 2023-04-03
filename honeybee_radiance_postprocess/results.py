@@ -780,6 +780,77 @@ class Results(_ResultsFolder):
         info_file = metric_folder.joinpath('grids_info.json')
         info_file.write_text(json.dumps(grids_info))
 
+    def median_values(
+            self, hoys: list = [], states: dict = None, grids_filter: str = '*',
+            res_type: str = 'total') -> type_hints.median_values:
+        """Get median values for each sensor over a given period.
+
+        The hoys input can be used to filter the data for a particular time
+        period.
+
+        Args:
+            hoys: An optional numbers or list of numbers to select the hours of
+                the year (HOYs) for which results will be computed. Defaults to [].
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+            res_type: Type of results to load. Defaults to 'total'.
+
+        Returns:
+            Tuple: A tuple with the median value for each sensor and grid information.
+        """
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+
+        mask = hoys_mask(self.sun_up_hours, hoys, self.timestep)
+
+        median_values = []
+        for grid_info in grids_info:
+            array = self._array_from_states(grid_info, states=states, res_type=res_type)
+            if np.any(array):
+                array_filter = np.apply_along_axis(
+                    filter_array, 1, array, mask=mask)
+                results = np.median(array_filter, axis=1)
+            else:
+                results = np.zeros(grid_info['count'])
+            median_values.append(results)
+
+        return median_values, grids_info
+
+    def median_values_to_folder(
+            self, target_folder: str, hoys: list = [], states: dict = None,
+            grids_filter: str = '*', res_type: str = 'total'):
+        """Get median values for each sensor over a given period and write the
+        values to a folder.
+
+        Args:
+            target_folder: Folder path to write annual metrics in. Usually this
+                folder is called 'metrics'.
+            hoys: An optional numbers or list of numbers to select the hours of
+                the year (HOYs) for which results will be computed. Defaults to [].
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+            res_type: Type of results to load. Defaults to 'total'.
+        """
+        folder = Path(target_folder)
+        folder.mkdir(parents=True, exist_ok=True)
+
+        median_values, grids_info = self.median_values(
+            hoys=hoys, states=states,
+            grids_filter=grids_filter, res_type=res_type)
+
+        metric_folder = folder.joinpath('median_values')
+
+        for count, grid_info in enumerate(grids_info):
+            d = median_values[count]
+            full_id = grid_info['full_id']
+            output_file = metric_folder.joinpath(f'{full_id}.median')
+            output_file.parent.mkdir(parents=True, exist_ok=True)
+            np.savetxt(output_file, d, fmt='%.2f')
+
+        info_file = metric_folder.joinpath('grids_info.json')
+        info_file.write_text(json.dumps(grids_info))
+
     def cumulative_values(
             self, hoys: list = [], states: dict = None, grids_filter: str = '*',
             res_type: str = 'total') -> type_hints.cumulative_values:

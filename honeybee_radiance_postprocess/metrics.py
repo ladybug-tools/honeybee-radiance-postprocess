@@ -253,6 +253,7 @@ def udi_upper_array1d(
 
     return np.float64((array > max_t).sum() / total_occ * 100)
 
+
 def sda_array2d(
         array: np.ndarray, target_time: float = 50, threshold: float = 300,
         total_occ: int = None) -> np.ndarray:
@@ -277,6 +278,7 @@ def sda_array2d(
 
     return sda
 
+
 def ase_array2d(
         array: np.ndarray, occ_hours: int = 250,
         direct_threshold: float = 1000) -> Tuple[np.ndarray, np.ndarray]:
@@ -297,6 +299,7 @@ def ase_array2d(
     ase = (h_above > occ_hours).sum() / array.shape[0] * 100
 
     return ase, h_above
+
 
 def average_values_array2d(
         array: np.ndarray, full_length: int = 8760) -> np.ndarray:
