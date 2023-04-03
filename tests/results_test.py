@@ -90,6 +90,16 @@ def test_results_sample_average_values_to_folder():
     nukedir(target_folder, True)
 
 
+def test_results_sample_median_values_to_folder():
+    folder = Path('./tests/assets/results_folders/results_sample')
+    target_folder = Path('./tests/assets/temp')
+    results = Results(folder)
+    results.median_values_to_folder(target_folder)
+    median_values_folder = Path(target_folder, 'median_values')
+    assert median_values_folder.is_dir()
+    nukedir(target_folder, True)
+
+
 def test_results_sample_cumulative_values_to_folder():
     folder = Path('./tests/assets/results_folders/results_sample')
     target_folder = Path('./tests/assets/temp')
