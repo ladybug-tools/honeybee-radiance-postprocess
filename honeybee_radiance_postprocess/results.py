@@ -93,6 +93,9 @@ class _ResultsFolder(object):
     def sun_up_hours(self, sun_up_hours):
         assert isinstance(sun_up_hours, list), \
             f'Sun up hours must be a list. Got object of type: {type(sun_up_hours)}'
+        assert len(sun_up_hours) <= 8760, \
+            (f'Length of sun up hours cannot be more than 8760. Got object of '
+            f'length: {len(sun_up_hours)}.')
         self._sun_up_hours = sun_up_hours
         all_hours = np.arange(0.5, 8760.5, 1).tolist()
         self._sun_down_hours = set(sun_up_hours).symmetric_difference(all_hours)
