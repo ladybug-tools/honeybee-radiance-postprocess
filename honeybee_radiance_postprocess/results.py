@@ -34,19 +34,21 @@ class _ResultsFolder(object):
         * folder
         * grids_info
         * sun_up_hours
+        * sun_down_hours
         * light_paths
         * default_states
         * grid_states
         * timestep
 
     """
-    __slots__ = ('_folder', '_grids_info', '_sun_up_hours', '_datetimes', '_light_paths',
-                 '_default_states', '_grid_states', '_timestep')
+    __slots__ = ('_folder', '_grids_info', '_sun_up_hours', '_sun_down_hours',
+                 '_datetimes', '_light_paths', '_default_states',
+                 '_grid_states', '_timestep')
 
     def __init__(self, folder: Union[str, Path]):
         """Initialize ResultsFolder."""
         self._folder = Path(folder).absolute().as_posix()
-        self.grids_info, self._sun_up_hours = _process_input_folder(self.folder, '*')
+        self.grids_info, self.sun_up_hours = _process_input_folder(self.folder, '*')
         self._datetimes = [
             DateTime.from_hoy(hoy) for hoy in list(map(float, self.sun_up_hours))
         ]
@@ -86,6 +88,19 @@ class _ResultsFolder(object):
     def sun_up_hours(self):
         """Return sun up hours."""
         return self._sun_up_hours
+
+    @sun_up_hours.setter
+    def sun_up_hours(self, sun_up_hours):
+        assert isinstance(sun_up_hours, list), \
+            f'Sun up hours must be a list. Got object of type: {type(sun_up_hours)}'
+        self._sun_up_hours = sun_up_hours
+        all_hours = np.arange(0.5, 8760.5, 1).tolist()
+        self._sun_down_hours = set(sun_up_hours).symmetric_difference(all_hours)
+
+    @property
+    def sun_down_hours(self):
+        """Return sun down hours."""
+        return self._sun_down_hours
 
     @property
     def datetimes(self):
@@ -786,7 +801,8 @@ class Results(_ResultsFolder):
         """Get median values for each sensor over a given period.
 
         The hoys input can be used to filter the data for a particular time
-        period.
+        period. If hoys is left empty the median values will likely be 0 since
+        there are likely more sun down hours than sun up hours.
 
         Args:
             hoys: An optional numbers or list of numbers to select the hours of
@@ -809,6 +825,20 @@ class Results(_ResultsFolder):
             if np.any(array):
                 array_filter = np.apply_along_axis(
                     filter_array, 1, array, mask=mask)
+                if not hoys:
+                    # concatenate zero array
+                    zero_array = \
+                        np.zeros((grid_info['count'], len(self.sun_down_hours)))
+                    array_filter = np.concatenate((array_filter, zero_array), axis=1)
+                else:
+                    # find number of hoys that are sun down hours
+                    sdh_hoys = \
+                        len(set([int(h) for h in self.sun_down_hours]).intersection(hoys))
+                    if sdh_hoys != 0:
+                        # concatenate zero array
+                        zero_array = np.zeros((grid_info['count'], sdh_hoys))
+                        array_filter = \
+                            np.concatenate((array_filter, zero_array), axis=1)
                 results = np.median(array_filter, axis=1)
             else:
                 results = np.zeros(grid_info['count'])
