@@ -7,6 +7,7 @@ import itertools
 import numpy as np
 
 from ladybug.analysisperiod import AnalysisPeriod
+from ladybug.datatype.generic import GenericType
 from ladybug.color import Colorset
 from ladybug.datacollection import HourlyContinuousCollection
 from ladybug.datatype.fraction import Fraction
@@ -210,7 +211,8 @@ def _ase_hourly_percentage(
     return data_collection
 
 def shade_transmittance_per_light_path(
-    light_paths: list, shade_transmittance: Union[float, dict]) -> dict:
+    light_paths: list, shade_transmittance: Union[float, dict],
+    shd_trans_dict: dict) -> dict:
     """Filter shade_transmittance by light paths and add default multiplier.
 
     Args:
@@ -220,6 +222,8 @@ def shade_transmittance_per_light_path(
             for all aperture groups, or a dictionary where aperture groups are
             keys, and the value for each key is the shade transmittance. Values
             for shade transmittance must be 1 > value > 0.
+        shd_trans_dict: A dictionary used to store shade
+            transmittance value for each aperture group.
 
     Returns:
         A dictionary with filtered light paths.
@@ -236,14 +240,16 @@ def shade_transmittance_per_light_path(
             # add default shade transmittance (0.05)
             elif light_path != '__static_apertures__':
                 shade_transmittances[light_path].append(0.05)
+                shd_trans_dict[light_path] = 0.05
     else:
-        shade_transmittance = float(shade_transmittance)
+        shd_trans = float(shade_transmittance)
         for light_path in light_paths:
             # default multiplier
             shade_transmittances[light_path] = [1]
             # add custom shade transmittance
             if light_path != '__static_apertures__':
-                shade_transmittances[light_path].append(shade_transmittance)
+                shade_transmittances[light_path].append(shd_trans)
+                shd_trans_dict[light_path] = shd_trans
 
     return shade_transmittances
 
@@ -286,13 +292,14 @@ def leed_states_schedule(
 
     states_schedule = defaultdict(list)
     fail_to_comply = {}
+    shd_trans_dict = {}
 
     for grid_info in grids_info:
         grid_id = grid_info['full_id']
         grid_count = grid_info['count']
         light_paths = [lp[0] for lp in grid_info['light_path']]
         shade_transmittances = shade_transmittance_per_light_path(
-            light_paths, shade_transmittance)
+            light_paths, shade_transmittance, shd_trans_dict)
         keys, values = zip(*shade_transmittances.items())
         combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
 
@@ -338,7 +345,7 @@ def leed_states_schedule(
             occupancy_hoys, shd_trans, results.timestep)
         states_schedule[light_path] = mapped_states
 
-    return states_schedule, fail_to_comply
+    return states_schedule, fail_to_comply, shd_trans_dict
 
 
 def leed_option_one(
@@ -402,10 +409,9 @@ def leed_option_one(
     grids_info = results._filter_grids(grids_filter=grids_filter)
 
     if not states_schedule:
-        states_schedule, fail_to_comply = leed_states_schedule(
-            results, grids_filter=grids_filter,
-            shade_transmittance=shade_transmittance
-            )
+        states_schedule, fail_to_comply, shd_trans_dict = \
+            leed_states_schedule(results, grids_filter=grids_filter,
+                shade_transmittance=shade_transmittance)
     else:
         raise NotImplementedError(
             'Custom input for argument states_schedule is not yet implemented.'
@@ -474,9 +480,9 @@ def leed_option_one(
                 filter_array, 1, array, occ_mask)
             if light_path != '__static_apertures__':
                 sun_up_hours = np.array(results.sun_up_hours).astype(int)
-                shade_transmittance = states_schedule[light_path][sun_up_hours]
-                shade_transmittance = shade_transmittance[occ_mask.astype(bool)]
-                arrays.append(array_filter * shade_transmittance)
+                shd_trans_array = states_schedule[light_path][sun_up_hours]
+                shd_trans_array = shd_trans_array[occ_mask.astype(bool)]
+                arrays.append(array_filter * shd_trans_array)
             else:
                 arrays.append(array_filter)
         array = sum(arrays)
@@ -517,7 +523,15 @@ def leed_option_one(
         )
         summary['note'] = note
 
-    states_schedule = {k:v.tolist() for k, v in states_schedule.items()}
+    # convert to datacollection
+    def to_datacollection(aperture_group, values):
+        header = Header(data_type=GenericType(aperture_group, ''), unit='',
+                        analysis_period=AnalysisPeriod(),
+                        metadata={'Shade Transmittance': shd_trans_dict[aperture_group]})
+        hourly_data = HourlyContinuousCollection(header=header, values=values)
+        return hourly_data.to_dict()
+
+    states_schedule = {k:to_datacollection(k, v.tolist()) for k, v in states_schedule.items()}
 
     if sub_folder:
         folder = Path(sub_folder)
