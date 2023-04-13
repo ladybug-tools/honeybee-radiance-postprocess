@@ -28,14 +28,14 @@ def leed():
 @click.option(
     '--shade-transmittance', '-st', help='A value to use as a multiplier in place of '
     'solar shading. Value for shade transmittance must be 1 > value > 0.',
-    default=0.2, show_default=True, type=click.FLOAT
+    default=0.05, show_default=True, type=click.FLOAT
 )
 @click.option(
     '--shade-transmittance-file', '-stf', help='A JSON file with a dictionary '
     'where aperture groups are keys, and the value for each key is the shade '
     'transmittance. Values for shade transmittance must be 1 > value > 0. '
     'If any aperture groups are missing in the JSON file, its shade transmittance '
-    'value will be set to the value of the shade transmittance option (0.2 by '
+    'value will be set to the value of the shade transmittance option (0.05 by '
     'default).', default=None, show_default=True,
     type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
 )
