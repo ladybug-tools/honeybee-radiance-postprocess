@@ -233,9 +233,9 @@ def shade_transmittance_per_light_path(
             if light_path in shade_transmittance:
                 shade_transmittances[light_path].append(
                     shade_transmittance[light_path])
-            # add default shade transmittance (0.2)
+            # add default shade transmittance (0.05)
             elif light_path != '__static_apertures__':
-                shade_transmittances[light_path].append(0.2)
+                shade_transmittances[light_path].append(0.05)
     else:
         shade_transmittance = float(shade_transmittance)
         for light_path in light_paths:
@@ -250,7 +250,7 @@ def shade_transmittance_per_light_path(
 
 def leed_states_schedule(
         results: Union[str, Results], grids_filter: str = '*',
-        shade_transmittance: Union[float, dict] = 0.2
+        shade_transmittance: Union[float, dict] = 0.05
         ) -> Tuple[dict, dict]:
     """Calculate a schedule of each aperture group for LEED compliant sDA.
 
@@ -268,7 +268,7 @@ def leed_states_schedule(
             for all aperture groups, or a dictionary where aperture groups are
             keys, and the value for each key is the shade transmittance. Values
             for shade transmittance must be 1 > value > 0.
-            Defaults to 0.2.
+            Defaults to 0.05.
 
     Returns:
         Tuple: A tuple with a dictionary of the annual schedule and a
@@ -343,7 +343,7 @@ def leed_states_schedule(
 
 def leed_option_one(
         results: Union[str, Results], grids_filter: str = '*',
-        shade_transmittance: Union[float, dict] = 0.2,
+        shade_transmittance: Union[float, dict] = 0.05,
         states_schedule: dict = None, threshold: float = 300,
         direct_threshold: float = 1000, occ_hours: int = 250,
         target_time: float = 50, sub_folder: str = None):
@@ -358,7 +358,7 @@ def leed_option_one(
             for all aperture groups, or a dictionary where aperture groups are
             keys, and the value for each key is the shade transmittance. Values
             for shade transmittance must be 1 > value > 0.
-            Defaults to 0.2.
+            Defaults to 0.05.
         states_schedule: A custom dictionary of shading states. In case this is
             left empty, the function will calculate a shading schedule by using
             the shade_transmittance input. If a states schedule is provided it
@@ -538,10 +538,10 @@ def leed_option_one(
             da_file = folder.joinpath('results', 'da', f'{grid_id}.da')
             da_file.parent.mkdir(parents=True, exist_ok=True)
             hours_above_file = folder.joinpath(
-                'results', 'ase_hours_above', f'{grid_id}.hrs')
+                'results', 'ase_hours_above', f'{grid_id}.res')
             hours_above_file.parent.mkdir(parents=True, exist_ok=True)
             ase_hr_p_file = folder.joinpath(
-                'datacollections', 'ase_percentage_above', f'{grid_id}.pct')
+                'datacollections', 'ase_percentage_above', f'{grid_id}.json')
             ase_hr_p_file.parent.mkdir(parents=True, exist_ok=True)
             np.savetxt(da_file, da, fmt='%.2f')
             np.savetxt(hours_above_file, h_above, fmt='%.0f')
