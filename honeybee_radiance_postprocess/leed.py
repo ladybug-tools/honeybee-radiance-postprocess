@@ -222,8 +222,8 @@ def shade_transmittance_per_light_path(
             for all aperture groups, or a dictionary where aperture groups are
             keys, and the value for each key is the shade transmittance. Values
             for shade transmittance must be 1 > value > 0.
-        shd_trans_dict: A dictionary used to store shade
-            transmittance value for each aperture group.
+        shd_trans_dict: A dictionary used to store shade transmittance value
+            for each aperture group.
 
     Returns:
         A dictionary with filtered light paths.
@@ -237,6 +237,7 @@ def shade_transmittance_per_light_path(
             if light_path in shade_transmittance:
                 shade_transmittances[light_path].append(
                     shade_transmittance[light_path])
+                shd_trans_dict[light_path] = shade_transmittance[light_path]
             # add default shade transmittance (0.05)
             elif light_path != '__static_apertures__':
                 shade_transmittances[light_path].append(0.05)
@@ -463,7 +464,7 @@ def leed_option_one(
 
         ase_grids.append(ase_grid)
         hours_above.append(h_above)
-        pass_ase = (h_above < occ_hours)
+        pass_ase = h_above < occ_hours
         pass_ase_grids.append(pass_ase)
 
     # spatial daylight autonomy
@@ -490,7 +491,7 @@ def leed_option_one(
         da_grid = da_array2d(array, total_occ=total_occ, threshold=threshold)
         da_grids.append(da_grid)
         # calculate sda per grid
-        pass_sda = (da_grid >= target_time)
+        pass_sda = da_grid >= target_time
         pass_sda_grids.append(pass_sda)
 
     # create summaries for all grids and each grid individually
