@@ -205,7 +205,9 @@ def _ase_hourly_percentage(
     # map states to 8760 values
     percentage_above = results.values_to_annual(
         occupancy_hoys, percentage_above, results.timestep)
-    header = Header(Fraction(), '%', AnalysisPeriod(results.timestep))
+    header = Header(Fraction('Percentage above 1000 direct lux'), '%',
+                    AnalysisPeriod(results.timestep),
+                    metadata={'SensorGrid': grid_info['full_id']})
     data_collection = HourlyContinuousCollection(header, percentage_above.tolist())
 
     return data_collection
@@ -525,14 +527,17 @@ def leed_option_one(
         summary['note'] = note
 
     # convert to datacollection
-    def to_datacollection(aperture_group, values):
+    def to_datacollection(aperture_group: str, values: np.ndarray):
+        # convert values to 0 and 1 (0 = no shading, 1 = shading)
+        values[values == 1] = 0
+        values[values == shd_trans_dict[aperture_group]] = 1
         header = Header(data_type=GenericType(aperture_group, ''), unit='',
                         analysis_period=AnalysisPeriod(),
                         metadata={'Shade Transmittance': shd_trans_dict[aperture_group]})
-        hourly_data = HourlyContinuousCollection(header=header, values=values)
+        hourly_data = HourlyContinuousCollection(header=header, values=values.tolist())
         return hourly_data.to_dict()
 
-    states_schedule = {k:to_datacollection(k, v.tolist()) for k, v in states_schedule.items()}
+    states_schedule = {k:to_datacollection(k, v) for k, v in states_schedule.items()}
 
     if sub_folder:
         folder = Path(sub_folder)
