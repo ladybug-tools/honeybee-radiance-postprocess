@@ -4,7 +4,6 @@ import os
 from click.testing import CliRunner
 
 from ladybug.futil import nukedir
-
 from honeybee_radiance_postprocess.cli.leed import daylight_option_one
 
 
