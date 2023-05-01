@@ -3,7 +3,6 @@ import os
 from click.testing import CliRunner
 
 from ladybug.futil import nukedir
-
 from honeybee_radiance_postprocess.cli.schedule import control_schedules
 
 
