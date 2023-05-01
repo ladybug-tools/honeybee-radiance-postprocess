@@ -520,7 +520,7 @@ def leed_option_one(
         summary['credits'] = 0
         fail_to_comply_rooms = ', '.join(list(fail_to_comply.keys()))
         note = (
-            '0 credits has been awarded. The following sensor grids have at '
+            '0 credits have been awarded. The following sensor grids have at '
             'least one hour where 2% of the floor area receives direct '
             f'illuminance of 1000 lux or more: {fail_to_comply_rooms}.'
         )
@@ -577,13 +577,12 @@ def leed_option_one(
             'datacollections', 'ase_percentage_above', 'grids_info.json')
         ase_hr_pct_info_file.write_text(json.dumps(grids_info, indent=2))
 
-        if fail_to_comply:
-            states_schedule_err_file = \
-                folder.joinpath('states_schedule_err.json')
-            states_schedule_err_file.write_text(json.dumps(fail_to_comply))
+        states_schedule_err_file = \
+            folder.joinpath('states_schedule_err.json')
+        states_schedule_err_file.write_text(json.dumps(fail_to_comply))
 
     return (summary, summary_grid, da_grids, hours_above, states_schedule,
-            grids_info)
+            fail_to_comply, grids_info)
 
 
 def _leed_daylight_option_one_vis_metadata():
