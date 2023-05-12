@@ -4,6 +4,10 @@ from pathlib import Path
 import json
 import numpy as np
 
+from ladybug.color import Colorset
+from ladybug.datatype.fraction import Fraction
+from ladybug.legend import LegendParameters
+
 from .results import Results
 from .metrics import da_array2d
 from .util import filter_array
@@ -44,22 +48,25 @@ def en17037_to_files(
     }
 
     da_folders = []
+    sda_folders = []
     for target_type, thresholds in recommendations.items():
-        type_folder = metrics_folder.joinpath(target_type)
-
+        da_folder = metrics_folder.joinpath('da')
+        sda_folder = metrics_folder.joinpath('sda')
         for level, threshold in thresholds.items():
-            level_folder = type_folder.joinpath(level)
-
             # da
-            da_file = level_folder.joinpath('da', f'{grid_id}.da')
+            da_level_folder = \
+                da_folder.joinpath('_'.join([target_type, level, str(threshold)]))
+            da_file = da_level_folder.joinpath(f'{grid_id}.da')
             if not da_file.parent.is_dir():
                 da_file.parent.mkdir(parents=True)
             da = da_array2d(array, total_occ=total_occ, threshold=threshold)
             np.savetxt(da_file, da, fmt='%.2f')
 
             # sda
+            sda_level_folder = \
+                sda_folder.joinpath('_'.join([target_type, level, str(threshold)]))
             space_target = 50 if target_type == 'target_illuminance' else 95
-            sda_file = level_folder.joinpath('sda', f'{grid_id}.sda')
+            sda_file = sda_level_folder.joinpath(f'{grid_id}.sda')
             if not sda_file.parent.is_dir():
                 sda_file.parent.mkdir(parents=True)
             sda = (da >= space_target).mean() * 100
@@ -67,8 +74,9 @@ def en17037_to_files(
                 sdaf.write(str(round(sda, 2)))
 
             da_folders.append(da_file.parent)
+            sda_folders.append(sda_file.parent)
 
-    return da_folders
+    return da_folders, sda_folders
 
 
 def en17037_to_folder(
@@ -116,23 +124,69 @@ def en17037_to_folder(
         if np.any(array):
             array = np.apply_along_axis(
                 filter_array, 1, array, occ_mask)
-        da_folders = en17037_to_files(
+        da_folders, sda_folders = en17037_to_files(
             array, metrics_folder, grid_info['full_id'], total_occ)
 
     # copy grids_info.json to all results folders
-    for da_folder in da_folders:
-        grids_info_file = Path(da_folder, 'grids_info.json')
+    for folder in da_folders + sda_folders:
+        grids_info_file = Path(folder, 'grids_info.json')
         with open(grids_info_file, 'w') as outf:
             json.dump(grids_info, outf, indent=2)
 
-    # create info for available results. This file will be used by honeybee-vtk
-    # for results visualization
-    config_file = Path(metrics_folder, 'config.json')
-    cfg = _annual_daylight_en17037_config()
-    with open(config_file, 'w') as outf:
-        json.dump(cfg, outf)
+    metric_info_dict = _annual_daylight_en17037_vis_metadata()
+    da_folder = metrics_folder.joinpath('da')
+    for metric, data in metric_info_dict.items():
+        file_path = da_folder.joinpath(metric, 'vis_metadata.json')
+        with open(file_path, 'w') as fp:
+            json.dump(data, fp, indent=4)
 
     return metrics_folder
+
+
+def _annual_daylight_en17037_vis_metadata():
+    """Return visualization metadata for annual daylight."""
+    da_lpar = LegendParameters(min=0, max=100, colors=Colorset.annual_comfort())
+
+    metric_info_dict = {
+        'minimum_illuminance_minimum_100': {
+            'type': 'VisualizationMetaData',
+            'data_type': Fraction('Daylight Autonomy').to_dict(),
+            'unit': '%',
+            'legend_parameters': da_lpar.to_dict()
+        },
+        'minimum_illuminance_medium_300': {
+            'type': 'VisualizationMetaData',
+            'data_type': Fraction('Daylight Autonomy').to_dict(),
+            'unit': '%',
+            'legend_parameters': da_lpar.to_dict()
+        },
+        'minimum_illuminance_high_500': {
+            'type': 'VisualizationMetaData',
+            'data_type': Fraction('Daylight Autonomy').to_dict(),
+            'unit': '%',
+            'legend_parameters': da_lpar.to_dict()
+        },
+        'target_illuminance_minimum_300': {
+            'type': 'VisualizationMetaData',
+            'data_type': Fraction('Daylight Autonomy').to_dict(),
+            'unit': '%',
+            'legend_parameters': da_lpar.to_dict()
+        },
+        'target_illuminance_medium_500': {
+            'type': 'VisualizationMetaData',
+            'data_type': Fraction('Daylight Autonomy').to_dict(),
+            'unit': '%',
+            'legend_parameters': da_lpar.to_dict()
+        },
+        'target_illuminance_high_750': {
+            'type': 'VisualizationMetaData',
+            'data_type': Fraction('Daylight Autonomy').to_dict(),
+            'unit': '%',
+            'legend_parameters': da_lpar.to_dict()
+        }
+    }
+
+    return metric_info_dict
 
 
 def _annual_daylight_en17037_config():
