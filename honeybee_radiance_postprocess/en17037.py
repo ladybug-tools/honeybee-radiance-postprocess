@@ -55,7 +55,7 @@ def en17037_to_files(
         for level, threshold in thresholds.items():
             # da
             da_level_folder = \
-                da_folder.joinpath('_'.join([target_type, level, str(threshold)]))
+                da_folder.joinpath('_'.join([target_type, str(threshold)]))
             da_file = da_level_folder.joinpath(f'{grid_id}.da')
             if not da_file.parent.is_dir():
                 da_file.parent.mkdir(parents=True)
@@ -64,7 +64,7 @@ def en17037_to_files(
 
             # sda
             sda_level_folder = \
-                sda_folder.joinpath('_'.join([target_type, level, str(threshold)]))
+                sda_folder.joinpath('_'.join([target_type, str(threshold)]))
             space_target = 50 if target_type == 'target_illuminance' else 95
             sda_file = sda_level_folder.joinpath(f'{grid_id}.sda')
             if not sda_file.parent.is_dir():
@@ -148,39 +148,39 @@ def _annual_daylight_en17037_vis_metadata():
     da_lpar = LegendParameters(min=0, max=100, colors=Colorset.annual_comfort())
 
     metric_info_dict = {
-        'minimum_illuminance_minimum_100': {
+        'minimum_illuminance_100': {
             'type': 'VisualizationMetaData',
-            'data_type': Fraction('Daylight Autonomy').to_dict(),
+            'data_type': Fraction('Daylight Autonomy - minimum 100 lux').to_dict(),
             'unit': '%',
             'legend_parameters': da_lpar.to_dict()
         },
-        'minimum_illuminance_medium_300': {
+        'minimum_illuminance_300': {
             'type': 'VisualizationMetaData',
-            'data_type': Fraction('Daylight Autonomy').to_dict(),
+            'data_type': Fraction('Daylight Autonomy - minimum 300 lux').to_dict(),
             'unit': '%',
             'legend_parameters': da_lpar.to_dict()
         },
-        'minimum_illuminance_high_500': {
+        'minimum_illuminance_500': {
             'type': 'VisualizationMetaData',
-            'data_type': Fraction('Daylight Autonomy').to_dict(),
+            'data_type': Fraction('Daylight Autonomy - minimum 500 lux').to_dict(),
             'unit': '%',
             'legend_parameters': da_lpar.to_dict()
         },
-        'target_illuminance_minimum_300': {
+        'target_illuminance_300': {
             'type': 'VisualizationMetaData',
-            'data_type': Fraction('Daylight Autonomy').to_dict(),
+            'data_type': Fraction('Daylight Autonomy - target 300 lux').to_dict(),
             'unit': '%',
             'legend_parameters': da_lpar.to_dict()
         },
-        'target_illuminance_medium_500': {
+        'target_illuminance_500': {
             'type': 'VisualizationMetaData',
-            'data_type': Fraction('Daylight Autonomy').to_dict(),
+            'data_type': Fraction('Daylight Autonomy - target 500 lux').to_dict(),
             'unit': '%',
             'legend_parameters': da_lpar.to_dict()
         },
-        'target_illuminance_high_750': {
+        'target_illuminance_750': {
             'type': 'VisualizationMetaData',
-            'data_type': Fraction('Daylight Autonomy').to_dict(),
+            'data_type': Fraction('Daylight Autonomy - target 750 lux').to_dict(),
             'unit': '%',
             'legend_parameters': da_lpar.to_dict()
         }
