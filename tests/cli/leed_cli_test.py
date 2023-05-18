@@ -20,7 +20,7 @@ def test_daylight_option_one():
     result = runner.invoke(daylight_option_one, cmd_args)
     assert result.exit_code == 0
     assert os.path.isdir(sub_folder)
-    nukedir(sub_folder)
+    nukedir(sub_folder, rmdir=True)
 
 
 def test_daylight_option_one_shade_transmittance_file():
@@ -36,4 +36,4 @@ def test_daylight_option_one_shade_transmittance_file():
     result = runner.invoke(daylight_option_one, cmd_args)
     assert result.exit_code == 0
     assert os.path.isdir(sub_folder)
-    nukedir(sub_folder)
+    nukedir(sub_folder, rmdir=True)
