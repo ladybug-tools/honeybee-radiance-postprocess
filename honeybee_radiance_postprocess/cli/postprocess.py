@@ -599,12 +599,16 @@ def annual_sunlight_exposure(
     show_default=True
 )
 @click.option(
+    '--grid-name', '-gn', help='Optional name of each metric file.',
+    default=None, show_default=True
+)
+@click.option(
     '--sub-folder', '-sf', help='Optional relative path for subfolder to write output '
     'metric files.', default='metrics'
 )
 def annual_metrics_file(
     file, sun_up_hours, schedule, threshold, lower_threshold, upper_threshold,
-    sub_folder
+    grid_name, sub_folder
 ):
     """Compute annual metrics for a single file and write the metrics in a
     subfolder.
@@ -639,6 +643,9 @@ def annual_metrics_file(
     else:
         schedule = generate_default_schedule()
 
+    if grid_name is None:
+        grid_name = file.stem
+
     occ_pattern, total_hours, sun_down_occ_hours = \
         filter_schedule_by_hours(sun_up_hours, schedule=schedule)
     occ_mask = np.array(occ_pattern)
@@ -664,7 +671,7 @@ def annual_metrics_file(
         for metric, data in pattern.items():
             metric_folder = sub_folder.joinpath(metric)
             extension = metric.split('_')[0]
-            output_file = metric_folder.joinpath(f'{file.stem}.{extension}')
+            output_file = metric_folder.joinpath(f'{grid_name}.{extension}')
             output_file.parent.mkdir(parents=True, exist_ok=True)
             np.savetxt(output_file, data, fmt='%.2f')
     except Exception:
