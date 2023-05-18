@@ -1,13 +1,21 @@
 """honeybee radiance daylight postprocessing commands."""
-import json
-import click
+from pathlib import Path
 import sys
 import os
 import logging
+import json
+import click
+import numpy as np
 
 from honeybee_radiance_postprocess.results import Results
-from ..en17037 import en17037_to_folder
+from honeybee_radiance_postprocess.metrics import da_array2d, cda_array2d, \
+    udi_array2d, udi_lower_array2d, udi_upper_array2d
+from honeybee_radiance_postprocess.reader import binary_to_array
+from honeybee_radiance.postprocess.annual import filter_schedule_by_hours, \
+    generate_default_schedule
 
+from ..en17037 import en17037_to_folder
+from ..util import filter_array
 from .two_phase import two_phase
 from .leed import leed
 
@@ -557,6 +565,110 @@ def annual_sunlight_exposure(
         )
     except Exception:
         _logger.exception('Failed to calculate annual sunlight exposure.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('annual-daylight-file')
+@click.argument(
+    'file',
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.argument(
+    'sun-up-hours',
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--schedule', '-sch', help='Path to an annual schedule file. Values should be 0-1 '
+    'separated by new line. If not provided an 8-5 annual schedule will be created.',
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--threshold', '-t', help='Threshold illuminance level for daylight autonomy.',
+    default=300, type=int, show_default=True
+)
+@click.option(
+    '--lower-threshold', '-lt',
+    help='Minimum threshold for useful daylight illuminance.', default=100, type=int,
+    show_default=True
+)
+@click.option(
+    '--upper-threshold', '-ut',
+    help='Maximum threshold for useful daylight illuminance.', default=3000, type=int,
+    show_default=True
+)
+@click.option(
+    '--sub-folder', '-sf', help='Optional relative path for subfolder to write output '
+    'metric files.', default='metrics'
+)
+def annual_metrics_file(
+    file, sun_up_hours, schedule, threshold, lower_threshold, upper_threshold,
+    sub_folder
+):
+    """Compute annual metrics for a single file and write the metrics in a
+    subfolder.
+
+    \b
+    This command generates 5 files for each input grid.
+        da/{grid-name}.da -> Daylight Autonomy
+        cda/{grid-name}.cda -> Continuos Daylight Autonomy
+        udi/{grid-name}.udi -> Useful Daylight Illuminance
+        udi_lower/{grid-name}_upper.udi -> Upper Useful Daylight Illuminance
+        udi_upper/{grid-name}_lower.udi -> Lower Useful Daylight Illuminance
+
+    \b
+    Args:
+        file: Annual illuminance file. This can be either a NumPy file or a
+            binary Radiance file.
+    """
+    file = Path(file)
+    # load file to array
+    try:
+        array = np.load(file)
+    except Exception:
+        array = binary_to_array(file)
+
+    # read sun up hours to list of integers
+    with open(sun_up_hours) as _sun_up_hours:
+        sun_up_hours = [int(float(v)) for v in _sun_up_hours]
+    # optional input - only check if the file exist otherwise ignore
+    if schedule and os.path.isfile(schedule):
+        with open(schedule) as hourly_schedule:
+            schedule = [int(float(v)) for v in hourly_schedule]
+    else:
+        schedule = generate_default_schedule()
+
+    occ_pattern, total_hours, sun_down_occ_hours = \
+        filter_schedule_by_hours(sun_up_hours, schedule=schedule)
+    occ_mask = np.array(occ_pattern)
+    array_filter = np.apply_along_axis(
+        filter_array, 1, array, mask=occ_mask)
+    try:
+        da = da_array2d(array_filter, total_occ=total_hours, threshold=threshold)
+        cda = cda_array2d(array_filter, total_occ=total_hours, threshold=threshold)
+        udi = udi_array2d(
+            array_filter, total_occ=total_hours, min_t=lower_threshold,
+            max_t=upper_threshold)
+        udi_lower = udi_lower_array2d(
+            array_filter, total_occ=total_hours, min_t=lower_threshold,
+            sun_down_occ_hours=sun_down_occ_hours)
+        udi_upper = udi_upper_array2d(
+            array_filter, total_occ=total_hours, max_t=upper_threshold)
+
+        sub_folder = Path(sub_folder)
+        pattern = {
+            'da': da, 'cda': cda, 'udi_lower': udi_lower, 'udi': udi,
+            'udi_upper': udi_upper
+        }
+        for metric, data in pattern.items():
+            metric_folder = sub_folder.joinpath(metric)
+            extension = metric.split('_')[0]
+            output_file = metric_folder.joinpath(f'{file.stem}.{extension}')
+            output_file.parent.mkdir(parents=True, exist_ok=True)
+            np.savetxt(output_file, data, fmt='%.2f')
+    except Exception:
+        _logger.exception('Failed to calculate annual metrics.')
         sys.exit(1)
     else:
         sys.exit(0)

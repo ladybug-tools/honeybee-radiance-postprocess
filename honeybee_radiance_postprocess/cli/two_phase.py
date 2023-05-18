@@ -91,3 +91,50 @@ def rgb_to_illuminance(
         sys.exit(1)
     else:
         sys.exit(0)
+
+
+@two_phase.command('rgb-to-illuminance-file')
+@click.argument(
+    'mtx-file', type=click.Path(exists=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--binary/--ascii', is_flag=True, default=True, help='Switch between binary '
+    'and ascii input matrices. Default is binary.'
+)
+@click.option(
+    '--name', '-n', help='Name of output file.', default='illuminance',
+    show_default=True
+)
+@click.option(
+    '--output-folder', '-of', help='Output folder.', default='.',
+    type=click.Path(exists=False, file_okay=False, dir_okay=True, resolve_path=True)
+)
+def rgb_to_illuminance_file(
+    mtx_file, binary, name, output_folder
+    ):
+    """Convert a RGB Radiance matrix to illuminance and save the array as a
+    NumPy file.
+
+    \b
+    Args:
+        mtx-file: Path to matrix file to convert.
+    """
+    try:
+        if binary:
+            mtx = binary_to_array(mtx_file)
+        else:
+            mtx = ascii_to_array(mtx_file)
+
+        conversion = np.array([47.4, 119.9, 11.6], dtype=np.float32)
+        total_illuminance = np.dot(mtx, conversion)
+
+        # save total illuminance
+        total_output = Path(output_folder, name)
+        total_output.parent.mkdir(parents=True, exist_ok=True)
+        np.save(total_output, total_illuminance)
+
+    except Exception:
+        _logger.exception('Processing annual results failed.')
+        sys.exit(1)
+    else:
+        sys.exit(0)

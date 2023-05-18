@@ -7,6 +7,8 @@ import json
 import numpy as np
 from pathlib import Path
 
+from honeybee_radiance_postprocess.reader import binary_to_array
+
 _logger = logging.getLogger(__name__)
 
 
@@ -55,6 +57,10 @@ def merge_grid_folder(input_folder, output_folder, extension, dist_info):
 def restore_original_distribution(
         input_folder, output_folder, extension='npy', dist_info=None):
     """Restructure files to the original distribution based on the distribution info.
+    
+    It will assume that the files in the input folder are NumPy files. However,
+    if it fails to load the files as arrays it will try to load from binary
+    Radiance files to array.
 
     Args:
         input_folder: Path to input folder.
@@ -95,7 +101,10 @@ def restore_original_distribution(
             st = src_info['st_ln']
             end = src_info['end_ln']
 
-            array = np.load(src_file)
+            try:
+                array = np.load(src_file)
+            except Exception:
+                array = binary_to_array(src_file)
             slice_array = array[st:end+1,:]
 
             out_arrays.append(slice_array)
