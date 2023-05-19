@@ -4,6 +4,7 @@ import sys
 import logging
 import json
 import numpy as np
+import time
 from pathlib import Path
 
 from honeybee_radiance_postprocess.reader import binary_to_array
@@ -46,7 +47,9 @@ def merge_grid_folder(input_folder, output_folder, extension, dist_info):
         # handle optional case for Functions input
         if dist_info and not Path(dist_info).is_file():
             dist_info = None
+        s_time = time.time()
         restore_original_distribution(input_folder, output_folder, extension, dist_info)
+        print('restore_original_distribution: %s' % (time.time() - s_time))
     except Exception:
         _logger.exception('Failed to restructure data from folder.')
         sys.exit(1)
@@ -153,6 +156,7 @@ def restore_original_distribution(
     if not output_folder.is_dir():
         output_folder.mkdir()
 
+    src_file = Path()
     for f in data:
         output_file = Path(output_folder, f['identifier'])
         # ensure the new folder is created. in case the identifier has a subfolder
@@ -162,15 +166,16 @@ def restore_original_distribution(
 
         out_arrays = []
         for src_info in f['dist_info']:
-            src_file = Path(
-                input_folder, '%s.%s' % (src_info['identifier'], extension)
-            )
             st = src_info['st_ln']
             end = src_info['end_ln']
-            try:
-                array = np.load(src_file)
-            except Exception:
-                array = binary_to_array(src_file)
+            if not Path(input_folder, '%s.%s' % (src_info['identifier'], extension)).samefile(src_file):
+                src_file = Path(
+                    input_folder, '%s.%s' % (src_info['identifier'], extension)
+                )
+                try:
+                    array = np.load(src_file)
+                except Exception:
+                    array = binary_to_array(src_file)
             slice_array = array[st:end+1,:]
 
             out_arrays.append(slice_array)
