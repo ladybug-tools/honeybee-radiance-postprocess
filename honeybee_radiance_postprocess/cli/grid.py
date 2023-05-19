@@ -7,6 +7,7 @@ import numpy as np
 from pathlib import Path
 
 from honeybee_radiance_postprocess.reader import binary_to_array
+from ..annualdaylight import _annual_daylight_vis_metadata
 
 _logger = logging.getLogger(__name__)
 
@@ -66,7 +67,13 @@ def merge_grid_folder(input_folder, output_folder, extension, dist_info):
     '. Alternatively, the command will look for a _redist_info.json file inside the '
     'folder.', type=click.Path(file_okay=True, dir_okay=False, resolve_path=True)
 )
-def merge_metrics_folder(input_folder, output_folder, dist_info):
+@click.option(
+    '--grids-info', '-gi',
+    help='An optional input for grid information that will be copied to each '
+    'metric folder. This file is usually called grids_info.json.',
+    type=click.Path(file_okay=True, dir_okay=False, resolve_path=True)
+)
+def merge_metrics_folder(input_folder, output_folder, dist_info, grids_info):
     """Restructure annual daylight metrics in a distributed folder.
     
     Since this command redistributes metrics it is expected that the input
@@ -81,6 +88,9 @@ def merge_metrics_folder(input_folder, output_folder, dist_info):
         # handle optional case for Functions input
         if dist_info and not Path(dist_info).is_file():
             dist_info = None
+        if grids_info:
+            with open(grids_info) as gi:
+                grids_info = json.load(gi)
         extension_mapper = {
             'da': 'da',
             'cda': 'cda',
@@ -88,12 +98,22 @@ def merge_metrics_folder(input_folder, output_folder, dist_info):
             'udi_lower': 'udi',
             'udi_upper': 'udi'
         }
+        metric_info_dict = _annual_daylight_vis_metadata()
         input_folder = Path(input_folder)
-        for metric in ['da', 'cda', 'udi', 'udi_lower', 'udi_upper']:
-            extension = extension_mapper[metric]
+        output_folder = Path(output_folder)
+        for metric, extension in extension_mapper.items():
             metric_folder = input_folder.joinpath(metric)
+            metric_out = output_folder.joinpath(metric)
             restore_original_distribution_metrics(
                 metric_folder, output_folder, metric, extension, dist_info)
+
+            if grids_info:
+                info_file = metric_out.joinpath('grids_info.json')
+                info_file.write_text(json.dumps(grids_info))
+
+            vis_data = metric_info_dict[metric]
+            vis_metadata_file = metric_out.joinpath('vis_metadata.json')
+            vis_metadata_file.write_text(json.dumps(vis_data, indent=4))
     except Exception:
         _logger.exception('Failed to restructure data from folder.')
         sys.exit(1)
