@@ -14,8 +14,7 @@ from .util import filter_array
 
 
 def en17037_to_files(
-        array: np.ndarray, metrics_folder: Path, grid_info: dict,
-        total_occ: int = None) -> list:
+        array: np.ndarray, metrics_folder: Path, grid_info: dict) -> list:
     """Compute annual EN 17037 metrics for a NumPy array and write the results
     to a folder.
 
@@ -27,12 +26,9 @@ def en17037_to_files(
         metrics_folder: An output folder where the results will be written to.
             The folder will be created if it does not exist.
         grid_info: A grid information dictionary.
-        total_occ: Integer indicating the number of occupied hours. If not
-            given any input the number of occupied hours will be found by the
-            array shape.
 
     Returns:
-        list -- List of paths of daylight autonomy folders.
+        tuple -- Tuple of lists of paths for da, sda, and compliance folders.
     """
     recommendations = {
         'minimum_illuminance': {
@@ -71,7 +67,7 @@ def en17037_to_files(
             da_file = da_level_folder.joinpath(f'{grid_id}.da')
             if not da_file.parent.is_dir():
                 da_file.parent.mkdir(parents=True)
-            da = da_array2d(array, total_occ=total_occ, threshold=threshold)
+            da = da_array2d(array, total_occ=4380, threshold=threshold)
             np.savetxt(da_file, da, fmt='%.2f')
 
             # sda
@@ -149,7 +145,7 @@ def en17037_to_folder(
             array = np.apply_along_axis(
                 filter_array, 1, array, occ_mask)
         da_folders, sda_folders, compliance_folders = en17037_to_files(
-            array, metrics_folder, grid_info, total_occ)
+            array, metrics_folder, grid_info)
 
     # copy grids_info.json to all results folders
     for folder in da_folders + sda_folders + compliance_folders:
