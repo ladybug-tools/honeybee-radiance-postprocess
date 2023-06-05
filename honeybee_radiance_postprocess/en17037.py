@@ -14,7 +14,7 @@ from .util import filter_array
 
 
 def en17037_to_files(
-        array: np.ndarray, metrics_folder: Path, grid_id: str,
+        array: np.ndarray, metrics_folder: Path, grid_info: dict,
         total_occ: int = None) -> list:
     """Compute annual EN 17037 metrics for a NumPy array and write the results
     to a folder.
@@ -26,7 +26,7 @@ def en17037_to_files(
         array: A 2D NumPy array.
         metrics_folder: An output folder where the results will be written to.
             The folder will be created if it does not exist.
-        grid_id: A grid id which will be used to name the output files.
+        grid_info: A grid information dictionary.
         total_occ: Integer indicating the number of occupied hours. If not
             given any input the number of occupied hours will be found by the
             array shape.
@@ -46,12 +46,24 @@ def en17037_to_files(
             'high': 750
         }
     }
+    compliance_value = {
+        'minimum': 1,
+        'medium': 2,
+        'high': 3
+    }
+
+    grid_id = grid_info['full_id']
+    grid_count = grid_info['count']
 
     da_folders = []
     sda_folders = []
+    compliance_folders = []
+    da_folder = metrics_folder.joinpath('da')
+    sda_folder = metrics_folder.joinpath('sda')
+    compliance_folder = metrics_folder.joinpath('compliance_level')
+
     for target_type, thresholds in recommendations.items():
-        da_folder = metrics_folder.joinpath('da')
-        sda_folder = metrics_folder.joinpath('sda')
+        compliance_level = None
         for level, threshold in thresholds.items():
             # da
             da_level_folder = \
@@ -72,10 +84,23 @@ def en17037_to_files(
             with open(sda_file, 'w') as sdaf:
                 sdaf.write(str(round(sda, 2)))
 
+            space_target = 50 if target_type == 'target_illuminance' else 95
+            if sda >= space_target:
+                compliance_level = np.full((grid_count), compliance_value[level], dtype=int)
+
             da_folders.append(da_file.parent)
             sda_folders.append(sda_file.parent)
 
-    return da_folders, sda_folders
+        if compliance_level is None:
+            compliance_level = np.zeros(grid_count, dtype=int)
+        compliance_level_folder = compliance_folder.joinpath(target_type)
+        compliance_level_file = compliance_level_folder.joinpath(f'{grid_id}.pf')
+        if not compliance_level_file.parent.is_dir():
+            compliance_level_file.parent.mkdir(parents=True)
+        np.savetxt(compliance_level_file, compliance_level, fmt='%i')
+        compliance_folders.append(compliance_level_file.parent)
+
+    return da_folders, sda_folders, compliance_folders
 
 
 def en17037_to_folder(
@@ -123,11 +148,11 @@ def en17037_to_folder(
         if np.any(array):
             array = np.apply_along_axis(
                 filter_array, 1, array, occ_mask)
-        da_folders, sda_folders = en17037_to_files(
-            array, metrics_folder, grid_info['full_id'], total_occ)
+        da_folders, sda_folders, compliance_folders = en17037_to_files(
+            array, metrics_folder, grid_info, total_occ)
 
     # copy grids_info.json to all results folders
-    for folder in da_folders + sda_folders:
+    for folder in da_folders + sda_folders + compliance_folders:
         grids_info_file = Path(folder, 'grids_info.json')
         with open(grids_info_file, 'w') as outf:
             json.dump(grids_info, outf, indent=2)
