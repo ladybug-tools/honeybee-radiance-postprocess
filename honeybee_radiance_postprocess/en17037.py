@@ -65,11 +65,10 @@ def en17037_to_files(
             # sda
             sda_level_folder = \
                 sda_folder.joinpath('_'.join([target_type, str(threshold)]))
-            space_target = 50 if target_type == 'target_illuminance' else 95
             sda_file = sda_level_folder.joinpath(f'{grid_id}.sda')
             if not sda_file.parent.is_dir():
                 sda_file.parent.mkdir(parents=True)
-            sda = (da >= space_target).mean() * 100
+            sda = (da >= 50).mean() * 100
             with open(sda_file, 'w') as sdaf:
                 sdaf.write(str(round(sda, 2)))
 
