@@ -6,6 +6,7 @@ import logging
 import json
 import click
 import numpy as np
+import pandas as pd
 
 from honeybee_radiance_postprocess.results import Results
 from honeybee_radiance_postprocess.metrics import da_array2d, cda_array2d, \
@@ -13,11 +14,13 @@ from honeybee_radiance_postprocess.metrics import da_array2d, cda_array2d, \
 from honeybee_radiance_postprocess.reader import binary_to_array
 from honeybee_radiance.postprocess.annual import filter_schedule_by_hours, \
     generate_default_schedule
+from honeybee.model import Model
 
 from ..en17037 import en17037_to_folder
 from ..util import filter_array
 from .two_phase import two_phase
 from .leed import leed
+from ..helper import model_grid_areas
 
 _logger = logging.getLogger(__name__)
 
@@ -676,6 +679,87 @@ def annual_metrics_file(
             np.savetxt(output_file, data, fmt='%.2f')
     except Exception:
         _logger.exception('Failed to calculate annual metrics.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('grid-summary')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.argument('extension', type=str)
+@click.option(
+    '--model', '-m', help='An optional HBJSON model file. This will be used to '
+    'find the area of the grids. The area is used when calculating percentages '
+    'of floor area.',
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--grids-info', '-gi', help='An optional JSON file with grid information. '
+    'If no file is provided the command will look for a file in the folder.',
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--name', '-n', help='Optional filename of grid summary.',
+    type=str, default='grid_summary', show_default=True
+)
+def grid_summary(
+    folder, extension, model, grids_info, name
+):
+    """Calculate a grid summary.
+
+    \b
+    Args:
+        folder: A folder with results.
+        extension: Extension of the files to collect data from.
+    """
+    try:
+        # create Path object
+        folder = Path(folder)
+
+        # get grids information
+        if grids_info:
+            with open(grids_info) as gi:
+                grids_info = json.load(gi)
+        else:
+            gi_file = folder.joinpath('grids_info.json')
+            with open(gi_file) as gi:
+                grids_info = json.load(gi)
+
+        # check to see if there is a HBJSON with sensor grid meshes for areas
+        if model:
+            grid_areas = model_grid_areas(model, grids_info)
+        else:
+            grid_areas = [None] * len(grids_info)
+
+        df = pd.DataFrame()
+        for grid_info, grid_area in zip(grids_info, grid_areas):
+            full_id = grid_info['full_id']
+            array = np.loadtxt(folder.joinpath(f'{full_id}.{extension}'))
+            _mean = array.mean()
+            _min = array.min()
+            _max = array.max()
+            _uniformity_ratio = _min / _mean
+            if grid_area is not None:
+                _pct_above_2 = grid_area[array > 2].sum() / grid_area.sum() * 100
+            else:
+                _pct_above_2 = (array > 2).sum() / grid_info['count'] * 100
+            data = {
+                'Sensor Grid': full_id,
+                'Mean': _mean,
+                'Minimum': _min,
+                'Maximum': _max,
+                'Uniformity Ratio': _uniformity_ratio,
+                'Percentage > 2%': _pct_above_2
+            }
+            df = df.append(pd.Series(data), ignore_index=True)
+
+        df = df.set_index('Sensor Grid')
+        df.to_csv(folder.joinpath(f'{name}.csv'), float_format='%.2f')
+    except Exception:
+        _logger.exception('Failed to calculate grid summary.')
         sys.exit(1)
     else:
         sys.exit(0)
