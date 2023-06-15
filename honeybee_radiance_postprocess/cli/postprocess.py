@@ -6,7 +6,6 @@ import logging
 import json
 import click
 import numpy as np
-import pandas as pd
 
 from honeybee_radiance_postprocess.results import Results
 from honeybee_radiance_postprocess.metrics import da_array2d, cda_array2d, \
@@ -734,7 +733,17 @@ def grid_summary(
         else:
             grid_areas = [None] * len(grids_info)
 
-        df = pd.DataFrame()
+        dtype = [
+            ('Sensor Grid', 'O'),
+            ('Mean', np.float32),
+            ('Minimum', np.float32),
+            ('Maximum', np.float32),
+            ('Uniformity Ratio', np.float32),
+            ('Percentage > 2%', np.float32)
+        ]
+        header = [dt[0] for dt in dtype]
+
+        arrays = []
         for grid_info, grid_area in zip(grids_info, grid_areas):
             full_id = grid_info['full_id']
             array = np.loadtxt(folder.joinpath(f'{full_id}.{extension}'))
@@ -746,18 +755,21 @@ def grid_summary(
                 _pct_above_2 = grid_area[array > 2].sum() / grid_area.sum() * 100
             else:
                 _pct_above_2 = (array > 2).sum() / grid_info['count'] * 100
-            data = {
-                'Sensor Grid': full_id,
-                'Mean': _mean,
-                'Minimum': _min,
-                'Maximum': _max,
-                'Uniformity Ratio': _uniformity_ratio,
-                'Percentage > 2%': _pct_above_2
-            }
-            df = df.append(pd.Series(data), ignore_index=True)
 
-        df = df.set_index('Sensor Grid')
-        df.to_csv(folder.joinpath(f'{name}.csv'), float_format='%.2f')
+            arrays.append((full_id, _mean, _min, _max, _uniformity_ratio, _pct_above_2))
+
+        # create structured array
+        struct_array = np.array(arrays, dtype=dtype)
+
+        # write header to file
+        with open(folder.joinpath(f'{name}.csv'), 'w') as file:
+            file.write(','.join(header))
+        # write structured array to file
+        with open(folder.joinpath(f'{name}.csv'), 'a') as file:
+            file.write('\n')
+            np.savetxt(file, struct_array, delimiter=',',
+                       fmt=['%s' , '%.2f', '%.2f', '%.2f', '%.2f', '%.2f'])
+
     except Exception:
         _logger.exception('Failed to calculate grid summary.')
         sys.exit(1)
