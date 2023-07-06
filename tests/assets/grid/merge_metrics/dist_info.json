@@ -1,0 +1,37 @@
+[
+  {
+    "identifier": "TestRoom_1",
+    "dist_info": [
+      {
+        "identifier": 0,
+        "st_ln": 0,
+        "end_ln": 220
+      },
+      {
+        "identifier": 1,
+        "st_ln": 0,
+        "end_ln": 194
+      }
+    ]
+  },
+  {
+    "identifier": "TestRoom_2",
+    "dist_info": [
+      {
+        "identifier": 1,
+        "st_ln": 195,
+        "end_ln": 220
+      },
+      {
+        "identifier": 2,
+        "st_ln": 0,
+        "end_ln": 220
+      },
+      {
+        "identifier": 3,
+        "st_ln": 0,
+        "end_ln": 220
+      }
+    ]
+  }
+]
