@@ -19,7 +19,7 @@ from ..en17037 import en17037_to_folder
 from ..util import filter_array
 from .two_phase import two_phase
 from .leed import leed
-from ..helper import model_grid_areas
+from ..helper import model_grid_areas, grid_summary
 
 _logger = logging.getLogger(__name__)
 
@@ -704,8 +704,13 @@ def annual_metrics_file(
     '--name', '-n', help='Optional filename of grid summary.',
     type=str, default='grid_summary', show_default=True
 )
-def grid_summary(
-    folder, extension, model, grids_info, name
+@click.option(
+    '--grid-metrics', '-gm', help='An optional JSON file with additional '
+    'custom metrics to calculate.', default=None,
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+)
+def grid_summary_metric(
+    folder, extension, model, grids_info, name, grid_metrics
 ):
     """Calculate a grid summary.
 
@@ -727,48 +732,22 @@ def grid_summary(
             with open(gi_file) as gi:
                 grids_info = json.load(gi)
 
+        # get grid metrics
+        if grid_metrics:
+            with open(grid_metrics) as gm:
+                grid_metrics = json.load(gm)
+        else:
+            gi_file = folder.joinpath('grids_info.json')
+            with open(gi_file) as gi:
+                grids_info = json.load(gi)
+
         # check to see if there is a HBJSON with sensor grid meshes for areas
         if model:
             grid_areas = model_grid_areas(model, grids_info)
         else:
             grid_areas = [None] * len(grids_info)
 
-        dtype = [
-            ('Sensor Grid', 'O'),
-            ('Mean', np.float32),
-            ('Minimum', np.float32),
-            ('Maximum', np.float32),
-            ('Uniformity Ratio', np.float32),
-            ('Percentage > 2%', np.float32)
-        ]
-        header = [dt[0] for dt in dtype]
-
-        arrays = []
-        for grid_info, grid_area in zip(grids_info, grid_areas):
-            full_id = grid_info['full_id']
-            array = np.loadtxt(folder.joinpath(f'{full_id}.{extension}'))
-            _mean = array.mean()
-            _min = array.min()
-            _max = array.max()
-            _uniformity_ratio = _min / _mean
-            if grid_area is not None:
-                _pct_above_2 = grid_area[array > 2].sum() / grid_area.sum() * 100
-            else:
-                _pct_above_2 = (array > 2).sum() / grid_info['count'] * 100
-
-            arrays.append((full_id, _mean, _min, _max, _uniformity_ratio, _pct_above_2))
-
-        # create structured array
-        struct_array = np.array(arrays, dtype=dtype)
-
-        # write header to file
-        with open(folder.joinpath(f'{name}.csv'), 'w') as file:
-            file.write(','.join(header))
-        # write structured array to file
-        with open(folder.joinpath(f'{name}.csv'), 'a') as file:
-            file.write('\n')
-            np.savetxt(file, struct_array, delimiter=',',
-                       fmt=['%s' , '%.2f', '%.2f', '%.2f', '%.2f', '%.2f'])
+        grid_summary(folder, extension, grids_info, grid_areas, name, grid_metrics)
 
     except Exception:
         _logger.exception('Failed to calculate grid summary.')
