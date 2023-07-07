@@ -13,7 +13,6 @@ from honeybee_radiance_postprocess.metrics import da_array2d, cda_array2d, \
 from honeybee_radiance_postprocess.reader import binary_to_array
 from honeybee_radiance.postprocess.annual import filter_schedule_by_hours, \
     generate_default_schedule
-from honeybee.model import Model
 
 from ..en17037 import en17037_to_folder
 from ..util import filter_array
