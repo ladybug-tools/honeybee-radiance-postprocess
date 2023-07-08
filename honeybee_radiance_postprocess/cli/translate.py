@@ -1,9 +1,11 @@
 """Commands to translate objects."""
 import sys
 import logging
+from pathlib import Path
+import shutil
 import numpy as np
 import click
-from pathlib import Path
+import json
 
 from ..reader import binary_to_array
 
@@ -126,6 +128,73 @@ def binary_to_npy(mtx_file, conversion, name, output_folder):
 
     except Exception:
         _logger.exception('Converting binary Radiance file to npy file failed.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@translate.command('annual-daylight-npy-to-ill')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.option(
+    '--output-folder', '-of', help='Output folder. If not provided the output '
+    'folder will be created in the same directory as the results folder. The '
+    'new folder will be called results_ill.', default=None,
+    type=click.Path(exists=False, file_okay=False, dir_okay=True, resolve_path=True)
+)
+def annual_daylight_npy_to_ill(folder, output_folder):
+    """Convert an annual daylight results folder to older version.
+
+    This command reads an annual daylight results folder with results saved as
+    npy files (NumPy), and converts the npy files to text files in the old
+    results folder format.
+
+    \b
+    Args:
+        folder: Results folder. This folder is an output folder of annual
+            daylight recipe. Folder should include grids_info.json and
+            sun-up-hours.txt.
+    """
+    try:
+        folder = Path(folder)
+        static_ill_folder = folder.joinpath('__static_apertures__/default/total')
+        if not static_ill_folder.exists():
+            raise FileNotFoundError(
+                'No results were found for static apertures in the results '
+                'folder.')
+        grids_info_file = folder.joinpath('grids_info.json')
+        if not grids_info_file.exists():
+            raise FileNotFoundError(
+                'The file grids_info.json was not found in the results folder.')
+        sun_up_hours_file = folder.joinpath('sun-up-hours.txt')
+        if not sun_up_hours_file.exists():
+            raise FileNotFoundError(
+                'The file sun-up-hours.txt was not found in the results folder.')
+
+        if output_folder is None:
+            output_folder = folder.parent.joinpath('results_ill')
+        else:
+            output_folder = Path(output_folder)
+        output_folder.mkdir(parents=True, exist_ok=True)
+
+        with open(grids_info_file) as json_file:
+            grids_info = json.load(json_file)
+
+        for grid_info in grids_info:
+            full_id = grid_info['full_id']
+            npy_file = static_ill_folder.joinpath(f'{full_id}.npy')
+
+            array = np.load(npy_file)
+            output = Path(output_folder, full_id + '.ill')
+            np.savetxt(output, array, fmt='%.7e', delimiter='\t')
+
+        # copy grids_info and sun-up-hours
+        shutil.copy(grids_info_file, output_folder.joinpath('grids_info.json'))
+        shutil.copy(sun_up_hours_file, output_folder.joinpath('sun-up-hours.txt'))
+    except Exception:
+        _logger.exception('Converting annual daylight results folder failed.')
         sys.exit(1)
     else:
         sys.exit(0)
