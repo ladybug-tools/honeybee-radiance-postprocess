@@ -1,4 +1,5 @@
 """Helper functions."""
+import json
 import numpy as np
 
 from honeybee.model import Model
@@ -25,7 +26,7 @@ def model_grid_areas(model, grids_info):
 
 
 def grid_summary(
-        folder, extension, grids_info, grid_areas, name='grid_summary',
+        folder, extension, grid_areas=None, grids_info=None, name='grid_summary',
         grid_metrics=None
     ):
     """Calculate a grid summary for a single metric.
@@ -33,11 +34,22 @@ def grid_summary(
     Args:
         folder: A folder with results.
         extension: Extension of the files to collect data from.
+        grid_areas: A list of area of each sensor.
         grids_info: Grid information as a dictionary.
-        grid_areas:
         name: Optional filename of grid summary.
         grid_metrics: Additional customized metrics to calculate.
     """
+    if grids_info is None:
+        gi_file = folder.joinpath('grids_info.json')
+        if not gi_file.exists():
+            raise FileNotFoundError(
+                f'The file grids_info.json was not found in the folder: {folder}.')
+        with open(gi_file) as gi:
+            grids_info = json.load(gi)
+
+    if grid_areas is None:
+        grid_areas = [None] * len(grids_info)
+
     # set up the default data types
     dtype = [
         ('Sensor Grid', 'O'),
