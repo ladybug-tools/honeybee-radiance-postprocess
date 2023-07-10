@@ -79,58 +79,11 @@ def grid_summary(
 
         data = [full_id, _mean, _min, _max, _uniformity_ratio]
 
-        grid_metrics_data = []
         if grid_metrics is not None:
-            for gr_metric in grid_metrics:
-                if len(gr_metric) == 1:
-                    for k, v in gr_metric.items():
-                        if k == 'anyOff' or k == 'allOff':
-                            gr_metric_arrays = []
-                            for vv in v:
-                                for kk, threshold in vv.items():
-                                    if kk == 'minimum':
-                                        gr_metric_arrays.append(array > threshold)
-                                    elif kk == 'exclusiveMinimum':
-                                        gr_metric_arrays.append(array >= threshold)
-                                    elif kk == 'maximum':
-                                        gr_metric_arrays.append(array < threshold)
-                                    elif kk == 'exclusiveMaximum':
-                                        gr_metric_arrays.append(array <= threshold)
-                            if k == 'anyOff':
-                                gr_metric_bool = np.any(gr_metric_arrays, axis=0)
-                            else:
-                                gr_metric_bool = np.all(gr_metric_arrays, axis=0)
-                            gr_metric_pct = \
-                                _calculate_percentage(gr_metric_bool, grid_info, grid_area)
-                        else:
-                            threshold = v
-                            if k == 'minimum':
-                                gr_metric_bool = array > threshold
-                            elif k == 'exclusiveMinimum':
-                                gr_metric_bool = array >= threshold
-                            elif k == 'maximum':
-                                gr_metric_bool = array < threshold
-                            elif k == 'exclusiveMaximum':
-                                gr_metric_bool = array <= threshold
-                            gr_metric_pct = \
-                                _calculate_percentage(gr_metric_bool, grid_info, grid_area)
-                elif len(gr_metric) == 2:
-                    gr_metric_arrays = []
-                    for k, threshold in gr_metric.items():
-                        if k == 'minimum':
-                            gr_metric_arrays.append(array > threshold)
-                        elif k == 'exclusiveMinimum':
-                            gr_metric_arrays.append(array >= threshold)
-                        elif k == 'maximum':
-                            gr_metric_arrays.append(array < threshold)
-                        elif k == 'exclusiveMaximum':
-                            gr_metric_arrays.append(array <= threshold)
-                    gr_metric_bool = np.all(gr_metric_arrays, axis=0)
-                    gr_metric_pct = \
-                        _calculate_percentage(gr_metric_bool, grid_info, grid_area)
-                grid_metrics_data.append(gr_metric_pct)
-
-        data.extend(grid_metrics_data)
+            # get grid metrics
+            grid_metrics_data = \
+                _get_grid_metrics(array, grid_metrics, grid_info, grid_area)
+            data.extend(grid_metrics_data)
 
         arrays.append(tuple(data))
 
@@ -138,17 +91,17 @@ def grid_summary(
     struct_array = np.array(arrays, dtype=dtype)
 
     # write header to file
-    with open(folder.joinpath(f'{name}.csv'), 'w') as file:
-        file.write(','.join(header))
-    # write structured array to file
+    with open(folder.joinpath(f'{name}.csv'), 'w') as grid_summary_file:
+        grid_summary_file.write(','.join(header))
+    # write structured array to grid_summary_file
     fmt = ['%s' , '%.2f', '%.2f', '%.2f', '%.2f']
     if grid_metrics is not None:
-        fmt.extend(['%.2f' for d in grid_metrics])
-    with open(folder.joinpath(f'{name}.csv'), 'a') as file:
-        file.write('\n')
-        np.savetxt(file, struct_array, delimiter=',', fmt=fmt)
+        fmt.extend(['%.2f' for _gr_m in grid_metrics])
+    with open(folder.joinpath(f'{name}.csv'), 'a') as grid_summary_file:
+        grid_summary_file.write('\n')
+        np.savetxt(grid_summary_file, struct_array, delimiter=',', fmt=fmt)
 
-    return file
+    return grid_summary_file
 
 
 def _calculate_percentage(gr_metric_bool, grid_info, grid_area=None):
@@ -169,3 +122,56 @@ def _calculate_percentage(gr_metric_bool, grid_info, grid_area=None):
         gr_metric_pct = \
             gr_metric_bool.sum() / grid_info['count'] * 100
     return gr_metric_pct
+
+
+def _numeric_type(array, gr_metric):
+    if 'minimum' in gr_metric:
+        gr_metric_bool = array > gr_metric['minimum']
+    elif 'exclusiveMinimum' in gr_metric:
+        gr_metric_bool = array >= gr_metric['minimum']
+    elif 'maximum' in gr_metric:
+        gr_metric_bool = array < gr_metric['maximum']
+    elif 'exclusiveMaximum' in gr_metric:
+        gr_metric_bool = array <= gr_metric['exclusiveMaximum']
+    return gr_metric_bool
+
+
+def _grid_summary_all_any(array, gr_metric, grid_info, grid_area, keyword):
+    gr_metric_arrays = []
+    for gr_m in gr_metric[keyword]:
+        assert len(gr_m) == 1
+        gr_metric_arrays.append(_numeric_type(array, gr_m))
+    if keyword == 'allOf':
+        gr_metric_bool = np.all(gr_metric_arrays, axis=0)
+    else:
+        gr_metric_bool = np.any(gr_metric_arrays, axis=0)
+    gr_metric_pct = \
+        _calculate_percentage(gr_metric_bool, grid_info, grid_area)
+    return gr_metric_pct
+
+
+def _get_grid_metrics(array, grid_metrics, grid_info, grid_area):
+    grid_metrics_data = []
+    for gr_metric in grid_metrics:
+        if len(gr_metric) == 1:
+            if 'allOf' in gr_metric:
+                gr_metric_pct = \
+                    _grid_summary_all_any(
+                        array, gr_metric, grid_info, grid_area, 'allOf')
+            elif 'anyOf' in gr_metric:
+                gr_metric_pct = \
+                    _grid_summary_all_any(
+                        array, gr_metric, grid_info, grid_area, 'anyOf')
+            else:
+                gr_metric_bool = _numeric_type(array, gr_metric)
+                gr_metric_pct = \
+                    _calculate_percentage(gr_metric_bool, grid_info, grid_area)
+        elif len(gr_metric) == 2:
+            gr_metric_arrays = []
+            for k, threshold in gr_metric.items():
+                gr_metric_arrays.append(_numeric_type(array, {k: threshold}))
+            gr_metric_bool = np.all(gr_metric_arrays, axis=0)
+            gr_metric_pct = \
+                _calculate_percentage(gr_metric_bool, grid_info, grid_area)
+        grid_metrics_data.append(gr_metric_pct)
+    return grid_metrics_data
