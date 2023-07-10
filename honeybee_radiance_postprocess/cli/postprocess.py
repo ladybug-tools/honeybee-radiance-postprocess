@@ -697,6 +697,7 @@ def annual_metrics_file(
 @click.option(
     '--grids-info', '-gi', help='An optional JSON file with grid information. '
     'If no file is provided the command will look for a file in the folder.',
+    default=None, show_default=True,
     type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
@@ -726,27 +727,88 @@ def grid_summary_metric(
         if grids_info:
             with open(grids_info) as gi:
                 grids_info = json.load(gi)
+
+        # get grid metrics
+        if grid_metrics:
+            with open(grid_metrics) as gm:
+                grid_metrics = json.load(gm)
+
+        # check to see if there is a HBJSON with sensor grid meshes for areas
+        if model:
+            grid_areas = model_grid_areas(model, grids_info)
         else:
-            gi_file = folder.joinpath('grids_info.json')
-            with open(gi_file) as gi:
+            grid_areas = None
+
+        grid_summary(folder, extension, grid_areas, grids_info, name, grid_metrics)
+
+    except Exception:
+        _logger.exception('Failed to calculate grid summary.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('grid-summary-annual-daylight')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.option(
+    '--model', '-m', help='An optional HBJSON model file. This will be used to '
+    'find the area of the grids. The area is used when calculating percentages '
+    'of floor area.',
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--grids-info', '-gi', help='An optional JSON file with grid information. '
+    'If no file is provided the command will look for a file in the folder.',
+    default=None, show_default=True,
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--name', '-n', help='Optional filename of grid summary.',
+    type=str, default='grid_summary', show_default=True
+)
+@click.option(
+    '--grid-metrics', '-gm', help='An optional JSON file with additional '
+    'custom metrics to calculate.', default=None,
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+)
+def grid_summary_annual_daylight_metric(
+    folder, model, grids_info, name, grid_metrics
+):
+    """Calculate a grid summary.
+
+    \b
+    Args:
+        folder: A folder with annual daylight metrics.
+    """
+    try:
+        # create Path object
+        folder = Path(folder)
+
+        # get grids information
+        if grids_info:
+            with open(grids_info) as gi:
                 grids_info = json.load(gi)
 
         # get grid metrics
         if grid_metrics:
             with open(grid_metrics) as gm:
                 grid_metrics = json.load(gm)
-        else:
-            gi_file = folder.joinpath('grids_info.json')
-            with open(gi_file) as gi:
-                grids_info = json.load(gi)
 
         # check to see if there is a HBJSON with sensor grid meshes for areas
         if model:
             grid_areas = model_grid_areas(model, grids_info)
         else:
-            grid_areas = [None] * len(grids_info)
+            grid_areas = None
 
-        grid_summary(folder, extension, grids_info, grid_areas, name, grid_metrics)
+        for metric in ['da', 'cda', 'udi', 'udi_lower', 'udi_upper']:
+            metric_folder = folder.joinpath(metric)
+            extension = metric.split('_')[0]
+            grid_summary(
+                metric_folder, extension, grids_info, grid_areas, name,
+                grid_metrics)
 
     except Exception:
         _logger.exception('Failed to calculate grid summary.')
