@@ -82,17 +82,32 @@ def grid_summary(
         _dtype = []
         _fmt = []
         for dt_b in dtype_base:
-            _dtype.append((sub_folder.stem + '-' + dt_b[0], np.float32))
+            _dtype.append((sub_folder.stem.upper() + '-' + dt_b[0], np.float32))
             _fmt.append('%s')
         dtype.extend(_dtype)
         fmt.extend(_fmt)
 
         if grid_metrics is not None:
-            for gr_m in grid_metrics:
-                gr_m_h = []
-                for k, v in gr_m.items():
-                    gr_m_h.append(k + str(v))
-                dtype.append((sub_folder.stem + '-' + ' '.join(gr_m_h), np.float32))
+            for grid_metric in grid_metrics:
+                if len(grid_metric) == 1:
+                    if 'allOf' in grid_metric:
+                        _mname = []
+                        for gr_m in grid_metric['allOf']:
+                            _mname.append(_get_grid_metric_name(gr_m))
+                        mname = ' and '.join(_mname)
+                    elif 'anyOf' in grid_metric:
+                        _mname = []
+                        for gr_m in grid_metric['anyOf']:
+                            _mname.append(_get_grid_metric_name(gr_m))
+                        mname = ' or '.join(_mname)
+                    else:
+                        mname = _get_grid_metric_name(grid_metric)
+                elif len(grid_metric) == 2:
+                    _mname = []
+                    for k, v in grid_metric.items():
+                        _mname.append(_get_grid_metric_name({k: v}))
+                    mname = ' and '.join(_mname)
+                dtype.append((sub_folder.stem.upper() + '-' + mname, np.float32))
                 fmt.append('%.2f')
 
     arrays = []
@@ -152,6 +167,27 @@ def _calculate_percentage(gr_metric_bool, grid_info, grid_area=None):
         gr_metric_pct = \
             gr_metric_bool.sum() / grid_info['count'] * 100
     return gr_metric_pct
+
+
+def _logical_operator(keyword):
+    lg = {
+        'minimum': '>',
+        'exclusiveMinimum': '>=',
+        'maximum': '<',
+        'exclusiveMaximum': '<='
+    }
+    return lg[keyword]
+
+
+def _get_grid_metric_name(grid_metric):
+    if 'minimum' in grid_metric:
+        return f'{_logical_operator("minimum")}{grid_metric["minimum"]}'
+    elif 'exclusiveMinimum' in grid_metric:
+        return f'{_logical_operator("exclusiveMinimum")}{grid_metric["exclusiveMinimum"]}'
+    elif 'maximum' in grid_metric:
+        return f'{_logical_operator("maximum")}{grid_metric["maximum"]}'
+    elif 'exclusiveMaximum' in grid_metric:
+        return f'{_logical_operator("exclusiveMaximum")}{grid_metric["exclusiveMaximum"]}'
 
 
 def _numeric_type(array, gr_metric):
