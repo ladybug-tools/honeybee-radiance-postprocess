@@ -49,9 +49,7 @@ def grid_summary(
         sub_folders = [folder]
 
     # set up the default data types
-    dtype_sensor_grid = [
-        ('Sensor Grid', 'O')
-    ]
+    dtype_sensor_grid = ('Sensor Grid', 'O')
     dtype_base = [
         ('Mean', np.float32),
         ('Minimum', np.float32),
@@ -60,28 +58,48 @@ def grid_summary(
     ]
     dtype = []
 
-    # if grid_metrics is not None:
-    #     for gr_m in grid_metrics:
-    #         gr_m_h = []
-    #         for k, v in gr_m.items():
-    #             gr_m_h.append(k + str(v))
-    #         dtype.append((' '.join(gr_m_h), np.float32))
+    # set up default format (for first column: str)
+    fmt = ['%s']
 
-    header = [dt[0] for dt in dtype]
+    if grids_info is None:
+        for sub_folder in sub_folders:
+            gi_file = sub_folder.joinpath('grids_info.json')
+            if gi_file.exists():
+                with open(gi_file) as gi:
+                    grids_info = json.load(gi)
+                break
+        if grids_info is None:
+            # if it did not find grids_info.json in any folder
+            raise FileNotFoundError(
+                f'The file grids_info.json was not found in any folder.')
+
+    if grid_areas is None:
+        grid_areas = [None] * len(grids_info)
+
+
+    dtype.append(dtype_sensor_grid)
+    for sub_folder in sub_folders:
+        _dtype = []
+        _fmt = []
+        for dt_b in dtype_base:
+            _dtype.append((sub_folder.stem + '-' + dt_b[0], np.float32))
+            _fmt.append('%s')
+        dtype.extend(_dtype)
+        fmt.extend(_fmt)
+
+        if grid_metrics is not None:
+            for gr_m in grid_metrics:
+                gr_m_h = []
+                for k, v in gr_m.items():
+                    gr_m_h.append(k + str(v))
+                dtype.append((sub_folder.stem + '-' + ' '.join(gr_m_h), np.float32))
+                fmt.append('%.2f')
 
     arrays = []
-    for sub_folder in sub_folders:
-        if grids_info is None:
-            gi_file = sub_folder.joinpath('grids_info.json')
-            if not gi_file.exists():
-                raise FileNotFoundError(
-                    f'The file grids_info.json was not found in the folder: {sub_folder}.')
-            with open(gi_file) as gi:
-                grids_info = json.load(gi)
-        if grid_areas is None:
-            grid_areas = [None] * len(grids_info)
-        for grid_info, grid_area in zip(grids_info, grid_areas):
-            full_id = grid_info['full_id']
+    for grid_info, grid_area in zip(grids_info, grid_areas):
+        full_id = grid_info['full_id']
+        data = [full_id]
+        for sub_folder in sub_folders:
             grid_files = list(sub_folder.glob(f'{full_id}.*'))
             assert len(grid_files) == 1
 
@@ -91,7 +109,7 @@ def grid_summary(
             _max = array.max()
             _uniformity_ratio = _min / _mean * 100
 
-            data = [full_id, _mean, _min, _max, _uniformity_ratio]
+            data.extend([_mean, _min, _max, _uniformity_ratio])
 
             if grid_metrics is not None:
                 # get grid metrics
@@ -99,18 +117,16 @@ def grid_summary(
                     _get_grid_metrics(array, grid_metrics, grid_info, grid_area)
                 data.extend(grid_metrics_data)
 
-            arrays.append(tuple(data))
+        arrays.append(tuple(data))
 
     # create structured array
     struct_array = np.array(arrays, dtype=dtype)
 
+    header = [dt[0] for dt in dtype]
     # write header to file
     with open(folder.joinpath(f'{name}.csv'), 'w') as grid_summary_file:
         grid_summary_file.write(','.join(header))
     # write structured array to grid_summary_file
-    fmt = ['%s' , '%.2f', '%.2f', '%.2f', '%.2f']
-    if grid_metrics is not None:
-        fmt.extend(['%.2f' for _gr_m in grid_metrics])
     with open(folder.joinpath(f'{name}.csv'), 'a') as grid_summary_file:
         grid_summary_file.write('\n')
         np.savetxt(grid_summary_file, struct_array, delimiter=',', fmt=fmt)
