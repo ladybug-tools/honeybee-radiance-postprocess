@@ -1,6 +1,7 @@
 """Helper functions."""
 import json
 import numpy as np
+from pathlib import Path
 
 from honeybee.model import Model
 
@@ -26,66 +27,79 @@ def model_grid_areas(model, grids_info):
 
 
 def grid_summary(
-        folder, extension, grid_areas=None, grids_info=None, name='grid_summary',
-        grid_metrics=None
+        folder: Path, grid_areas: list = None,
+        grids_info: list = None, name: str = 'grid_summary',
+        grid_metrics: list = None, sub_folder: bool = True
     ):
     """Calculate a grid summary for a single metric.
 
     Args:
         folder: A folder with results.
-        extension: Extension of the files to collect data from.
         grid_areas: A list of area of each sensor.
         grids_info: Grid information as a dictionary.
         name: Optional filename of grid summary.
         grid_metrics: Additional customized metrics to calculate.
+        sub_folder: If set to True it will look for results in all sub-folders
+            in the folder input. Else it look for results directly in the folder
+            input.
     """
-    if grids_info is None:
-        gi_file = folder.joinpath('grids_info.json')
-        if not gi_file.exists():
-            raise FileNotFoundError(
-                f'The file grids_info.json was not found in the folder: {folder}.')
-        with open(gi_file) as gi:
-            grids_info = json.load(gi)
-
-    if grid_areas is None:
-        grid_areas = [None] * len(grids_info)
+    if sub_folder:
+        sub_folders = [sf for sf in folder.iterdir() if sf.is_dir()]
+    else:
+        sub_folders = [folder]
 
     # set up the default data types
-    dtype = [
-        ('Sensor Grid', 'O'),
+    dtype_sensor_grid = [
+        ('Sensor Grid', 'O')
+    ]
+    dtype_base = [
         ('Mean', np.float32),
         ('Minimum', np.float32),
         ('Maximum', np.float32),
         ('Uniformity Ratio', np.float32)
     ]
+    dtype = []
 
-    if grid_metrics is not None:
-        for gr_m in grid_metrics:
-            gr_m_h = []
-            for k, v in gr_m.items():
-                gr_m_h.append(k + str(v))
-            dtype.append((' '.join(gr_m_h), np.float32))
+    # if grid_metrics is not None:
+    #     for gr_m in grid_metrics:
+    #         gr_m_h = []
+    #         for k, v in gr_m.items():
+    #             gr_m_h.append(k + str(v))
+    #         dtype.append((' '.join(gr_m_h), np.float32))
 
     header = [dt[0] for dt in dtype]
 
     arrays = []
-    for grid_info, grid_area in zip(grids_info, grid_areas):
-        full_id = grid_info['full_id']
-        array = np.loadtxt(folder.joinpath(f'{full_id}.{extension}'))
-        _mean = array.mean()
-        _min = array.min()
-        _max = array.max()
-        _uniformity_ratio = _min / _mean * 100
+    for sub_folder in sub_folders:
+        if grids_info is None:
+            gi_file = sub_folder.joinpath('grids_info.json')
+            if not gi_file.exists():
+                raise FileNotFoundError(
+                    f'The file grids_info.json was not found in the folder: {sub_folder}.')
+            with open(gi_file) as gi:
+                grids_info = json.load(gi)
+        if grid_areas is None:
+            grid_areas = [None] * len(grids_info)
+        for grid_info, grid_area in zip(grids_info, grid_areas):
+            full_id = grid_info['full_id']
+            grid_files = list(sub_folder.glob(f'{full_id}.*'))
+            assert len(grid_files) == 1
 
-        data = [full_id, _mean, _min, _max, _uniformity_ratio]
+            array = np.loadtxt(grid_files[0])
+            _mean = array.mean()
+            _min = array.min()
+            _max = array.max()
+            _uniformity_ratio = _min / _mean * 100
 
-        if grid_metrics is not None:
-            # get grid metrics
-            grid_metrics_data = \
-                _get_grid_metrics(array, grid_metrics, grid_info, grid_area)
-            data.extend(grid_metrics_data)
+            data = [full_id, _mean, _min, _max, _uniformity_ratio]
 
-        arrays.append(tuple(data))
+            if grid_metrics is not None:
+                # get grid metrics
+                grid_metrics_data = \
+                    _get_grid_metrics(array, grid_metrics, grid_info, grid_area)
+                data.extend(grid_metrics_data)
+
+            arrays.append(tuple(data))
 
     # create structured array
     struct_array = np.array(arrays, dtype=dtype)

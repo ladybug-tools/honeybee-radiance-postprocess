@@ -687,7 +687,6 @@ def annual_metrics_file(
     'folder',
     type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
 )
-@click.argument('extension', type=str)
 @click.option(
     '--model', '-m', help='An optional HBJSON model file. This will be used to '
     'find the area of the grids. The area is used when calculating percentages '
@@ -709,15 +708,20 @@ def annual_metrics_file(
     'custom metrics to calculate.', default=None,
     type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
 )
+@click.option(
+    '--sub-folder/--main-folder', is_flag=True, default=True,
+    help='If sub-folder is selected it will look for any sub-folders in the '
+    'folder argument. If main-folder is seleted it will look result files '
+    'in the folder argument.'
+)
 def grid_summary_metric(
-    folder, extension, model, grids_info, name, grid_metrics
+    folder, model, grids_info, name, grid_metrics, sub_folder
 ):
     """Calculate a grid summary.
 
     \b
     Args:
         folder: A folder with results.
-        extension: Extension of the files to collect data from.
     """
     try:
         # create Path object
@@ -739,7 +743,9 @@ def grid_summary_metric(
         else:
             grid_areas = None
 
-        grid_summary(folder, extension, grid_areas, grids_info, name, grid_metrics)
+        grid_summary(
+            folder, grid_areas=grid_areas, grids_info=grids_info, name=name,
+            grid_metrics=grid_metrics, sub_folder=sub_folder)
 
     except Exception:
         _logger.exception('Failed to calculate grid summary.')
