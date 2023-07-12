@@ -83,7 +83,7 @@ def grid_summary(
         _fmt = []
         for dt_b in dtype_base:
             _dtype.append((sub_folder.stem.upper() + '-' + dt_b[0], np.float32))
-            _fmt.append('%s')
+            _fmt.append('%.2f')
         dtype.extend(_dtype)
         fmt.extend(_fmt)
 
