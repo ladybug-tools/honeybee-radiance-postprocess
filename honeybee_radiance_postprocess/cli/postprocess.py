@@ -705,8 +705,8 @@ def annual_metrics_file(
 )
 @click.option(
     '--grid-metrics', '-gm', help='An optional JSON file with additional '
-    'custom metrics to calculate.', default=None,
-    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+    'custom metrics to calculate.', default=None, show_default=True,
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
     '--sub-folder/--main-folder', is_flag=True, default=True,
@@ -733,9 +733,11 @@ def grid_summary_metric(
                 grids_info = json.load(gi)
 
         # get grid metrics
-        if grid_metrics:
+        if grid_metrics and Path(grid_metrics).is_file():
             with open(grid_metrics) as gm:
                 grid_metrics = json.load(gm)
+        else:
+            grid_metrics = None
 
         # check to see if there is a HBJSON with sensor grid meshes for areas
         if model:
