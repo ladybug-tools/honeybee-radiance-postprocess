@@ -62,8 +62,8 @@ def grid_summary(
     fmt = ['%s']
 
     if grids_info is None:
-        for sub_folder in sub_folders:
-            gi_file = sub_folder.joinpath('grids_info.json')
+        for sf in sub_folders:
+            gi_file = sf.joinpath('grids_info.json')
             if gi_file.exists():
                 with open(gi_file) as gi:
                     grids_info = json.load(gi)
@@ -78,11 +78,14 @@ def grid_summary(
 
 
     dtype.append(dtype_sensor_grid)
-    for sub_folder in sub_folders:
+    for sf in sub_folders:
         _dtype = []
         _fmt = []
         for dt_b in dtype_base:
-            _dtype.append((sub_folder.stem.upper() + '-' + dt_b[0], np.float32))
+            col_name = dt_b[0]
+            if sub_folder:
+                col_name = '-'.join([sf.stem.upper(), col_name])
+            _dtype.append((col_name, np.float32))
             _fmt.append('%.2f')
         dtype.extend(_dtype)
         fmt.extend(_fmt)
@@ -107,15 +110,18 @@ def grid_summary(
                     for k, v in grid_metric.items():
                         _mname.append(_get_grid_metric_name({k: v}))
                     mname = ' and '.join(_mname)
-                dtype.append((sub_folder.stem.upper() + '-' + mname, np.float32))
+                col_name = mname
+                if sub_folder:
+                    col_name = '-'.join([sf.stem.upper(), col_name])
+                dtype.append((col_name, np.float32))
                 fmt.append('%.2f')
 
     arrays = []
     for grid_info, grid_area in zip(grids_info, grid_areas):
         full_id = grid_info['full_id']
         data = [full_id]
-        for sub_folder in sub_folders:
-            grid_files = list(sub_folder.glob(f'{full_id}.*'))
+        for sf in sub_folders:
+            grid_files = list(sf.glob(f'{full_id}.*'))
             assert len(grid_files) == 1
 
             array = np.loadtxt(grid_files[0])

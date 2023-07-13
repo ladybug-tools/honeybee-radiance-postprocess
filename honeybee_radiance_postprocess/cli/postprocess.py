@@ -740,7 +740,7 @@ def grid_summary_metric(
             grid_metrics = None
 
         # check to see if there is a HBJSON with sensor grid meshes for areas
-        if model:
+        if grids_info and model:
             grid_areas = model_grid_areas(model, grids_info)
         else:
             grid_areas = None
