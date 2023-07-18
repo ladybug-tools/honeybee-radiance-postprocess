@@ -191,14 +191,17 @@ class DynamicSchedule(object):
                 filter_dyn_sch.add_aperture_group_schedule(group)
         return filter_dyn_sch
 
-    def to_dict(self):
+    def to_dict(self, simplified=False):
         """Return DynamicSchedule as a dictionary."""
         base = {}
         for identifier, group in self.dynamic_schedule.items():
-            base[identifier] = group.to_dict()
+            if not simplified:
+                base[identifier] = group.to_dict()
+            else:
+                base[identifier] = group.to_dict()['schedule']
         return base
 
-    def to_json(self, folder=None, file_name=None, indent=None):
+    def to_json(self, folder=None, file_name=None, indent=None, simplified=False):
         """Write a DynamicSchedule to JSON.
 
         Args:
@@ -213,7 +216,7 @@ class DynamicSchedule(object):
             json_file: Path to JSON file.
         """
         # create dictionary of the DynamicSchedule
-        dyn_sch_dict = self.to_dict()
+        dyn_sch_dict = self.to_dict(simplified=simplified)
 
         # set up name and folder for the JSON
         file_name = file_name if file_name else 'dynamic_schedule'
