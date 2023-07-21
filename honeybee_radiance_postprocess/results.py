@@ -1076,7 +1076,10 @@ class Results(_ResultsFolder):
             array = self._array_from_states(grid_info, states=states, res_type=res_type)
             indices = sensor_index[grid_id]
             for idx in indices:
-                values = array[idx, :]
+                if np.any(array):
+                    values = array[idx, :]
+                else:
+                    values = np.zeros(len(self.sun_up_hours))
                 annual_array = Results.values_to_annual(
                     self.sun_up_hours, values, self.timestep)
                 header = Header(Illuminance(), 'lux', analysis_period)
