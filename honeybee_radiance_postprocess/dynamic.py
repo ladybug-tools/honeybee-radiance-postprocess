@@ -208,7 +208,7 @@ class DynamicSchedule(object):
             folder: A text string for the directory where the JSON file will be
                 written. If unspecified, the default simulation folder will be
                 used. This is usually at "C:\\Users\\USERNAME\\simulation."
-            file_name (_type_, optional): _description_. Defaults to None.
+            file_name: _description_. Defaults to None.
             indent: A positive integer to set the indentation used in the
                 resulting JSON file. (Default: None).
 
