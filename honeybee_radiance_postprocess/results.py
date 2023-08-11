@@ -1010,7 +1010,7 @@ class Results(_ResultsFolder):
         values to a folder.
 
         Args:
-            target_folder: Folder path to write annual metrics in. Usually this
+            target_folder: Folder path to write peak values in. Usually this
                 folder is called 'metrics'.
             hoys: An optional numbers or list of numbers to select the hours of
                 the year (HOYs) for which results will be computed. Defaults to [].
@@ -1037,6 +1037,9 @@ class Results(_ResultsFolder):
             output_file = metric_folder.joinpath(f'{full_id}.peak')
             output_file.parent.mkdir(parents=True, exist_ok=True)
             np.savetxt(output_file, d, fmt='%.2f')
+
+        max_hoys_file = metric_folder.joinpath('max_hoys.txt')
+        max_hoys_file.write_text('\n'.join(str(h) for h in max_hoys))
 
         info_file = metric_folder.joinpath('grids_info.json')
         info_file.write_text(json.dumps(grids_info))
