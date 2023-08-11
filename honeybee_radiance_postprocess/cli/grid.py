@@ -151,7 +151,7 @@ def restore_original_distribution(
     # create output folder
     output_folder = Path(output_folder)
     if not output_folder.is_dir():
-        output_folder.mkdir()
+        output_folder.mkdir(parents=True, exist_ok=True)
 
     src_file = Path()
     for f in data:
