@@ -155,8 +155,7 @@ def annual_en17037_metrics(
         schedule = [int(float(v)) for v in hourly_schedule]
 
     if states:
-        with open(states) as json_file:
-            states = json.load(json_file)
+        states = DynamicSchedule.from_json(states)
 
     try:
         en17037_to_folder(
@@ -217,8 +216,7 @@ def average_values(
             hoys = []
 
         if states:
-            with open(states) as json_file:
-                states = json.load(json_file)
+            states = DynamicSchedule.from_json(states)
 
         res_type = 'total' if total is True else 'direct'
 
@@ -281,8 +279,7 @@ def median_values(
             hoys = []
 
         if states:
-            with open(states) as json_file:
-                states = json.load(json_file)
+            states = DynamicSchedule.from_json(states)
 
         res_type = 'total' if total is True else 'direct'
 
@@ -345,8 +342,7 @@ def cumulative_values(
             hoys = []
 
         if states:
-            with open(states) as json_file:
-                states = json.load(json_file)
+            states = DynamicSchedule.from_json(states)
 
         res_type = 'total' if total is True else 'direct'
 
@@ -415,8 +411,7 @@ def peak_values(
             hoys = []
 
         if states:
-            with open(states) as json_file:
-                states = json.load(json_file)
+            states = DynamicSchedule.from_json(states)
 
         res_type = 'total' if total is True else 'direct'
 
@@ -474,8 +469,7 @@ def annual_to_data(
             sensor grid.
     """
     if states:
-        with open(states) as json_file:
-            states = json.load(json_file)
+        states = DynamicSchedule.from_json(states)
 
     if sensor_index:
         with open(sensor_index) as json_file:
