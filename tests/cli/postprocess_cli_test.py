@@ -5,8 +5,41 @@ from click.testing import CliRunner
 
 from ladybug.futil import nukedir
 
-from honeybee_radiance_postprocess.cli.postprocess import annual_metrics_file, \
-    peak_values
+from honeybee_radiance_postprocess.dynamic import DynamicSchedule, \
+    ApertureGroupSchedule
+from honeybee_radiance_postprocess.cli.postprocess import annual_metrics, \
+    annual_metrics_file, peak_values
+
+
+def test_annual_metrics():
+    runner = CliRunner()
+    folder = './tests/assets/results_folders/results_sample'
+    subfolder = Path('./tests/assets/temp/metrics')
+    cmd_args = [
+        folder, '--sub-folder', subfolder
+    ]
+    result = runner.invoke(annual_metrics, cmd_args)
+    assert result.exit_code == 0
+    assert subfolder.is_dir()
+    nukedir(subfolder, rmdir=True)
+
+
+def test_annual_metrics_with_dyn_sch():
+    runner = CliRunner()
+    folder = './tests/assets/results_folders/results_sample'
+    subfolder = Path('./tests/assets/temp/metrics')
+    dyn_sch = DynamicSchedule()
+    ag_sch = ApertureGroupSchedule('Room1_South', [0] * 4380 + [1] * 4380)
+    dyn_sch.add_aperture_group_schedule(ag_sch)
+    dyn_sch_file = Path(dyn_sch.to_json('./tests/assets/temp'))
+    cmd_args = [
+        folder, '--states', dyn_sch_file, '--sub-folder', subfolder
+    ]
+    result = runner.invoke(annual_metrics, cmd_args)
+    assert result.exit_code == 0
+    assert subfolder.is_dir()
+    dyn_sch_file.unlink()
+    nukedir(subfolder, rmdir=True)
 
 
 def test_annual_metrics_file():
