@@ -158,7 +158,8 @@ class DynamicSchedule(object):
     def dynamic_schedule(self, dynamic_schedule):
         if not dynamic_schedule:
             dynamic_schedule = {}
-        assert isinstance(dynamic_schedule, dict), 'value is wrong type!'
+        assert isinstance(dynamic_schedule, dict), \
+            'Expected dictionary. Got %s.' % type(dynamic_schedule)
         self._dynamic_schedule = dynamic_schedule
 
     def add_aperture_group_schedule(self, aperture_group_schedule):
