@@ -187,9 +187,15 @@ class DynamicSchedule(object):
             A filtered DynamicSchedule object.
         """
         filter_dyn_sch = DynamicSchedule()
-        for identifier, group in self.dynamic_schedule.items():
-            if identifier in identifiers:
-                filter_dyn_sch.add_aperture_group_schedule(group)
+        for identifier in identifiers:
+            if identifier in self.dynamic_schedule:
+                filter_dyn_sch.add_aperture_group_schedule(
+                    self.dynamic_schedule[identifier]
+                )
+            else:
+                filter_dyn_sch.add_aperture_group_schedule(
+                    ApertureGroupSchedule(identifier, [0])
+                )
         return filter_dyn_sch
 
     def to_dict(self, simplified=False):
