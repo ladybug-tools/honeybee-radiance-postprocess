@@ -1561,7 +1561,8 @@ class Results(_ResultsFolder):
         return states
 
     def _array_from_states(
-            self, grid_info, states: DynamicSchedule = None, res_type: str = 'total'
+            self, grid_info, states: DynamicSchedule = None,
+            res_type: str = 'total', zero_array: bool = False
             ) -> np.ndarray:
         """Create an array for a given grid by the states settings.
 
@@ -1572,6 +1573,9 @@ class Results(_ResultsFolder):
                 off.
             res_type: Which type of result to create an array for. E.g., 'total'
                 for total illuminance or 'direct' for direct illuminance.
+            zero_array: Boolean to note if a 2D zero array should be created if
+                the array of the grid is zero. This is the case if the
+                illuminance of the grid is zero. (Default: False).
 
         Returns:
             A NumPy array based on the states settings.
@@ -1605,7 +1609,10 @@ class Results(_ResultsFolder):
         array = sum(arrays)
 
         if not np.any(array):
-            array = np.array([])
+            if zero_array:
+                array = np.zeros((grid_count, len(self.sun_up_hours)))
+            else:
+                array = np.array([])
 
         return array
 

@@ -9,6 +9,7 @@ from ladybug.datatype.fraction import Fraction
 from ladybug.legend import LegendParameters
 
 from .results import Results
+from .dynamic import DynamicSchedule
 from .metrics import da_array2d
 from .util import filter_array
 
@@ -100,8 +101,9 @@ def en17037_to_files(
 
 
 def en17037_to_folder(
-        results: Union[str, Results], schedule: list, states: dict = None,
-        grids_filter: str = '*', sub_folder: str = 'en17037') -> Path:
+        results: Union[str, Results], schedule: list,
+        states: DynamicSchedule = None, grids_filter: str = '*',
+        sub_folder: str = 'en17037') -> Path:
     """Compute annual EN 17037 metrics in a folder and write them in a subfolder.
 
     The results is an output folder of annual daylight recipe.
@@ -140,7 +142,7 @@ def en17037_to_folder(
 
     for grid_info in grids_info:
         array = results._array_from_states(
-            grid_info, states=states, res_type='total')
+            grid_info, states=states, res_type='total', zero_array=True)
         if np.any(array):
             array = np.apply_along_axis(
                 filter_array, 1, array, occ_mask)
