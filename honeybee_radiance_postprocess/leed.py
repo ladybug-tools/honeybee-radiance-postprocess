@@ -25,12 +25,12 @@ from .util import filter_array, recursive_dict_merge
 
 
 def _create_grid_summary(
-    grid_id, sda_grid, ase_grid, pass_sda, pass_ase, total_floor,
+    grid_name, sda_grid, ase_grid, pass_sda, pass_ase, total_floor,
     area_weighted=True):
     """Create a LEED summary for a single grid.
 
     Args:
-        grid_id: Identifier of grid.
+        grid_name: Name of grid.
         sda_grid: Spatial Daylight Autonomy.
         ase_grid: Annual Sunlight Exposure.
         pass_sda: The percentage of the sensor points or floor area that
@@ -46,19 +46,19 @@ def _create_grid_summary(
         -   summary_grid: Summary of each grid individually.
     """
     grid_summary = {
-        grid_id: {}
+        grid_name: {}
     }
     if ase_grid > 10:
         ase_note = (
             'The Annual Sunlight Exposure is greater than 10% for space: '
-            f'{grid_id}. Identify in writing how the space is designed to '
+            f'{grid_name}. Identify in writing how the space is designed to '
             'address glare.'
         )
-        grid_summary[grid_id]['ase_note'] = ase_note
+        grid_summary[grid_name]['ase_note'] = ase_note
 
     if area_weighted:
         _grid_summary = {
-            grid_id: {
+            grid_name: {
                 'ase': round(ase_grid, 2),
                 'sda': round(sda_grid, 2),
                 'floor_area_passing_ase': round(pass_ase, 2),
@@ -68,7 +68,7 @@ def _create_grid_summary(
         }
     else:
         _grid_summary = {
-            grid_id: {
+            grid_name: {
                 'ase': round(ase_grid, 2),
                 'sda': round(sda_grid, 2),
                 'sensor_count_passing_ase': int(round(pass_ase, 2)),
@@ -111,7 +111,7 @@ def _leed_summary(
         total_area_pass_sda = 0
         for (pass_ase, pass_sda, grid_area, grid_info) in \
             zip(pass_ase_grids, pass_sda_grids, grid_areas, grids_info):
-            grid_id = grid_info['full_id']
+            grid_name = grid_info['name']
             total_grid_area = grid_area.sum()
             area_pass_ase = grid_area[pass_ase].sum()
             area_pass_sda = grid_area[pass_sda].sum()
@@ -120,7 +120,7 @@ def _leed_summary(
             # grid summary
             grid_summary = \
                 _create_grid_summary(
-                    grid_id, sda_grid, ase_grid, area_pass_sda, area_pass_ase,
+                    grid_name, sda_grid, ase_grid, area_pass_sda, area_pass_ase,
                     total_grid_area, area_weighted=True
                 )
 
@@ -142,7 +142,7 @@ def _leed_summary(
         total_sensor_count_pass_sda = 0
         for (pass_ase, pass_sda, grid_info) in \
             zip(pass_ase_grids, pass_sda_grids, grids_info):
-            grid_id = grid_info['full_id']
+            grid_name = grid_info['name']
             grid_count = grid_info['count']
             sensor_count_pass_ase = pass_ase.sum()
             sensor_count_pass_sda = pass_sda.sum()
@@ -151,7 +151,7 @@ def _leed_summary(
             # grid summary
             grid_summary = \
                 _create_grid_summary(
-                    grid_id, sda_grid, ase_grid, sensor_count_pass_sda,
+                    grid_name, sda_grid, ase_grid, sensor_count_pass_sda,
                     sensor_count_pass_ase, grid_count, area_weighted=False
                 )
 
@@ -207,7 +207,7 @@ def _ase_hourly_percentage(
         occupancy_hoys, percentage_above, results.timestep)
     header = Header(Fraction('Percentage above 1000 direct lux'), '%',
                     AnalysisPeriod(results.timestep),
-                    metadata={'SensorGrid': grid_info['full_id']})
+                    metadata={'SensorGrid': grid_info['name']})
     data_collection = HourlyContinuousCollection(header, percentage_above.tolist())
 
     return data_collection
@@ -588,7 +588,6 @@ def leed_option_one(
     pass_ase_grids = []
     ase_hr_pct = []
     for (grid_info, grid_area) in zip(grids_info, grid_areas):
-        grid_id = grid_info['full_id']
         light_paths = [lp[0] for lp in grid_info['light_path']]
         arrays = []
         # combine direct array for all light paths
@@ -620,7 +619,6 @@ def leed_option_one(
     da_grids = []
     pass_sda_grids = []
     for grid_info in grids_info:
-        grid_id = grid_info['full_id']
         light_paths = [lp[0] for lp in grid_info['light_path']]
         arrays = []
         # combine total array for all light paths
