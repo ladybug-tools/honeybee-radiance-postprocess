@@ -1045,6 +1045,45 @@ class Results(_ResultsFolder):
         info_file = metric_folder.joinpath('grids_info.json')
         info_file.write_text(json.dumps(grids_info))
 
+    def _array_to_annual_data(
+            self, grid_info, states: DynamicSchedule = None,
+            sensor_index: list = None, res_type: str = 'total'
+            ) -> Tuple[List[HourlyContinuousCollection], dict, list]:
+        """Get annual data for one or multiple sensors.
+
+        Args:
+            grid_info: Grid information of the grid.
+            states: A dictionary of states. Defaults to None.
+            sensor_index: A list of sensor indices as integers. Defaults to None.
+            res_type: Type of results to load. Defaults to 'total'.
+
+        Returns:
+            Tuple: A tuple with Data Collections for each sensor, grid information,
+                and a list of the sensors.
+        """
+        analysis_period = AnalysisPeriod(timestep=self.timestep)
+
+        # if no sensor_index, create list with all sensors
+        if not sensor_index:
+            sensor_index = [range(grid_info['count'])]
+
+        data_collections = []
+        array = self._array_from_states(grid_info, states=states, res_type=res_type)
+        for idx in sensor_index:
+            if np.any(array):
+                values = array[idx, :]
+            else:
+                values = np.zeros(len(self.sun_up_hours))
+            annual_array = Results.values_to_annual(
+                self.sun_up_hours, values, self.timestep)
+            header = Header(Illuminance(), 'lux', analysis_period)
+            header.metadata['sensor grid'] = grid_info['full_id']
+            header.metadata['sensor index'] = idx
+            data_collections.append(
+                HourlyContinuousCollection(header, annual_array.tolist()))
+
+        return data_collections, grid_info, sensor_index
+
     def annual_data(
             self, states: DynamicSchedule = None, grids_filter: str = '*',
             sensor_index: dict = None, res_type: str = 'total'
