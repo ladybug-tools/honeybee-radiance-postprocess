@@ -982,8 +982,9 @@ class Results(_ResultsFolder):
             Tuple: A tuple with the peak value for each sensor and grid information.
         """
         grids_info = self._filter_grids(grids_filter=grids_filter)
-
         mask = hoys_mask(self.sun_up_hours, hoys, self.timestep)
+        filt_suh = [suh for suh in self.sun_up_hours if int(suh) in hoys] \
+            if len(hoys) != 0 else self.sun_up_hours
 
         peak_values = []
         max_hoys = []
@@ -998,7 +999,7 @@ class Results(_ResultsFolder):
                 results = np.zeros(grid_info['count'])
             peak_values.append(results)
             if max_i:
-                max_hoys.append(int(self.sun_up_hours[max_i]))
+                max_hoys.append(int(filt_suh[max_i]))
             else:
                 max_hoys.append(max_i)
 
