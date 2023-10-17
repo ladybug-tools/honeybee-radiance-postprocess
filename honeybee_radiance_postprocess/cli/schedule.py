@@ -5,6 +5,7 @@ import sys
 import logging
 
 from honeybee_radiance_postprocess.results import Results
+from ..dynamic import DynamicSchedule
 
 _logger = logging.getLogger(__name__)
 
@@ -88,8 +89,7 @@ def control_schedules(
             base_schedule = None
 
         if states:
-            with open(states) as json_file:
-                states = json.load(json_file)
+            states = DynamicSchedule.from_json(states)
 
         results = Results(folder)
         results.daylight_control_schedules_to_folder(
