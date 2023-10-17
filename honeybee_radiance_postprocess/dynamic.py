@@ -122,6 +122,26 @@ class DynamicSchedule(object):
         self.dynamic_schedule = dynamic_schedule
 
     @classmethod
+    def from_group_schedules(cls, group_schedules):
+        """Initialize a DynamicSchedule from a list of ApertureGroupSchedules.
+
+        The method will automatically sense if there are duplicated groups in
+        the list and ensure the group schedule only appears once.
+
+        Args:
+            data: A dictionary representation of a DynamicSchedule objects.
+        """
+        dyn_sch = cls()
+        dyn_sch_ids = set()
+        for _ap_group in group_schedules:
+            assert isinstance(_ap_group, ApertureGroupSchedule), \
+                'Expected Aperture Group Schedule. Got {}'.format(type(_ap_group))
+            if _ap_group.identifier not in dyn_sch_ids:
+                dyn_sch_ids.add(_ap_group.identifier)
+                dyn_sch.add_aperture_group_schedule(_ap_group)
+        return dyn_sch
+
+    @classmethod
     def from_dict(cls, data):
         """Initialize a DynamicSchedule from a dictionary.
 
