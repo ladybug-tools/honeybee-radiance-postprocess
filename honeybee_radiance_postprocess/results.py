@@ -77,6 +77,11 @@ class _ResultsFolder(object):
                 'Object in grids information must be a dictionary. ' \
                 f'Got object of type {type(grid_info)}.'
             if 'light_path' in grid_info.keys():
+                _grid_info = []
+                for light_path in grid_info['light_path']:
+                    if Path(self.folder, light_path[0]).exists():
+                        _grid_info.append((light_path))
+                grid_info['light_path'] = _grid_info
                 if not grid_info['light_path']:
                     # if light path is empty
                     grid_info['light_path'] = [['__static_apertures__']]
@@ -1476,7 +1481,6 @@ class Results(_ResultsFolder):
         """
         # TODO: Figure out if there is a better way to handle the states.
         # I.e., state integer <--> state identifier.
-
         valid_states = self.valid_states[light_path]
         if state in valid_states:
             if light_path == '__static_apertures__':
