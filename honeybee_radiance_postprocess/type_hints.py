@@ -21,3 +21,5 @@ median_values = Tuple[List[np.ndarray], List[dict]]
 cumulative_values = Tuple[List[np.ndarray], List[dict]]
 peak_values = Tuple[List[np.ndarray], List[dict]]
 annual_data = Tuple[List[List[HourlyContinuousCollection]], List[dict], dict]
+annual_uniformity_ratio = \
+    Tuple[List[float], List[HourlyContinuousCollection], List[dict]]
