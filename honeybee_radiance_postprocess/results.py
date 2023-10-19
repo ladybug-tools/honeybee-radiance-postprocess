@@ -8,6 +8,7 @@ import numpy as np
 from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.datacollection import HourlyContinuousCollection
 from ladybug.datatype.illuminance import Illuminance
+from ladybug.datatype.fraction import Fraction
 from ladybug.dt import DateTime
 from ladybug.header import Header
 from honeybee_radiance.postprocess.annual import _process_input_folder, \
@@ -1333,6 +1334,56 @@ class Results(_ResultsFolder):
 
         info_file = schedule_folder.joinpath('grids_info.json')
         info_file.write_text(json.dumps(grids_info))
+
+    def annual_uniformity_ratio(
+            self, threshold: float = 0.5, states: DynamicSchedule = None,
+            grids_filter: str = '*') -> type_hints.annual_uniformity_ratio:
+        """Calculate annual uniformity ratio.
+
+        Args:
+            threshold: A threshold for the uniformity ratio. Defaults to 0.5.
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+
+        Returns:
+            Tuple: A tuple with the daylight autonomy and grid information.
+        """
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+        analysis_period = AnalysisPeriod(timestep=self.timestep)
+
+        data_collections = []
+        annual_uniformity_ratio = []
+        for grid_info in grids_info:
+            array = self._array_from_states(grid_info, states=states, res_type='total')
+            if np.any(array):
+                su_min_array = array.min(axis=0)
+                su_mean_array = array.mean(axis=0)
+                su_uniformity_ratio = su_min_array / su_mean_array
+
+                array_filter = np.apply_along_axis(
+                    filter_array, 1, array, mask=self.occ_mask)
+                min_array = array_filter.min(axis=0)
+                mean_array = array_filter.mean(axis=0)
+                uniformity_ratio = min_array / mean_array
+                annual_uniformity_ratio.append(
+                    np.float64(
+                        (uniformity_ratio >= threshold).sum() / self.total_occ * 100
+                    )
+                )
+            else:
+                su_uniformity_ratio = np.zeros(len(self.sun_up_hours))
+                annual_uniformity_ratio.append(np.float64(0))
+
+            annual_array = \
+                self.values_to_annual(
+                    self.sun_up_hours, su_uniformity_ratio, self.timestep)
+            header = Header(Fraction(), '%', analysis_period)
+            header.metadata['sensor grid'] = grid_info['full_id']
+            data_collections.append(
+                HourlyContinuousCollection(header, annual_array.tolist()))
+
+        return annual_uniformity_ratio, data_collections, grids_info
 
     @staticmethod
     def values_to_annual(
