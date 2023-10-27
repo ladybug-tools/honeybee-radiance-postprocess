@@ -1424,6 +1424,9 @@ class Results(_ResultsFolder):
             aur_file.parent.mkdir(parents=True, exist_ok=True)
             aur_file.write_text(str(round(aur, 2)))
 
+        info_file = uniformity_ratio_folder.joinpath('grids_info.json')
+        info_file.write_text(json.dumps(grids_info))
+
     @staticmethod
     def values_to_annual(
             hours: Union[List[float], np.ndarray],
