@@ -1347,7 +1347,8 @@ class Results(_ResultsFolder):
                 Defaults to '*'.
 
         Returns:
-            Tuple: A tuple with the daylight autonomy and grid information.
+            Tuple: A tuple with the annual uniformity ratio, annual
+                data collections, and grid information.
         """
         grids_info = self._filter_grids(grids_filter=grids_filter)
         analysis_period = AnalysisPeriod(timestep=self.timestep)
@@ -1384,6 +1385,44 @@ class Results(_ResultsFolder):
                 HourlyContinuousCollection(header, annual_array.tolist()))
 
         return annual_uniformity_ratio, data_collections, grids_info
+
+    def annual_uniformity_ratio_to_folder(
+            self, target_folder: str, threshold: float = 0.5,
+            states: DynamicSchedule = None, grids_filter: str = '*'
+            ) -> type_hints.annual_uniformity_ratio:
+        """Calculate annual uniformity ratio and write it to a folder.
+
+        Args:
+            target_folder: Folder path to write annual uniformity ratio in.
+            threshold: A threshold for the uniformity ratio. Defaults to 0.5.
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+
+        Returns:
+            Tuple: A tuple with the daylight autonomy and grid information.
+        """
+        folder = Path(target_folder)
+        folder.mkdir(parents=True, exist_ok=True)
+
+        annual_uniformity_ratio, data_collections, grids_info = \
+            self.annual_uniformity_ratio(threshold=threshold, states=states,
+                                         grids_filter=grids_filter)
+
+        datacollection_folder = folder.joinpath('datacollections')
+        uniformity_ratio_folder = folder.joinpath('uniformity_ratio')
+
+        for aur, data_collection, grid_info in \
+            zip(annual_uniformity_ratio, data_collections, grids_info):
+            grid_id = grid_info['full_id']
+            data_dict = data_collection.to_dict()
+            data_file = datacollection_folder.joinpath(f'{grid_id}.json')
+            data_file.parent.mkdir(parents=True, exist_ok=True)
+            data_file.write_text(json.dumps(data_dict))
+
+            aur_file = uniformity_ratio_folder.joinpath(f'{grid_id}.ur')
+            aur_file.parent.mkdir(parents=True, exist_ok=True)
+            aur_file.write_text(str(round(aur, 2)))
 
     @staticmethod
     def values_to_annual(
