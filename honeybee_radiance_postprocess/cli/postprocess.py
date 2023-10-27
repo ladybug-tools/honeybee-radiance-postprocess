@@ -747,3 +747,65 @@ def grid_summary_metric(
         sys.exit(1)
     else:
         sys.exit(0)
+
+
+@post_process.command('annual-uniformity-ratio')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.option(
+    '--schedule', '-sch', help='Path to an annual schedule file. Values should be 0-1 '
+    'separated by new line. If not provided an 8-5 annual schedule will be created.',
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--threshold', '-t', help='A threshold for the uniformity ratio. Defaults '
+    'to 0.5.',
+    default=0.5, type=click.FloatRange(0, 1), show_default=True
+)
+@click.option(
+    '--states', '-st', help='A JSON file with a dictionary of states. If states are not '
+    'provided the default states will be used for any aperture groups.', default=None,
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
+    show_default=True
+)
+@click.option(
+    '--sub-folder', '-sf', help='Optional relative path for subfolder to write '
+    'annual uniformity ratio.', default='annual_uniformity_ratio'
+)
+def annual_uniformity_ratio(
+    folder, schedule, threshold, states, grids_filter, sub_folder
+):
+    """Calculate annual uniformity ratio and write it to a folder.
+
+    \b
+    Args:
+        folder: Results folder. This folder is an output folder of annual
+            daylight recipe. Folder should include grids_info.json and
+            sun-up-hours.txt.
+    """
+    # optional input - only check if the file exist otherwise ignore
+    if schedule and os.path.isfile(schedule):
+        with open(schedule) as hourly_schedule:
+            schedule = [int(float(v)) for v in hourly_schedule]
+    else:
+        schedule = None
+
+    if states:
+        states = DynamicSchedule.from_json(states)
+
+    try:
+        results = Results(folder, schedule=schedule)
+        results.annual_uniformity_ratio_to_folder(
+            sub_folder, threshold=threshold, states=states,
+            grids_filter=grids_filter
+        )
+    except Exception:
+        _logger.exception('Failed to calculate annual uniformity ratio.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
