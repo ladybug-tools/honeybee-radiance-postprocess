@@ -9,7 +9,7 @@ from honeybee_radiance_postprocess.cli.two_phase import rgb_to_illuminance, \
     rgb_to_illuminance_file, add_remove_sky_matrix
 
 
-def test_annual_metrics():
+def test_rgb_to_illuminance():
     runner = CliRunner()
     total_mtx = './tests/assets/binary/sky.ill'
     direct_mtx = './tests/assets/binary/sky_dir.ill'
@@ -24,4 +24,18 @@ def test_annual_metrics():
     assert result.exit_code == 0
     assert total_file.exists()
     assert direct_file.exists()
+    nukedir(output_folder, rmdir=False)
+
+
+def test_rgb_to_illuminance_file():
+    runner = CliRunner()
+    mtx_file = './tests/assets/binary/sky.ill'
+    output_folder = Path('./tests/assets/temp')
+    total_file = output_folder.joinpath('illuminance.npy')
+    cmd_args = [
+        mtx_file, '--output-folder', output_folder
+    ]
+    result = runner.invoke(rgb_to_illuminance_file, cmd_args)
+    assert result.exit_code == 0
+    assert total_file.exists()
     nukedir(output_folder, rmdir=False)
