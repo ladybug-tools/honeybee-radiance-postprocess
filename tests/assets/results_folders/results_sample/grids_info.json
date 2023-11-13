@@ -13,7 +13,7 @@
         "Room1_North"
       ],
       [
-        "__static_apertures__"
+        "__static__"
       ]
     ]
   },
@@ -31,7 +31,7 @@
         "Room2_North2"
       ],
       [
-        "__static_apertures__"
+        "__static__"
       ]
     ]
   }
