@@ -8,21 +8,16 @@ import numpy as np
 from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.datacollection import HourlyContinuousCollection
 from ladybug.datatype.illuminance import Illuminance
-from ladybug.datatype.generic import GenericType
-from ladybug.datatype.fraction import Fraction
 from ladybug.datatype.base import DataTypeBase
 from ladybug.dt import DateTime
 from ladybug.header import Header
 from ladybug.wea import Wea
 from honeybee_radiance.postprocess.annual import _process_input_folder, \
     filter_schedule_by_hours, generate_default_schedule
-from ..metrics import (da_array2d, cda_array2d, udi_array2d, udi_lower_array2d,
-    udi_upper_array2d, ase_array2d, average_values_array2d,
-    cumulative_values_array2d, peak_values_array2d)
+from ..metrics import (average_values_array2d, cumulative_values_array2d,
+    peak_values_array2d)
 from ..util import filter_array, hoys_mask, check_array_dim, \
     _filter_grids_by_pattern
-from ..annualdaylight import _annual_daylight_vis_metadata
-from ..electriclight import array_to_dimming_fraction
 from .. import type_hints
 from ..dynamic import DynamicSchedule, ApertureGroupSchedule
 
@@ -61,7 +56,7 @@ class _ResultsFolder(object):
         self._light_paths = self._get_light_paths()
         self._default_states = self._get_default_states()
         self._grid_states = self._get_grid_states()
-        self._timestep = self._set_timestep()
+        self._timestep = self._get_timestep()
         self._wea = self._get_wea()
 
     @property
@@ -187,8 +182,8 @@ class _ResultsFolder(object):
             # only static results
             return {}
 
-    def _set_timestep(self) -> float:
-        """Set timestep."""
+    def _get_timestep(self) -> float:
+        """Get timestep."""
         # timestep has no use until sub-annual annual-daylight is supported
         timestep_file = Path(self.folder, 'timestep.txt')
         if timestep_file.is_file():
