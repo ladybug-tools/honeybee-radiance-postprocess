@@ -51,18 +51,16 @@ class _ResultsFolder(object):
         """Initialize ResultsFolder."""
         self._folder = Path(folder).absolute().as_posix()
         self.grids_info, self.sun_up_hours = _process_input_folder(self.folder, '*')
-        self._datetimes = [
-            DateTime.from_hoy(hoy) for hoy in list(map(float, self.sun_up_hours))
-        ]
+        self._wea = self._get_wea()
+        self._datetimes = self._get_datetimes()
         self._light_paths = self._get_light_paths()
         self._default_states = self._get_default_states()
         self._grid_states = self._get_grid_states()
         self._timestep = self._get_timestep()
-        self._wea = self._get_wea()
 
     @property
     def folder(self):
-        """Return full path to results folder."""
+        """Return full path to results folder as a string."""
         return self._folder
 
     @property
@@ -204,10 +202,21 @@ class _ResultsFolder(object):
             wea = Wea.from_file(wea_files[0])
         else:
             raise ValueError(
-                'Expected 1 .wea file in results folder. Found %s .wea file.' % len(wea_files)
+                f'Expected 1 .wea file in results folder. Found {len(wea_files)}.wea file.'
                 )
 
         return wea
+
+    def _get_datetimes(self) -> List[DateTime]:
+        """Get a list of DateTimes."""
+        if self.wea:
+            datetimes = self.wea.datetimes
+        else:
+            datetimes = [
+                DateTime.from_hoy(hoy) for hoy in list(map(float, self.sun_up_hours))
+                ]
+
+        return datetimes
 
     def __repr__(self):
         return f'{self.__class__.__name__}: {self.folder}'
@@ -304,7 +313,7 @@ class Results(_ResultsFolder):
     @datatype.setter
     def datatype(self, value):
         assert isinstance(value, DataTypeBase), \
-            'data_type must be a Ladybug DataType. Got {}'.format(type(value))
+            f'data_type must be a Ladybug DataType. Got {type(value)}'
         self._datatype = value
 
     def total(

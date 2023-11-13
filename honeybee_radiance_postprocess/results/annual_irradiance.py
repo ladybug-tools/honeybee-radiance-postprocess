@@ -44,9 +44,6 @@ class AnnualIrradiance(Results):
         * valid_states
         * datatype
     """
-    __slots__ = ('_schedule', '_occ_pattern', '_total_occ', '_sun_down_occ_hours',
-                 '_occ_mask', '_arrays', '_valid_states')
-
     def __init__(self, folder, schedule: list = None, load_arrays: bool = False):
         """Initialize Results."""
         Results.__init__(self, folder, datatype=EnergyFlux('Irradiance'),
