@@ -340,12 +340,14 @@ def average_values_array1d(
 
 
 def cumulative_values_array2d(
-        array: np.ndarray, timestep: int = 1) -> np.ndarray:
+        array: np.ndarray, timestep: int = 1, t_step_multiplier: float = 1
+        ) -> np.ndarray:
     """Calculate cumulative values for a 2D NumPy array.
 
     Args:
         array: A 2D NumPy array.
         timestep: Integer for the timestep of the analysis.
+        t_step_multiplier: A value that will be multiplied with the timestep.
 
     Returns:
         A 1-dimensional NumPy array with the cumulative value for each row in
@@ -353,25 +355,27 @@ def cumulative_values_array2d(
     """
     check_array_dim(array, 2)
 
-    cumulative_values = array.sum(axis=1) / timestep
+    cumulative_values = array.sum(axis=1) / (timestep * t_step_multiplier)
 
     return cumulative_values
 
 
 def cumulative_values_array1d(
-        array: np.ndarray, timestep: int = 1) -> np.float64:
+        array: np.ndarray, timestep: int = 1, t_step_multiplier: float = 1
+        ) -> np.float64:
     """Calculate daylight autonomy for a 1D NumPy array.
 
     Args:
         array: A 1D NumPy array.
         timestep: Integer for the timestep of the analysis.
+        t_step_multiplier: A value that will be multiplied with the timestep.
 
     Returns:
         A NumPy float of the cumulative value.
     """
     check_array_dim(array, 1)
 
-    return array.sum() / timestep
+    return array.sum() / (timestep * t_step_multiplier)
 
 
 def peak_values_array2d(
