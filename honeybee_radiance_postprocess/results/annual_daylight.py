@@ -47,7 +47,7 @@ class AnnualDaylight(Results):
 
     def __init__(self, folder, schedule: list = None, load_arrays: bool = False):
         """Initialize Results."""
-        Results.__init__(self, folder, datatype=Illuminance(), load_arrays=load_arrays)
+        Results.__init__(self, folder, datatype=Illuminance('Illuminance'), load_arrays=load_arrays)
         self.schedule = schedule
 
     @property
