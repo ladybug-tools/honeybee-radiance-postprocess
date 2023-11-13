@@ -8,6 +8,7 @@ import numpy as np
 from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.datacollection import HourlyContinuousCollection
 from ladybug.datatype.illuminance import Illuminance
+from ladybug.datatype.generic import GenericType
 from ladybug.datatype.base import DataTypeBase
 from ladybug.dt import DateTime
 from ladybug.header import Header
@@ -85,10 +86,10 @@ class _ResultsFolder(object):
                 grid_info['light_path'] = _grid_info
                 if not grid_info['light_path']:
                     # if light path is empty
-                    grid_info['light_path'] = [['__static_apertures__']]
+                    grid_info['light_path'] = [['__static_']]
             else:
                 # if light path key is nonexistent
-                grid_info['light_path'] = [['__static_apertures__']]
+                grid_info['light_path'] = [['__static__']]
         self._grids_info = grids_info
 
     @property
@@ -149,18 +150,18 @@ class _ResultsFolder(object):
             try:
                 light_paths = grid_info['light_path']
             except KeyError:
-                grid_info['light_path'] = [['__static_apertures__']]
+                grid_info['light_path'] = [['__static__']]
                 light_paths = grid_info['light_path']
             for light_path in light_paths:
                 light_path = light_path[0]
                 if light_path in lp:
                     continue
-                if light_path == '__static_apertures__':
+                if light_path == '__static__':
                     lp.insert(0, light_path)
                 else:
                     lp.append(light_path)
-            if not light_paths and '__static_apertures__' not in lp:
-                lp.insert(0, '__static_apertures__')
+            if not light_paths and '__static__' not in lp:
+                lp.insert(0, '__static__')
 
         return lp
 
@@ -307,12 +308,14 @@ class Results(_ResultsFolder):
         self._datatype = value
 
     def total(
-            self, states: DynamicSchedule = None, grids_filter: str = '*',
-            res_type: str = 'total'
+            self, hoys: list = [], states: DynamicSchedule = None,
+            grids_filter: str = '*', res_type: str = 'total'
             ) -> type_hints.total:
         """Get summed values for each sensor.
 
         Args:
+            hoys: An optional numbers or list of numbers to select the hours of
+                the year (HOYs) for which results will be computed. Defaults to [].
             states: A dictionary of states. Defaults to None.
             grids_filter: The name of a grid or a pattern to filter the grids.
                 Defaults to '*'.
@@ -323,12 +326,14 @@ class Results(_ResultsFolder):
         """
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
+        mask = hoys_mask(self.sun_up_hours, hoys, self.timestep)
+
         total = []
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type=res_type)
             if np.any(array):
                 array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=self.occ_mask
+                    filter_array, 1, array, mask=mask
                 )
                 array_total = array_filter.sum(axis=1)
             else:
@@ -580,7 +585,8 @@ class Results(_ResultsFolder):
         info_file.write_text(json.dumps(grids_info))
 
     def cumulative_values(
-            self, hoys: list = [], states: DynamicSchedule = None, grids_filter: str = '*',
+            self, hoys: list = [], states: DynamicSchedule = None,
+            t_step_multiplier: float = 1, grids_filter: str = '*',
             res_type: str = 'total') -> type_hints.cumulative_values:
         """Get cumulative values for each sensor over a given period.
 
@@ -591,6 +597,7 @@ class Results(_ResultsFolder):
             hoys: An optional numbers or list of numbers to select the hours of
                 the year (HOYs) for which results will be computed. Defaults to [].
             states: A dictionary of states. Defaults to None.
+            t_step_multiplier: A value that will be multiplied with the timestep.
             grids_filter: The name of a grid or a pattern to filter the grids.
                 Defaults to '*'.
             res_type: Type of results to load. Defaults to 'total'.
@@ -610,7 +617,7 @@ class Results(_ResultsFolder):
                 array_filter = np.apply_along_axis(
                     filter_array, 1, array, mask=mask)
                 results = cumulative_values_array2d(
-                    array_filter, self.timestep)
+                    array_filter, self.timestep, t_step_multiplier)
             else:
                 results = np.zeros(grid_info['count'])
             cumulative_values.append(results)
@@ -618,7 +625,8 @@ class Results(_ResultsFolder):
         return cumulative_values, grids_info
 
     def cumulative_values_to_folder(
-            self, target_folder: str, hoys: list = [], states: DynamicSchedule = None,
+            self, target_folder: str, hoys: list = [],
+            states: DynamicSchedule = None, t_step_multiplier: float = 1,
             grids_filter: str = '*', res_type: str = 'total'):
         """Get cumulative values for each sensor over a given period and write
         the values to a folder.
@@ -629,6 +637,7 @@ class Results(_ResultsFolder):
             hoys: An optional numbers or list of numbers to select the hours of
                 the year (HOYs) for which results will be computed. Defaults to [].
             states: A dictionary of states. Defaults to None.
+            t_step_multiplier: A value that will be multiplied with the timestep.
             grids_filter: The name of a grid or a pattern to filter the grids.
                 Defaults to '*'.
             res_type: Type of results to load. Defaults to 'total'.
@@ -637,7 +646,9 @@ class Results(_ResultsFolder):
         folder.mkdir(parents=True, exist_ok=True)
 
         cumulative_values, grids_info = self.cumulative_values(
-            hoys=hoys, states=states, grids_filter=grids_filter, res_type=res_type)
+            hoys=hoys, states=states, t_step_multiplier=t_step_multiplier,
+            grids_filter=grids_filter, res_type=res_type
+            )
 
         metric_folder = folder.joinpath('cumulative_values')
 
@@ -1013,7 +1024,7 @@ class Results(_ResultsFolder):
         # I.e., state integer <--> state identifier.
         valid_states = self.valid_states[light_path]
         if state in valid_states:
-            if light_path == '__static_apertures__':
+            if light_path == '__static__':
                 state_identifier = 'default'
             else:
                 state_identifier = self.grid_states[grid_id][light_path][state]
@@ -1247,7 +1258,7 @@ class Results(_ResultsFolder):
 
         Example of output format:
         {
-            '__static_apertures__': [0],
+            '__static__': [0],
             'Room1_North': [0, 1],
             'Room1_South': [0, 1],
             'Room2_North1': [0, 1],
@@ -1259,8 +1270,8 @@ class Results(_ResultsFolder):
         """
         valid_states = {}
         grid_states = self.grid_states
-        if '__static_apertures__' in self.light_paths:
-            valid_states['__static_apertures__'] = [0]
+        if '__static__' in self.light_paths:
+            valid_states['__static__'] = [0]
         for light_paths in grid_states.values():
             for light_path, states in light_paths.items():
                 if light_path not in valid_states:
