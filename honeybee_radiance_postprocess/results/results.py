@@ -86,7 +86,7 @@ class _ResultsFolder(object):
                 grid_info['light_path'] = _grid_info
                 if not grid_info['light_path']:
                     # if light path is empty
-                    grid_info['light_path'] = [['__static_']]
+                    grid_info['light_path'] = [['__static__']]
             else:
                 # if light path key is nonexistent
                 grid_info['light_path'] = [['__static__']]
@@ -219,7 +219,7 @@ class Results(_ResultsFolder):
     Args:
         folder: Path to results folder.
         schedule: 8760 values as a list. Values must be either 0 or 1. Values of 1
-            indicates occupied hours. If not schedule is provided a default schedule
+            indicates occupied hours. If no schedule is provided a default schedule
             will be used. (Default: None).
         load_arrays: Set to True to load all NumPy arrays. If False the arrays will be
             loaded only once they are needed. In both cases the loaded array(s) will be

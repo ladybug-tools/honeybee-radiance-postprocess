@@ -26,7 +26,7 @@ class AnnualDaylight(Results):
     Args:
         folder: Path to results folder.
         schedule: 8760 values as a list. Values must be either 0 or 1. Values of 1
-            indicates occupied hours. If not schedule is provided a default schedule
+            indicates occupied hours. If no schedule is provided a default schedule
             will be used. (Default: None).
         load_arrays: Set to True to load all NumPy arrays. If False the arrays will be
             loaded only once they are needed. In both cases the loaded array(s) will be
@@ -47,18 +47,8 @@ class AnnualDaylight(Results):
 
     def __init__(self, folder, schedule: list = None, load_arrays: bool = False):
         """Initialize Results."""
-        Results.__init__(self, folder, datatype=Illuminance('Illuminance'), load_arrays=load_arrays)
-        self.schedule = schedule
-
-    @property
-    def schedule(self):
-        """Return schedule."""
-        return self._schedule
-
-    @schedule.setter
-    def schedule(self, schedule):
-        self._schedule = schedule if schedule else generate_default_schedule()
-        self._update_occ()
+        Results.__init__(self, folder, datatype=Illuminance('Illuminance'),
+                         schedule=schedule, load_arrays=load_arrays)
 
     def daylight_autonomy(
             self, threshold: float = 300, states: DynamicSchedule = None,
