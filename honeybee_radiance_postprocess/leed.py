@@ -173,7 +173,7 @@ def _leed_summary(
 
 
 def _ase_hourly_percentage(
-    results: Results, array: np.ndarray, grid_info: dict,
+    results: AnnualDaylight, array: np.ndarray, grid_info: dict,
     direct_threshold: float = 1000, grid_area: Union[None, np.ndarray] = None
     ) -> np.ndarray:
     """Calculate the percentage of floor area that receives greater than 1000
@@ -258,7 +258,7 @@ def shade_transmittance_per_light_path(
 
 
 def leed_states_schedule(
-        results: Union[str, Results], grids_filter: str = '*',
+        results: Union[str, AnnualDaylight], grids_filter: str = '*',
         shade_transmittance: Union[float, dict] = 0.05
         ) -> Tuple[dict, dict]:
     """Calculate a schedule of each aperture group for LEED compliant sDA.
@@ -284,8 +284,8 @@ def leed_states_schedule(
             dictionary of hours where no shading configuration comply with the
             2% rule.
     """
-    if not isinstance(results, Results):
-        results = Results(results)
+    if not isinstance(results, AnnualDaylight):
+        results = AnnualDaylight(results)
 
     grids_info = results._filter_grids(grids_filter=grids_filter)
     schedule = occupancy_schedule_8_to_6(as_list=True)
@@ -499,7 +499,7 @@ def leed_states_schedule(
 
 
 def leed_option_one(
-        results: Union[str, Results], grids_filter: str = '*',
+        results: Union[str, AnnualDaylight], grids_filter: str = '*',
         shade_transmittance: Union[float, dict] = 0.05,
         states_schedule: dict = None, threshold: float = 300,
         direct_threshold: float = 1000, occ_hours: int = 250,
@@ -547,8 +547,8 @@ def leed_option_one(
     # use default leed occupancy schedule
     schedule = occupancy_schedule_8_to_6(as_list=True)
 
-    if not isinstance(results, Results):
-        results = Results(results, schedule=schedule)
+    if not isinstance(results, AnnualDaylight):
+        results = AnnualDaylight(results, schedule=schedule)
     else:
         # set schedule to default leed schedule
         results.schedule = schedule

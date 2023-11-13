@@ -8,7 +8,7 @@ from ladybug.color import Colorset
 from ladybug.datatype.fraction import Fraction
 from ladybug.legend import LegendParameters
 
-from .results import Results
+from .results.annual_daylight import AnnualDaylight
 from .dynamic import DynamicSchedule
 from .metrics import da_array2d
 from .util import filter_array
@@ -101,7 +101,7 @@ def en17037_to_files(
 
 
 def en17037_to_folder(
-        results: Union[str, Results], schedule: list,
+        results: Union[str, AnnualDaylight], schedule: list,
         states: DynamicSchedule = None, grids_filter: str = '*',
         sub_folder: str = 'en17037') -> Path:
     """Compute annual EN 17037 metrics in a folder and write them in a subfolder.
@@ -121,8 +121,8 @@ def en17037_to_folder(
     Returns:
         str -- Path to results folder.
     """
-    if not isinstance(results, Results):
-        results = Results(results, schedule=schedule)
+    if not isinstance(results, AnnualDaylight):
+        results = AnnualDaylight(results, schedule=schedule)
     else:
         results.schedule = schedule
 

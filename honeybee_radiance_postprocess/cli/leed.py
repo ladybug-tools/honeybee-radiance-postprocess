@@ -6,7 +6,7 @@ import os
 import click
 
 from ..leed import leed_option_one
-from ..results import Results
+from ..results.annual_daylight import AnnualDaylight
 
 _logger = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ def daylight_option_one(
     if shade_transmittance_file and os.path.isfile(shade_transmittance_file):
         with open(shade_transmittance_file) as json_file:
             shd_trans = json.load(json_file)
-        results = Results(folder)
+        results = AnnualDaylight(folder)
         # check if aperture groups are missing in json file
         for light_path in results.light_paths:
             if (not light_path in shd_trans and
