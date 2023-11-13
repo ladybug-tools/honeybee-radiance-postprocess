@@ -9,7 +9,7 @@ import numpy as np
 
 from ladybug.location import Location
 from ladybug.wea import Wea
-from honeybee_radiance_postprocess.results import Results
+from honeybee_radiance_postprocess.results.annual_daylight import AnnualDaylight
 from honeybee_radiance_postprocess.metrics import da_array2d, cda_array2d, \
     udi_array2d, udi_lower_array2d, udi_upper_array2d
 from honeybee_radiance_postprocess.reader import binary_to_array
@@ -100,7 +100,7 @@ def annual_metrics(
         states = DynamicSchedule.from_json(states)
 
     try:
-        results = Results(folder, schedule=schedule)
+        results = AnnualDaylight(folder, schedule=schedule)
         results.annual_metrics_to_folder(
             sub_folder, threshold=threshold, min_t=lower_threshold,
             max_t=upper_threshold, states=states, grids_filter=grids_filter
@@ -221,7 +221,7 @@ def average_values(
 
         res_type = 'total' if total is True else 'direct'
 
-        results = Results(folder)
+        results = AnnualDaylight(folder)
         results.average_values_to_folder(
             sub_folder, hoys=hoys, states=states, grids_filter=grids_filter,
             res_type=res_type)
@@ -284,7 +284,7 @@ def median_values(
 
         res_type = 'total' if total is True else 'direct'
 
-        results = Results(folder)
+        results = AnnualDaylight(folder)
         results.median_values_to_folder(
             sub_folder, hoys=hoys, states=states, grids_filter=grids_filter,
             res_type=res_type)
@@ -347,7 +347,7 @@ def cumulative_values(
 
         res_type = 'total' if total is True else 'direct'
 
-        results = Results(folder)
+        results = AnnualDaylight(folder)
         results.cumulative_values_to_folder(
             sub_folder, hoys=hoys, states=states, grids_filter=grids_filter,
             res_type=res_type)
@@ -416,7 +416,7 @@ def peak_values(
 
         res_type = 'total' if total is True else 'direct'
 
-        results = Results(folder)
+        results = AnnualDaylight(folder)
         results.peak_values_to_folder(
             sub_folder, hoys=hoys, states=states, grids_filter=grids_filter,
             coincident=coincident, res_type=res_type)
@@ -479,7 +479,7 @@ def annual_to_data(
     res_type = 'total' if total is True else 'direct'
 
     try:
-        results = Results(folder)
+        results = AnnualDaylight(folder)
         data_cs, grids_info, sensor_index = results.annual_data(
             states=states, grids_filter=grids_filter,
             sensor_index=sensor_index, res_type=res_type)
@@ -609,7 +609,7 @@ def annual_sunlight_exposure(
         states = DynamicSchedule.from_json(states)
 
     try:
-        results = Results(folder, schedule=schedule)
+        results = AnnualDaylight(folder, schedule=schedule)
         results.annual_sunlight_exposure_to_folder(
             sub_folder, direct_threshold=direct_threshold, occ_hours=occ_hours,
             states=states, grids_filter=grids_filter
@@ -878,7 +878,7 @@ def annual_uniformity_ratio(
         states = DynamicSchedule.from_json(states)
 
     try:
-        results = Results(folder, schedule=schedule)
+        results = AnnualDaylight(folder, schedule=schedule)
         results.annual_uniformity_ratio_to_folder(
             sub_folder, threshold=threshold, states=states,
             grids_filter=grids_filter

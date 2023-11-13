@@ -1,10 +1,9 @@
 """honeybee radiance postprocess schedule commands."""
-import json
 import click
 import sys
 import logging
 
-from honeybee_radiance_postprocess.results import Results
+from ..results.annual_daylight import AnnualDaylight
 from ..dynamic import DynamicSchedule
 
 _logger = logging.getLogger(__name__)
@@ -91,7 +90,7 @@ def control_schedules(
         if states:
             states = DynamicSchedule.from_json(states)
 
-        results = Results(folder)
+        results = AnnualDaylight(folder)
         results.daylight_control_schedules_to_folder(
             sub_folder, states=states, grids_filter=grids_filter,
             base_schedule=base_schedule, ill_setpoint=ill_setpoint,
