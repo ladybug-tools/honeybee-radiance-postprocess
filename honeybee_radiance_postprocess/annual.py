@@ -11,7 +11,7 @@ def occupancy_schedule_8_to_6(
     """Create an occupancy schedule for LEED (8 am to 6 pm).
 
     Args:
-        timestep: An integer value noting the number of time steps per hour.
+        timestep: An integer value noting the number of timesteps per hour.
             Defaults to 1.
         as_list: Boolean toggle to output the schedule as a Python list instead
             of a NumPy array. Defaults to False.
