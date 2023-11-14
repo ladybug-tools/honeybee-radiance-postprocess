@@ -12,9 +12,10 @@ from ladybug.datatype.generic import GenericType
 from ladybug.datatype.base import DataTypeBase
 from ladybug.dt import DateTime
 from ladybug.header import Header
+from ladybug.location import Location
 from ladybug.wea import Wea
-from honeybee_radiance.postprocess.annual import _process_input_folder, \
-    filter_schedule_by_hours, generate_default_schedule
+
+from ..annual import occupancy_schedule_8_to_6
 from ..metrics import (average_values_array2d, cumulative_values_array2d,
     peak_values_array2d)
 from ..util import filter_array, hoys_mask, check_array_dim, \
@@ -44,19 +45,23 @@ class _ResultsFolder(object):
 
     """
     __slots__ = ('_folder', '_grids_info', '_sun_up_hours', '_sun_down_hours',
-                 '_datetimes', '_light_paths', '_default_states',
-                 '_grid_states', '_timestep', '_wea')
+                 '_sun_up_hours_mask', '_sun_down_hours_mask', '_datetimes',
+                 '_light_paths', '_default_states', '_grid_states', '_timestep',
+                 '_wea')
 
     def __init__(self, folder: Union[str, Path]):
         """Initialize ResultsFolder."""
         self._folder = Path(folder).absolute().as_posix()
-        self.grids_info, self.sun_up_hours = _process_input_folder(self.folder, '*')
+        self._timestep = self._get_timestep()
         self._wea = self._get_wea()
+        self.grids_info = self._get_grids_info()
+        self.sun_up_hours = self._get_sun_up_hours()
+        self._sun_up_hours_mask = self._get_sun_up_hours_mask()
+        self._sun_down_hours_mask = self._get_sun_down_hours_mask()
         self._datetimes = self._get_datetimes()
         self._light_paths = self._get_light_paths()
         self._default_states = self._get_default_states()
         self._grid_states = self._get_grid_states()
-        self._timestep = self._get_timestep()
 
     @property
     def folder(self):
@@ -99,17 +104,29 @@ class _ResultsFolder(object):
     def sun_up_hours(self, sun_up_hours):
         assert isinstance(sun_up_hours, list), \
             f'Sun up hours must be a list. Got object of type: {type(sun_up_hours)}'
-        assert len(sun_up_hours) <= 8760, \
-            (f'Length of sun up hours cannot be more than 8760. Got object of '
-            f'length: {len(sun_up_hours)}.')
         self._sun_up_hours = sun_up_hours
-        all_hours = np.arange(0.5, 8760.5, 1).tolist()
-        self._sun_down_hours = set(sun_up_hours).symmetric_difference(all_hours)
+        self.sun_down_hours = np.setdiff1d(self.wea.hoys, sun_up_hours).tolist()
+
+    @property
+    def sun_up_hours_mask(self):
+        """Return sun up hours masking array."""
+        return self._sun_up_hours_mask
 
     @property
     def sun_down_hours(self):
         """Return sun down hours."""
         return self._sun_down_hours
+
+    @sun_down_hours.setter
+    def sun_down_hours(self, sun_down_hours):
+        assert isinstance(sun_down_hours, list), \
+            f'Sun down hours must be a list. Got object of type: {type(sun_down_hours)}'
+        self._sun_down_hours = sun_down_hours
+
+    @property
+    def sun_down_hours_mask(self):
+        """Return sun down hours masking array."""
+        return self._sun_down_hours_mask
 
     @property
     def datetimes(self):
@@ -197,12 +214,13 @@ class _ResultsFolder(object):
         """Get Wea object."""
         wea_files = list(Path(self.folder).glob('*.wea'))
         if len(wea_files) == 0:
-            wea = None
+            # create a dummy Wea object assuming 1 time step per hour for 8760 hours
+            wea = Wea.from_annual_values(Location(), [1000] * 8760, [1000] * 8760)
         elif len(wea_files) == 1:
-            wea = Wea.from_file(wea_files[0])
+            wea = Wea.from_file(wea_files[0], timestep=self.timestep)
         else:
             raise ValueError(
-                f'Expected 1 .wea file in results folder. Found {len(wea_files)}.wea file.'
+                f'Expected one .wea file in results folder. Found {len(wea_files)}.wea file.'
                 )
 
         return wea
@@ -217,6 +235,35 @@ class _ResultsFolder(object):
                 ]
 
         return datetimes
+
+    def _get_grids_info(self) -> List[dict]:
+        """Get grids info from folder."""
+        info = Path(self.folder, 'grids_info.json')
+        with open(info) as data_f:
+            grids = json.load(data_f)
+
+        return grids
+
+    def _get_sun_up_hours(self) -> List[float]:
+        """Get sun up hours from folder."""
+        suh_fp = Path(self.folder, 'sun-up-hours.txt')
+        sun_up_hours = np.loadtxt(suh_fp, dtype=float).tolist()
+
+        return sun_up_hours
+
+    def _get_sun_up_hours_mask(self) -> List[int]:
+        """Get a sun up hours masking array of the Wea hours."""
+        sun_up_hours_mask = \
+            np.where(np.isin(self.wea.hoys, self.sun_up_hours))[0]
+        
+        return sun_up_hours_mask
+
+    def _get_sun_down_hours_mask(self) -> List[int]:
+        """Get a sun down hours masking array of the Wea hours."""
+        sun_down_hours_mask = \
+            np.where(~np.isin(self.wea.hoys, self.sun_up_hours))[0]
+        
+        return sun_down_hours_mask
 
     def __repr__(self):
         return f'{self.__class__.__name__}: {self.folder}'
@@ -247,8 +294,8 @@ class Results(_ResultsFolder):
     __slots__ = ('_schedule', '_occ_pattern', '_total_occ', '_sun_down_occ_hours',
                  '_occ_mask', '_arrays', '_valid_states', '_datatype')
 
-    def __init__(self, folder, datatype: DataTypeBase, schedule: list = None,
-                 load_arrays: bool = False):
+    def __init__(self, folder, datatype: DataTypeBase = None,
+                 schedule: list = None, load_arrays: bool = False):
         """Initialize Results."""
         _ResultsFolder.__init__(self, folder)
         self.schedule = schedule
@@ -263,7 +310,8 @@ class Results(_ResultsFolder):
 
     @schedule.setter
     def schedule(self, schedule):
-        self._schedule = schedule if schedule else generate_default_schedule()
+        self._schedule = schedule if schedule else \
+            occupancy_schedule_8_to_6(timestep=self.timestep, as_list=True)
         self._update_occ()
 
     @property
@@ -312,8 +360,11 @@ class Results(_ResultsFolder):
 
     @datatype.setter
     def datatype(self, value):
-        assert isinstance(value, DataTypeBase), \
-            f'data_type must be a Ladybug DataType. Got {type(value)}'
+        if value is not None:
+            assert isinstance(value, DataTypeBase), \
+                f'data_type must be a Ladybug DataType. Got {type(value)}'
+        else:
+            value = GenericType('Generic', '')
         self._datatype = value
 
     def total(
@@ -1212,10 +1263,13 @@ class Results(_ResultsFolder):
 
     def _update_occ(self):
         """Set properties related to occupancy."""
-        sun_up_hours, schedule = [self.sun_up_hours, self.schedule]
-        self._occ_pattern, self._total_occ, self._sun_down_occ_hours = \
-            filter_schedule_by_hours(sun_up_hours=sun_up_hours, schedule=schedule)
-        self._occ_mask = np.array(self.occ_pattern)
+        occ_mask = np.array(self.schedule, dtype=int)[self.sun_up_hours_mask]
+        sun_down_sch = \
+            np.array(self.schedule, dtype=int)[self.sun_down_hours_mask].sum()
+
+        self._occ_mask = occ_mask
+        self._total_occ = sum(self.schedule)
+        self._sun_down_occ_hours = sun_down_sch
 
     def _filter_grids(self, grids_filter: str = '*') -> list:
         """Return grids information.

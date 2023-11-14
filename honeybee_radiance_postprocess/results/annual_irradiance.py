@@ -125,7 +125,7 @@ class AnnualIrradiance(Results):
         """
         grids_info = self._filter_grids(grids_filter=grids_filter)
         mask = hoys_mask(self.sun_up_hours, hoys, self.timestep)
-        full_length = len(self.wea.datetimes) * self.timestep
+        full_length = len(self.wea.hoys) * self.timestep
 
         average = []
         peak = []
