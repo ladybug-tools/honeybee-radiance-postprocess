@@ -507,7 +507,7 @@ class Results(_ResultsFolder):
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         full_length = 8760 * self.timestep if len(hoys) == 0 else len(hoys)
-        mask = hoys_mask(self.sun_up_hours, hoys, self.timestep)
+        mask = hoys_mask(self.sun_up_hours, hoys)
 
         average_values = []
         for grid_info in grids_info:
@@ -580,7 +580,7 @@ class Results(_ResultsFolder):
         """
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
-        mask = hoys_mask(self.sun_up_hours, hoys, self.timestep)
+        mask = hoys_mask(self.sun_up_hours, hoys)
 
         median_values = []
         for grid_info in grids_info:
@@ -596,7 +596,7 @@ class Results(_ResultsFolder):
                 else:
                     # find number of hoys that are sun down hours
                     sdh_hoys = \
-                        len(set([int(h) for h in self.sun_down_hours]).intersection(hoys))
+                        len(set(self.sun_down_hours).intersection(hoys))
                     if sdh_hoys != 0:
                         # concatenate zero array
                         zero_array = np.zeros((grid_info['count'], sdh_hoys))
@@ -668,7 +668,7 @@ class Results(_ResultsFolder):
         """
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
-        mask = hoys_mask(self.sun_up_hours, hoys, self.timestep)
+        mask = hoys_mask(self.sun_up_hours, hoys)
 
         cumulative_values = []
         for grid_info in grids_info:
@@ -747,7 +747,7 @@ class Results(_ResultsFolder):
             Tuple: A tuple with the peak value for each sensor and grid information.
         """
         grids_info = self._filter_grids(grids_filter=grids_filter)
-        mask = hoys_mask(self.sun_up_hours, hoys, self.timestep)
+        mask = hoys_mask(self.sun_up_hours, hoys)
         filt_suh = [suh for suh in self.sun_up_hours if int(suh) in hoys] \
             if len(hoys) != 0 else self.sun_up_hours
 
