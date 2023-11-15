@@ -226,13 +226,10 @@ class _ResultsFolder(object):
         return wea
 
     def _get_datetimes(self) -> List[DateTime]:
-        """Get a list of DateTimes."""
-        if self.wea:
-            datetimes = self.wea.datetimes
-        else:
-            datetimes = [
-                DateTime.from_hoy(hoy) for hoy in list(map(float, self.sun_up_hours))
-                ]
+        """Get a list of DateTimes of the sun up hours."""
+        datetimes = [
+            DateTime.from_hoy(hoy) for hoy in list(map(float, self.sun_up_hours))
+            ]
 
         return datetimes
 
@@ -385,8 +382,7 @@ class Results(_ResultsFolder):
             Tuple: A tuple with total values and grid information.
         """
         grids_info = self._filter_grids(grids_filter=grids_filter)
-
-        mask = hoys_mask(self.sun_up_hours, hoys, self.timestep)
+        mask = hoys_mask(self.sun_up_hours, hoys)
 
         total = []
         for grid_info in grids_info:
@@ -505,7 +501,6 @@ class Results(_ResultsFolder):
             Tuple: A tuple with the average value for each sensor and grid information.
         """
         grids_info = self._filter_grids(grids_filter=grids_filter)
-
         full_length = 8760 * self.timestep if len(hoys) == 0 else len(hoys)
         mask = hoys_mask(self.sun_up_hours, hoys)
 
@@ -579,7 +574,6 @@ class Results(_ResultsFolder):
             Tuple: A tuple with the median value for each sensor and grid information.
         """
         grids_info = self._filter_grids(grids_filter=grids_filter)
-
         mask = hoys_mask(self.sun_up_hours, hoys)
 
         median_values = []
@@ -667,7 +661,6 @@ class Results(_ResultsFolder):
                 information.
         """
         grids_info = self._filter_grids(grids_filter=grids_filter)
-
         mask = hoys_mask(self.sun_up_hours, hoys)
 
         cumulative_values = []
@@ -748,8 +741,7 @@ class Results(_ResultsFolder):
         """
         grids_info = self._filter_grids(grids_filter=grids_filter)
         mask = hoys_mask(self.sun_up_hours, hoys)
-        filt_suh = [suh for suh in self.sun_up_hours if int(suh) in hoys] \
-            if len(hoys) != 0 else self.sun_up_hours
+        filt_suh = hoys if len(hoys) != 0 else self.sun_up_hours
 
         peak_values = []
         max_hoys = []
@@ -764,7 +756,7 @@ class Results(_ResultsFolder):
                 results = np.zeros(grid_info['count'])
             peak_values.append(results)
             if max_i:
-                max_hoys.append(int(filt_suh[max_i]))
+                max_hoys.append(filt_suh[max_i])
             else:
                 max_hoys.append(max_i)
 

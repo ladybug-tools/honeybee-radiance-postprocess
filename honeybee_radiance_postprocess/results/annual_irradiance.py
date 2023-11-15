@@ -124,7 +124,7 @@ class AnnualIrradiance(Results):
             Tuple: A tuple with the three annual irradiance metrics and grid information.
         """
         grids_info = self._filter_grids(grids_filter=grids_filter)
-        mask = hoys_mask(self.sun_up_hours, hoys, self.timestep)
+        mask = hoys_mask(self.sun_up_hours, hoys)
         full_length = len(self.wea.hoys) * self.timestep
 
         average = []
