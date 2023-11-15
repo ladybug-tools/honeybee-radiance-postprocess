@@ -403,6 +403,6 @@ def peak_values_array2d(
         max_i = np.argmax(array_summed)
         peak_values = array[:, max_i]
     else:
-        peak_values =  np.amax(array, axis=1)
+        peak_values = np.amax(array, axis=1)
 
     return peak_values, max_i
