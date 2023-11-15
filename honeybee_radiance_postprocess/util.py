@@ -83,24 +83,19 @@ def filter_array(array: np.ndarray, mask: np.ndarray) -> np.ndarray:
     return array
 
 
-def hoys_mask(sun_up_hours: list, hoys: list, timestep: int) -> np.ndarray:
+def hoys_mask(sun_up_hours: list, hoys: list) -> np.ndarray:
     """Create a NumPy masking array from a list of hoys.
 
     Args:
-        sun_up_hours: A list of integers for the sun-up hours.
-        hoys: A list of 8760 * timestep values for the hoys to select. If an empty
-            list is passed, None will be returned.
-        timestep: Integer for the timestep of the analysis.
+        sun_up_hours: A list of sun up hours.
+        hoys: A list hoys to select.
 
     Returns:
         A NumPy array of booleans.
     """
     if len(hoys) != 0:
-        schedule = [False] * (8760 * timestep)
-        for hoy in hoys:
-            schedule[int(hoy * timestep)] = True
-        su_pattern = [schedule[int(hoy * timestep)] for hoy in sun_up_hours]
-        return np.array(su_pattern)
+        hoys_mask = np.where(np.isin(sun_up_hours, hoys), True, False)
+        return hoys_mask
 
 
 def array_memory_size(
