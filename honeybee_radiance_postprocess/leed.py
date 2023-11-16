@@ -423,7 +423,7 @@ def leed_states_schedule(
                     filter_indices = np.where(occ_mask.astype(bool))[0]
                     grid_comply = [filter_indices[_gc] for _gc in grid_comply]
                     grid_comply = np.array(results.sun_up_hours)[grid_comply]
-                    fail_to_comply[grid_id] = \
+                    fail_to_comply[grid_info['name']] = \
                         [int(hoy) for hoy in grid_comply]
 
                 previous_indices = None
@@ -473,7 +473,7 @@ def leed_states_schedule(
             grid_comply = np.where(np.all(array_combinations==np.NINF, axis=0))[0]
             if grid_comply.size != 0:
                 grid_comply = np.array(results.sun_up_hours)[grid_comply]
-                fail_to_comply[grid_id] = \
+                fail_to_comply[grid_info['name']] = \
                     [int(hoy) for hoy in grid_comply]
 
             array_combinations_filter = \
