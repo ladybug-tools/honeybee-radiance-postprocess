@@ -501,7 +501,7 @@ class Results(_ResultsFolder):
             Tuple: A tuple with the average value for each sensor and grid information.
         """
         grids_info = self._filter_grids(grids_filter=grids_filter)
-        full_length = 8760 * self.timestep if len(hoys) == 0 else len(hoys)
+        full_length = len(self.wea) if len(hoys) == 0 else len(hoys)
         mask = hoys_mask(self.sun_up_hours, hoys)
 
         average_values = []
