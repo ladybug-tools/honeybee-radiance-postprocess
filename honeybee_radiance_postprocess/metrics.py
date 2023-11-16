@@ -400,9 +400,15 @@ def peak_values_array2d(
     max_i = None
     if coincident:
         array_summed = array.sum(axis=0)
-        max_i = np.argmax(array_summed)
-        peak_values = array[:, max_i]
+        if np.any(array_summed):
+            max_i = np.argmax(array_summed)
+            peak_values = array[:, max_i]
+        else:
+            peak_values = np.zeros(array.shape[0])
     else:
-        peak_values = np.amax(array, axis=1)
+        if np.any(array):
+            peak_values = np.amax(array, axis=1)
+        else:
+            peak_values = np.zeros(array.shape[0])
 
     return peak_values, max_i

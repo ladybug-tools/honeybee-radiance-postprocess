@@ -746,6 +746,7 @@ class Results(_ResultsFolder):
         peak_values = []
         max_hoys = []
         for grid_info in grids_info:
+            max_i = None
             array = self._array_from_states(grid_info, states=states, res_type=res_type)
             if np.any(array):
                 array_filter = np.apply_along_axis(
@@ -758,7 +759,7 @@ class Results(_ResultsFolder):
             if max_i:
                 max_hoys.append(filt_suh[max_i])
             else:
-                max_hoys.append(max_i)
+                max_hoys.append(None)
 
         return peak_values, max_hoys, grids_info
 
