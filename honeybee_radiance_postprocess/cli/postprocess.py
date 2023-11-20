@@ -15,6 +15,7 @@ from honeybee_radiance_postprocess.reader import binary_to_array
 from honeybee_radiance.postprocess.annual import filter_schedule_by_hours, \
     generate_default_schedule
 
+from ..annual import occupancy_schedule_8_to_6
 from ..en17037 import en17037_to_folder
 from ..util import filter_array
 from .two_phase import two_phase
@@ -593,6 +594,11 @@ def annual_sunlight_exposure(
     show_default=True
 )
 @click.option(
+    '--timestep', type=int, default=1, help='The timestep of the Wea file. '
+    'The timestep is used to generate a default occupancy schedule. If a '
+    'schedule is provided the timestep will have no use.'
+)
+@click.option(
     '--grid-name', '-gn', help='Optional name of each metric file.',
     default=None, show_default=True
 )
@@ -602,7 +608,7 @@ def annual_sunlight_exposure(
 )
 def annual_metrics_file(
     file, sun_up_hours, schedule, threshold, lower_threshold, upper_threshold,
-    grid_name, sub_folder
+    timestep, grid_name, sub_folder
 ):
     """Compute annual metrics for a single file and write the metrics in a
     subfolder.
@@ -635,7 +641,7 @@ def annual_metrics_file(
         with open(schedule) as hourly_schedule:
             schedule = [int(float(v)) for v in hourly_schedule]
     else:
-        schedule = generate_default_schedule()
+        schedule = occupancy_schedule_8_to_6(timestep=timestep)
 
     if grid_name is None:
         grid_name = file.stem
