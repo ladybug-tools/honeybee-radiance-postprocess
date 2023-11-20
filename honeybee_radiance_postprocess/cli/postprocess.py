@@ -10,6 +10,7 @@ import numpy as np
 from ladybug.location import Location
 from ladybug.wea import Wea
 from honeybee_radiance_postprocess.results.annual_daylight import AnnualDaylight
+from honeybee_radiance_postprocess.results.annual_irradiance import AnnualIrradiance
 from honeybee_radiance_postprocess.metrics import da_array2d, cda_array2d, \
     udi_array2d, udi_lower_array2d, udi_upper_array2d
 from honeybee_radiance_postprocess.reader import binary_to_array
@@ -885,6 +886,68 @@ def annual_uniformity_ratio(
         )
     except Exception:
         _logger.exception('Failed to calculate annual uniformity ratio.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('annual-irradiance')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.option(
+    '--schedule', '-sch', help='Path to an annual schedule file. Values should be 0-1 '
+    'separated by new line. If not provided an 8-5 annual schedule will be created.',
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--states', '-st', help='A JSON file with a dictionary of states. If states are not '
+    'provided the default states will be used for any aperture groups.', default=None,
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
+    show_default=True
+)
+@click.option(
+    '--sub-folder', '-sf', help='Optional relative path for subfolder to write output '
+    'metric files.', default='metrics'
+)
+def annual_irradiance_metrics(
+    folder, schedule, states, grids_filter, sub_folder
+):
+    """Compute irradiance metrics in a folder and write them in a subfolder.
+
+    \b
+    This command generates 3 files for each input grid.
+        average_irradiance/{grid-name}.res -> Average Irradiance (W/m2)
+        peak_irradiance/{grid-name}.res -> Peak Irradiance (W/m2)
+        cumulative_radiation/{grid-name}.res -> Cumulative Radiation (kWh/m2)
+
+    \b
+    Args:
+        folder: Results folder. This folder is an output folder of annual
+            irradiance recipe. Folder should include grids_info.json and
+            sun-up-hours.txt.
+    """
+    # optional input - only check if the file exist otherwise ignore
+    if schedule and os.path.isfile(schedule):
+        with open(schedule) as hourly_schedule:
+            schedule = [int(float(v)) for v in hourly_schedule]
+    else:
+        schedule = None
+
+    if states:
+        states = DynamicSchedule.from_json(states)
+
+    try:
+        results = AnnualIrradiance(folder, schedule=schedule)
+        results.annual_metrics_to_folder(
+            sub_folder, states=states, grids_filter=grids_filter
+        )
+    except Exception:
+        _logger.exception('Failed to calculate annual irradiance metrics.')
         sys.exit(1)
     else:
         sys.exit(0)
