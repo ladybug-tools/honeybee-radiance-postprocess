@@ -7,15 +7,15 @@ import json
 import click
 import numpy as np
 
-from ..dynamic import DynamicSchedule
+from ladybug.location import Location
+from ladybug.wea import Wea
 from honeybee_radiance_postprocess.results import Results
 from honeybee_radiance_postprocess.metrics import da_array2d, cda_array2d, \
     udi_array2d, udi_lower_array2d, udi_upper_array2d
 from honeybee_radiance_postprocess.reader import binary_to_array
-from honeybee_radiance.postprocess.annual import filter_schedule_by_hours, \
-    generate_default_schedule
 
 from ..annual import occupancy_schedule_8_to_6
+from ..dynamic import DynamicSchedule
 from ..en17037 import en17037_to_folder
 from ..util import filter_array
 from .two_phase import two_phase
@@ -599,6 +599,10 @@ def annual_sunlight_exposure(
     'schedule is provided the timestep will have no use.'
 )
 @click.option(
+    '--wea', type=click.Path(exists=True, file_okay=True, resolve_path=True),
+    help='Optional Wea file.'
+)
+@click.option(
     '--grid-name', '-gn', help='Optional name of each metric file.',
     default=None, show_default=True
 )
@@ -608,7 +612,7 @@ def annual_sunlight_exposure(
 )
 def annual_metrics_file(
     file, sun_up_hours, schedule, threshold, lower_threshold, upper_threshold,
-    timestep, grid_name, sub_folder
+    timestep, wea, grid_name, sub_folder
 ):
     """Compute annual metrics for a single file and write the metrics in a
     subfolder.
@@ -633,9 +637,14 @@ def annual_metrics_file(
     except Exception:
         array = binary_to_array(file)
 
-    # read sun up hours to list of integers
-    with open(sun_up_hours) as _sun_up_hours:
-        sun_up_hours = [int(float(v)) for v in _sun_up_hours]
+    if wea:
+        wea = Wea.from_file(wea)
+    else:
+        # create a dummy Wea object assuming 1 time step per hour for 8760 hours
+        wea = Wea.from_annual_values(Location(), [1000] * 8760, [1000] * 8760)
+
+    # read sun up hours
+    sun_up_hours = np.loadtxt(sun_up_hours)
     # optional input - only check if the file exist otherwise ignore
     if schedule and os.path.isfile(schedule):
         with open(schedule) as hourly_schedule:
@@ -646,9 +655,12 @@ def annual_metrics_file(
     if grid_name is None:
         grid_name = file.stem
 
-    occ_pattern, total_hours, sun_down_occ_hours = \
-        filter_schedule_by_hours(sun_up_hours, schedule=schedule)
-    occ_mask = np.array(occ_pattern)
+    sun_up_hours_mask =  np.where(np.isin(wea.hoys, sun_up_hours))[0]
+    sun_down_hours_mask =  np.where(~np.isin(wea.hoys, sun_up_hours))[0]
+    occ_mask = np.array(schedule, dtype=int)[sun_up_hours_mask]
+    sun_down_occ_hours =  np.array(schedule, dtype=int)[sun_down_hours_mask].sum()
+    total_hours = sum(schedule)
+
     array_filter = np.apply_along_axis(
         filter_array, 1, array, mask=occ_mask)
     try:
