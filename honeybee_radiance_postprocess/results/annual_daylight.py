@@ -8,8 +8,8 @@ from ladybug.datacollection import HourlyContinuousCollection
 from ladybug.datatype.illuminance import Illuminance
 from ladybug.datatype.fraction import Fraction
 from ladybug.header import Header
-from honeybee_radiance.postprocess.annual import generate_default_schedule
 
+from ..annual import occupancy_schedule_8_to_6
 from ..metrics import da_array2d, cda_array2d, udi_array2d, udi_lower_array2d, \
     udi_upper_array2d, ase_array2d
 from ..util import filter_array
@@ -493,7 +493,7 @@ class AnnualDaylight(Results):
         """
         # process the base schedule input into a list of values
         if base_schedule is None:
-            base_schedule = generate_default_schedule()
+            base_schedule = occupancy_schedule_8_to_6(timestep=self.timestep)
         base_schedule = np.array(base_schedule)
 
         grids_info = self._filter_grids(grids_filter=grids_filter)
