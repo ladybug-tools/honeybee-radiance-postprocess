@@ -1,22 +1,13 @@
 import json
 from pathlib import Path
-from typing import Tuple, List
 import numpy as np
 
-from ladybug.analysisperiod import AnalysisPeriod
-from ladybug.datacollection import HourlyContinuousCollection
-from ladybug.datatype.illuminance import Illuminance
 from ladybug.datatype.energyflux import EnergyFlux
-from ladybug.datatype.fraction import Fraction
-from ladybug.header import Header
-from honeybee_radiance.postprocess.annual import generate_default_schedule
 
 from ..metrics import (average_values_array2d, cumulative_values_array2d,
     peak_values_array2d)
-from ..util import filter_array, hoys_mask, check_array_dim, \
-    _filter_grids_by_pattern
+from ..util import filter_array, hoys_mask
 from ..annualirradiance import _annual_irradiance_vis_metadata
-from ..electriclight import array_to_dimming_fraction
 from .. import type_hints
 from ..dynamic import DynamicSchedule
 from .results import Results
@@ -105,7 +96,7 @@ class AnnualIrradiance(Results):
 
     def annual_metrics(
             self, hoys: list = [], states: DynamicSchedule = None,
-            grids_filter: str = '*') ->type_hints.annual_metrics:
+            grids_filter: str = '*') -> type_hints.annual_irradiance_metrics:
         """Calculate multiple annual irradiance metrics.
 
         This method will calculate the following metrics:
