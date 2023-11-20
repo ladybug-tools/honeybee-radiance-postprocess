@@ -252,14 +252,14 @@ class _ResultsFolder(object):
         """Get a sun up hours masking array of the Wea hours."""
         sun_up_hours_mask = \
             np.where(np.isin(self.wea.hoys, self.sun_up_hours))[0]
-        
+
         return sun_up_hours_mask
 
     def _get_sun_down_hours_mask(self) -> List[int]:
         """Get a sun down hours masking array of the Wea hours."""
         sun_down_hours_mask = \
             np.where(~np.isin(self.wea.hoys, self.sun_up_hours))[0]
-        
+
         return sun_down_hours_mask
 
     def __repr__(self):
@@ -287,18 +287,21 @@ class Results(_ResultsFolder):
         * arrays
         * valid_states
         * datatype
+        * unit
     """
     __slots__ = ('_schedule', '_occ_pattern', '_total_occ', '_sun_down_occ_hours',
-                 '_occ_mask', '_arrays', '_valid_states', '_datatype')
+                 '_occ_mask', '_arrays', '_valid_states', '_datatype', '_unit')
 
     def __init__(self, folder, datatype: DataTypeBase = None,
-                 schedule: list = None, load_arrays: bool = False):
+                 schedule: list = None, unit: str = None,
+                 load_arrays: bool = False):
         """Initialize Results."""
         _ResultsFolder.__init__(self, folder)
         self.schedule = schedule
         self._arrays = self._load_arrays() if load_arrays else {}
         self._valid_states = self._get_valid_states()
         self.datatype = datatype
+        self.unit = unit
 
     @property
     def schedule(self):
@@ -363,6 +366,15 @@ class Results(_ResultsFolder):
         else:
             value = GenericType('Generic', '')
         self._datatype = value
+
+    @property
+    def unit(self):
+        """Return unit of hourly values."""
+        return self._unit
+
+    @unit.setter
+    def unit(self, value):
+        self._unit = value
 
     def total(
             self, hoys: list = [], states: DynamicSchedule = None,
@@ -835,7 +847,7 @@ class Results(_ResultsFolder):
                 values = np.zeros(len(self.sun_up_hours))
             annual_array = Results.values_to_annual(
                 self.sun_up_hours, values, self.timestep)
-            header = Header(Illuminance(), 'lux', analysis_period)
+            header = Header(self.datatype, self.unit, analysis_period)
             header.metadata['sensor grid'] = grid_info['full_id']
             header.metadata['sensor index'] = idx
             data_collections.append(
@@ -884,7 +896,7 @@ class Results(_ResultsFolder):
                     values = np.zeros(len(self.sun_up_hours))
                 annual_array = Results.values_to_annual(
                     self.sun_up_hours, values, self.timestep)
-                header = Header(self.datatype, self.datatype.units, analysis_period)
+                header = Header(self.datatype, self.unit, analysis_period)
                 header.metadata['sensor grid'] = grid_id
                 header.metadata['sensor index'] = idx
                 data_collections_grid.append(
