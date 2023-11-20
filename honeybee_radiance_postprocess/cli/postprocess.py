@@ -15,6 +15,7 @@ from honeybee_radiance_postprocess.metrics import da_array2d, cda_array2d, \
 from honeybee_radiance_postprocess.reader import binary_to_array
 
 from ..annual import occupancy_schedule_8_to_6
+from ..dynamic import DynamicSchedule
 from ..en17037 import en17037_to_folder
 from ..util import filter_array
 from .two_phase import two_phase
@@ -655,6 +656,10 @@ def annual_sunlight_exposure(
     'larger than 1.'
 )
 @click.option(
+    '--wea', type=click.Path(exists=True, file_okay=True, resolve_path=True),
+    help='Optional Wea file.'
+)
+@click.option(
     '--grid-name', '-gn', help='Optional name of each metric file.',
     default=None, show_default=True
 )
@@ -664,7 +669,7 @@ def annual_sunlight_exposure(
 )
 def annual_metrics_file(
     file, sun_up_hours, schedule, threshold, lower_threshold, upper_threshold,
-    timestep, grid_name, sub_folder
+    timestep, wea, grid_name, sub_folder
 ):
     """Compute annual metrics for a single file and write the metrics in a
     subfolder.
