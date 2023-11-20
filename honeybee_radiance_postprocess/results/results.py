@@ -884,7 +884,7 @@ class Results(_ResultsFolder):
                     values = np.zeros(len(self.sun_up_hours))
                 annual_array = Results.values_to_annual(
                     self.sun_up_hours, values, self.timestep)
-                header = Header(Illuminance(), 'lux', analysis_period)
+                header = Header(self.datatype, self.datatype.units, analysis_period)
                 header.metadata['sensor grid'] = grid_id
                 header.metadata['sensor index'] = idx
                 data_collections_grid.append(

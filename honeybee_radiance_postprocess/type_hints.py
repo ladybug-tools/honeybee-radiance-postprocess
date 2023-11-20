@@ -4,9 +4,15 @@ import numpy as np
 from ladybug.datacollection import HourlyContinuousCollection
 
 annual_metric = Tuple[List[np.ndarray], List[dict]]
-annual_metrics = Tuple[
+annual_daylight_metrics = Tuple[
     List[np.ndarray],
     List[np.ndarray],
+    List[np.ndarray],
+    List[np.ndarray],
+    List[np.ndarray],
+    List[dict]
+]
+annual_irradiance_metrics = Tuple[
     List[np.ndarray],
     List[np.ndarray],
     List[np.ndarray],

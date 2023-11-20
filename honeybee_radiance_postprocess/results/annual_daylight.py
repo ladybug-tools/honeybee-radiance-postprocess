@@ -206,7 +206,7 @@ class AnnualDaylight(Results):
     def annual_metrics(
             self, threshold: float = 300, min_t: float = 100,
             max_t: float = 3000, states: DynamicSchedule = None,
-            grids_filter: str = '*') -> type_hints.annual_metrics:
+            grids_filter: str = '*') -> type_hints.annual_daylight_metrics:
         """Calculate multiple annual daylight metrics.
 
         This method will calculate the following metrics:
@@ -645,7 +645,7 @@ class AnnualDaylight(Results):
     def annual_uniformity_ratio_to_folder(
             self, target_folder: str, threshold: float = 0.5,
             states: DynamicSchedule = None, grids_filter: str = '*'
-            ) -> type_hints.annual_uniformity_ratio:
+            ):
         """Calculate annual uniformity ratio and write it to a folder.
 
         Args:
