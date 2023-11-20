@@ -656,6 +656,10 @@ def annual_sunlight_exposure(
     'larger than 1.'
 )
 @click.option(
+    '--wea', type=click.Path(exists=True, file_okay=True, resolve_path=True),
+    help='Optional Wea file.'
+)
+@click.option(
     '--grid-name', '-gn', help='Optional name of each metric file.',
     default=None, show_default=True
 )
