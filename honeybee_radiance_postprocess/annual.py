@@ -6,19 +6,24 @@ from ladybug.analysisperiod import AnalysisPeriod
 from .util import filter_array
 
 
-def leed_occupancy_schedule(as_list: bool = False) -> Union[np.ndarray, list]:
+def occupancy_schedule_8_to_6(
+        timestep: int = 1, as_list: bool = False) -> Union[np.ndarray, list]:
     """Create an occupancy schedule for LEED (8 am to 6 pm).
 
     Args:
+        timestep: An integer value noting the number of time steps per hour.
+            Defaults to 1.
         as_list: Boolean toggle to output the schedule as a Python list instead
             of a NumPy array. Defaults to False.
 
     Returns:
         A schedule as an array or list.
     """
-    leed_hours = np.array(AnalysisPeriod(st_hour=8, end_hour=17).hoys_int)
-    schedule = np.zeros(8760).astype(int)
-    schedule[leed_hours] = 1
+    full_analysis_period = AnalysisPeriod(timestep=timestep)
+    analysis_period = AnalysisPeriod(st_hour=8, end_hour=17, timestep=timestep)
+    schedule = np.zeros(8760 * timestep).astype(int)
+    hours = np.where(np.isin(full_analysis_period.hoys, analysis_period.hoys))[0]
+    schedule[hours] = 1
     if as_list:
         schedule = schedule.tolist()
 
