@@ -19,7 +19,7 @@ from honeybee.units import conversion_factor_to_meters
 from honeybee_radiance.writer import _filter_by_pattern
 from honeybee_radiance.postprocess.annual import filter_schedule_by_hours
 from .metrics import da_array2d, ase_array2d
-from .annual import schedule_to_hoys, leed_occupancy_schedule
+from .annual import schedule_to_hoys, occupancy_schedule_8_to_6
 from .results import Results
 from .util import filter_array, recursive_dict_merge
 
@@ -288,7 +288,7 @@ def leed_states_schedule(
         results = Results(results)
 
     grids_info = results._filter_grids(grids_filter=grids_filter)
-    schedule = leed_occupancy_schedule(as_list=True)
+    schedule = occupancy_schedule_8_to_6(as_list=True)
     occ_pattern = \
         filter_schedule_by_hours(results.sun_up_hours, schedule=schedule)[0]
     occ_mask = np.array(occ_pattern)
@@ -545,7 +545,7 @@ def leed_option_one(
         -   grids_info: Grid information.
     """
     # use default leed occupancy schedule
-    schedule = leed_occupancy_schedule(as_list=True)
+    schedule = occupancy_schedule_8_to_6(as_list=True)
 
     if not isinstance(results, Results):
         results = Results(results, schedule=schedule)
