@@ -20,7 +20,7 @@ from honeybee_radiance.writer import _filter_by_pattern
 from honeybee_radiance.postprocess.annual import filter_schedule_by_hours
 from .metrics import da_array2d, ase_array2d
 from .annual import schedule_to_hoys, occupancy_schedule_8_to_6
-from .results import Results
+from .results.annual_daylight import AnnualDaylight
 from .util import filter_array, recursive_dict_merge
 
 
@@ -204,7 +204,7 @@ def _ase_hourly_percentage(
     occupancy_hoys = schedule_to_hoys(results.schedule, results.sun_up_hours)
     # map states to 8760 values
     percentage_above = results.values_to_annual(
-        occupancy_hoys, percentage_above, results.timestep)
+        occupancy_hoys, percentage_above, results.timestep, results.study_hours)
     header = Header(Fraction('Percentage above 1000 direct lux'), '%',
                     AnalysisPeriod(results.timestep),
                     metadata={'SensorGrid': grid_info['name']})
@@ -492,7 +492,7 @@ def leed_states_schedule(
     # map states to 8760 values
     for light_path, shd_trans in states_schedule.items():
         mapped_states = results.values_to_annual(
-            occupancy_hoys, shd_trans, results.timestep)
+            occupancy_hoys, shd_trans, results.timestep, results.study_hours)
         states_schedule[light_path] = mapped_states
 
     return states_schedule, fail_to_comply, shd_trans_dict
