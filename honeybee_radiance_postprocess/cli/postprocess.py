@@ -656,10 +656,6 @@ def annual_sunlight_exposure(
     'larger than 1.'
 )
 @click.option(
-    '--wea', type=click.Path(exists=True, file_okay=True, resolve_path=True),
-    help='Optional Wea file.'
-)
-@click.option(
     '--grid-name', '-gn', help='Optional name of each metric file.',
     default=None, show_default=True
 )
@@ -669,7 +665,7 @@ def annual_sunlight_exposure(
 )
 def annual_metrics_file(
     file, sun_up_hours, schedule, threshold, lower_threshold, upper_threshold,
-    timestep, wea, grid_name, sub_folder
+    study_info, grid_name, sub_folder
 ):
     """Compute annual metrics for a single file and write the metrics in a
     subfolder.
