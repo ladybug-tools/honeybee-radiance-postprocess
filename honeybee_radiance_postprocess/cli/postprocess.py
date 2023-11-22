@@ -594,13 +594,9 @@ def annual_sunlight_exposure(
     show_default=True
 )
 @click.option(
-    '--timestep', type=int, default=1, help='The timestep of the Wea file. '
-    'The timestep is used to generate a default occupancy schedule. If a '
-    'schedule is provided the timestep will have no use.'
-)
-@click.option(
-    '--wea', type=click.Path(exists=True, file_okay=True, resolve_path=True),
-    help='Optional Wea file.'
+    '--study-info', type=click.Path(exists=True, file_okay=True, resolve_path=True),
+    help='Optional study info file. This option is needed if the time step is '
+    'larger than 1.'
 )
 @click.option(
     '--grid-name', '-gn', help='Optional name of each metric file.',
@@ -612,7 +608,7 @@ def annual_sunlight_exposure(
 )
 def annual_metrics_file(
     file, sun_up_hours, schedule, threshold, lower_threshold, upper_threshold,
-    timestep, wea, grid_name, sub_folder
+    study_info, grid_name, sub_folder
 ):
     """Compute annual metrics for a single file and write the metrics in a
     subfolder.
@@ -637,11 +633,15 @@ def annual_metrics_file(
     except Exception:
         array = binary_to_array(file)
 
-    if wea:
-        wea = Wea.from_file(wea)
+    if study_info:
+        with open(study_info) as file:
+            study_info = json.load(file)
+        timestep = study_info['timestep']
+        study_hours = study_info['study_hours']
     else:
-        # create a dummy Wea object assuming 1 time step per hour for 8760 hours
-        wea = Wea.from_annual_values(Location(), [1000] * 8760, [1000] * 8760)
+        timestep = 1
+        study_hours = \
+            Wea.from_annual_values(Location(), [0] * 8760, [0] * 8760).hoys
 
     # read sun up hours
     sun_up_hours = np.loadtxt(sun_up_hours)
@@ -655,8 +655,8 @@ def annual_metrics_file(
     if grid_name is None:
         grid_name = file.stem
 
-    sun_up_hours_mask =  np.where(np.isin(wea.hoys, sun_up_hours))[0]
-    sun_down_hours_mask =  np.where(~np.isin(wea.hoys, sun_up_hours))[0]
+    sun_up_hours_mask =  np.where(np.isin(study_hours, sun_up_hours))[0]
+    sun_down_hours_mask =  np.where(~np.isin(study_hours, sun_up_hours))[0]
     occ_mask = np.array(schedule, dtype=int)[sun_up_hours_mask]
     sun_down_occ_hours =  np.array(schedule, dtype=int)[sun_down_hours_mask].sum()
     total_hours = sum(schedule)
