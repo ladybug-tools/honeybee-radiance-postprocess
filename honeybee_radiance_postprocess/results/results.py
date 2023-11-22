@@ -7,13 +7,12 @@ import numpy as np
 
 from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.datacollection import HourlyContinuousCollection
-from ladybug.datatype.illuminance import Illuminance
 from ladybug.datatype.generic import GenericType
 from ladybug.datatype.base import DataTypeBase
 from ladybug.dt import DateTime
 from ladybug.header import Header
-from ladybug.location import Location
 from ladybug.wea import Wea
+from ladybug.location import Location
 
 from ..annual import occupancy_schedule_8_to_6
 from ..metrics import (average_values_array2d, cumulative_values_array2d,
@@ -41,19 +40,18 @@ class _ResultsFolder(object):
         * default_states
         * grid_states
         * timestep
-        * wea
+        * study_hours
 
     """
     __slots__ = ('_folder', '_grids_info', '_sun_up_hours', '_sun_down_hours',
                  '_sun_up_hours_mask', '_sun_down_hours_mask', '_datetimes',
                  '_light_paths', '_default_states', '_grid_states', '_timestep',
-                 '_wea')
+                 '_study_hours')
 
     def __init__(self, folder: Union[str, Path]):
         """Initialize ResultsFolder."""
         self._folder = Path(folder).absolute().as_posix()
-        self._timestep = self._get_timestep()
-        self._wea = self._get_wea()
+        self._timestep, self._study_hours = self._get_study_info()
         self.grids_info = self._get_grids_info()
         self.sun_up_hours = self._get_sun_up_hours()
         self._sun_up_hours_mask = self._get_sun_up_hours_mask()
@@ -89,10 +87,10 @@ class _ResultsFolder(object):
                 grid_info['light_path'] = _grid_info
                 if not grid_info['light_path']:
                     # if light path is empty
-                    grid_info['light_path'] = [['__static__']]
+                    grid_info['light_path'] = [['__static_apertures__']]
             else:
                 # if light path key is nonexistent
-                grid_info['light_path'] = [['__static__']]
+                grid_info['light_path'] = [['__static_apertures__']]
         self._grids_info = grids_info
 
     @property
@@ -105,7 +103,7 @@ class _ResultsFolder(object):
         assert isinstance(sun_up_hours, list), \
             f'Sun up hours must be a list. Got object of type: {type(sun_up_hours)}'
         self._sun_up_hours = sun_up_hours
-        self.sun_down_hours = np.setdiff1d(self.wea.hoys, sun_up_hours).tolist()
+        self.sun_down_hours = np.setdiff1d(self._study_hours, sun_up_hours).tolist()
 
     @property
     def sun_up_hours_mask(self):
@@ -154,9 +152,9 @@ class _ResultsFolder(object):
         return self._timestep
 
     @property
-    def wea(self):
-        """Return Wea object."""
-        return self._wea
+    def study_hours(self):
+        """Return study hours as a list."""
+        return self._study_hours
 
     def _get_light_paths(self) -> list:
         """Find all light paths in grids_info."""
@@ -165,18 +163,18 @@ class _ResultsFolder(object):
             try:
                 light_paths = grid_info['light_path']
             except KeyError:
-                grid_info['light_path'] = [['__static__']]
+                grid_info['light_path'] = [['__static_apertures__']]
                 light_paths = grid_info['light_path']
             for light_path in light_paths:
                 light_path = light_path[0]
                 if light_path in lp:
                     continue
-                if light_path == '__static__':
+                if light_path == '__static_apertures__':
                     lp.insert(0, light_path)
                 else:
                     lp.append(light_path)
-            if not light_paths and '__static__' not in lp:
-                lp.insert(0, '__static__')
+            if not light_paths and '__static_apertures__' not in lp:
+                lp.insert(0, '__static_apertures__')
 
         return lp
 
@@ -198,32 +196,19 @@ class _ResultsFolder(object):
             # only static results
             return {}
 
-    def _get_timestep(self) -> float:
-        """Get timestep."""
-        # timestep has no use until sub-annual annual-daylight is supported
-        timestep_file = Path(self.folder, 'timestep.txt')
-        if timestep_file.is_file():
-            with open(timestep_file) as file:
-                timestep = int(file.readline())
+    def _get_study_info(self) -> Tuple[int, list]:
+        """Read study info file."""
+        study_info_file = Path(self.folder).joinpath('study_info.json')
+        if study_info_file.exists():
+            with open(study_info_file) as file:
+                study_info = json.load(file)
         else:
-            timestep = 1
+            study_info = {}
+            study_info['timestep'] = 1
+            study_info['study_hours'] = \
+                Wea.from_annual_values(Location(), [0] * 8760, [0] * 8760).hoys
 
-        return timestep
-
-    def _get_wea(self) -> Union[Wea, None]:
-        """Get Wea object."""
-        wea_files = list(Path(self.folder).glob('*.wea'))
-        if len(wea_files) == 0:
-            # create a dummy Wea object assuming 1 time step per hour for 8760 hours
-            wea = Wea.from_annual_values(Location(), [1000] * 8760, [1000] * 8760)
-        elif len(wea_files) == 1:
-            wea = Wea.from_file(wea_files[0], timestep=self.timestep)
-        else:
-            raise ValueError(
-                f'Expected one .wea file in results folder. Found {len(wea_files)}.wea file.'
-                )
-
-        return wea
+        return study_info['timestep'], study_info['study_hours']
 
     def _get_datetimes(self) -> List[DateTime]:
         """Get a list of DateTimes of the sun up hours."""
@@ -249,16 +234,16 @@ class _ResultsFolder(object):
         return sun_up_hours
 
     def _get_sun_up_hours_mask(self) -> List[int]:
-        """Get a sun up hours masking array of the Wea hours."""
+        """Get a sun up hours masking array of the study hours."""
         sun_up_hours_mask = \
-            np.where(np.isin(self.wea.hoys, self.sun_up_hours))[0]
+            np.isin(self.study_hours, self.sun_up_hours)
 
         return sun_up_hours_mask
 
     def _get_sun_down_hours_mask(self) -> List[int]:
-        """Get a sun down hours masking array of the Wea hours."""
+        """Get a sun down hours masking array of the study hours."""
         sun_down_hours_mask = \
-            np.where(~np.isin(self.wea.hoys, self.sun_up_hours))[0]
+            np.where(~np.isin(self.study_hours, self.sun_up_hours))[0]
 
         return sun_down_hours_mask
 
@@ -513,7 +498,7 @@ class Results(_ResultsFolder):
             Tuple: A tuple with the average value for each sensor and grid information.
         """
         grids_info = self._filter_grids(grids_filter=grids_filter)
-        full_length = len(self.wea) if len(hoys) == 0 else len(hoys)
+        full_length = len(self.study_hours) if len(hoys) == 0 else len(hoys)
         mask = hoys_mask(self.sun_up_hours, hoys)
 
         average_values = []
@@ -895,7 +880,7 @@ class Results(_ResultsFolder):
                 else:
                     values = np.zeros(len(self.sun_up_hours))
                 annual_array = Results.values_to_annual(
-                    self.sun_up_hours, values, self.timestep)
+                    self.sun_up_hours, values, self.timestep, self.study_hours)
                 header = Header(self.datatype, self.unit, analysis_period)
                 header.metadata['sensor grid'] = grid_id
                 header.metadata['sensor index'] = idx
@@ -944,7 +929,7 @@ class Results(_ResultsFolder):
     def values_to_annual(
             hours: Union[List[float], np.ndarray],
             values: Union[List[float], np.ndarray],
-            timestep: float, base_value: int = 0) -> np.ndarray:
+            timestep: int, study_hours: list, base_value: int = 0) -> np.ndarray:
         """Map a 1D NumPy array based on a set of hours to an annual array.
 
         This method creates an array with a base value of length 8760 and
@@ -956,19 +941,20 @@ class Results(_ResultsFolder):
                 array.
             values: A list of values to map to an annual array. This can be a
                 regular list or a 1D NumPy array.
-            timestep: Timestep of the simulation.
+            timestep: Time step of the simulation.
+            study_hours: Study hours of the simulation.
             base_value: A value that will be applied for all the base array.
 
         Returns:
             A 1D NumPy array.
         """
-        if not isinstance(values, np.ndarray):
-            values = np.array(values)
+        values = np.array(values)
         check_array_dim(values, 1)
-        hours = np.array(hours).astype(int)
+        hours = np.array(hours)
         assert hours.shape == values.shape
+        indices = np.where(np.isin(study_hours, hours))[0]
         annual_array = np.repeat(base_value, 8760 * timestep).astype(np.float32)
-        annual_array[hours] = values
+        annual_array[indices] = values
 
         return annual_array
 
@@ -1089,7 +1075,7 @@ class Results(_ResultsFolder):
         # I.e., state integer <--> state identifier.
         valid_states = self.valid_states[light_path]
         if state in valid_states:
-            if light_path == '__static__':
+            if light_path == '__static_apertures__':
                 state_identifier = 'default'
             else:
                 state_identifier = self.grid_states[grid_id][light_path][state]
@@ -1326,7 +1312,7 @@ class Results(_ResultsFolder):
 
         Example of output format:
         {
-            '__static__': [0],
+            '__static_apertures__': [0],
             'Room1_North': [0, 1],
             'Room1_South': [0, 1],
             'Room2_North1': [0, 1],
@@ -1338,8 +1324,8 @@ class Results(_ResultsFolder):
         """
         valid_states = {}
         grid_states = self.grid_states
-        if '__static__' in self.light_paths:
-            valid_states['__static__'] = [0]
+        if '__static_apertures__' in self.light_paths:
+            valid_states['__static_apertures__'] = [0]
         for light_paths in grid_states.values():
             for light_path, states in light_paths.items():
                 if light_path not in valid_states:
