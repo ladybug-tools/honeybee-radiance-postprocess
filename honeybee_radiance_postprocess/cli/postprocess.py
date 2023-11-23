@@ -595,7 +595,7 @@ def annual_sunlight_exposure(
 )
 @click.option(
     '--study-info',
-    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True),
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True),
     help='Optional study info file. This option is needed if the time step is '
     'larger than 1.'
 )
@@ -634,7 +634,7 @@ def annual_metrics_file(
     except Exception:
         array = binary_to_array(file)
 
-    if study_info:
+    if study_info and os.path.isfile(study_info):
         with open(study_info) as file:
             study_info = json.load(file)
         timestep = study_info['timestep']
