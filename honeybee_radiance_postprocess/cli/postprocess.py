@@ -594,7 +594,8 @@ def annual_sunlight_exposure(
     show_default=True
 )
 @click.option(
-    '--study-info', type=click.Path(exists=True, file_okay=True, resolve_path=True),
+    '--study-info',
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True),
     help='Optional study info file. This option is needed if the time step is '
     'larger than 1.'
 )
