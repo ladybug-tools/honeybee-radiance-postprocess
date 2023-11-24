@@ -51,12 +51,13 @@ def schedule_to_hoys(
     if not isinstance(schedule, np.ndarray):
         schedule = np.array(schedule).astype(int)
 
-    hours = np.arange(0.5, 8760.5, 1.0)
+    hours = np.arange(0, 8760, 1)
     if sun_up_hours:
         sun_up_hours = np.array(sun_up_hours).astype(int)
         mask = np.ones(schedule.size, dtype=bool)
         mask[sun_up_hours] = False
         schedule[mask] = 0
+
     occ_hoys = filter_array(hours, np.array(schedule))
 
     if as_list:

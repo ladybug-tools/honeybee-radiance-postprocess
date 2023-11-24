@@ -11,8 +11,6 @@ from ladybug.datatype.generic import GenericType
 from ladybug.datatype.base import DataTypeBase
 from ladybug.dt import DateTime
 from ladybug.header import Header
-from ladybug.wea import Wea
-from ladybug.location import Location
 
 from ..annual import occupancy_schedule_8_to_6
 from ..metrics import (average_values_array2d, cumulative_values_array2d,
