@@ -103,7 +103,7 @@ class _ResultsFolder(object):
         assert isinstance(sun_up_hours, list), \
             f'Sun up hours must be a list. Got object of type: {type(sun_up_hours)}'
         self._sun_up_hours = sun_up_hours
-        self.sun_down_hours = np.setdiff1d(self._study_hours, sun_up_hours).tolist()
+        self.sun_down_hours = np.setdiff1d(self.study_hours, sun_up_hours).tolist()
 
     @property
     def sun_up_hours_mask(self):
@@ -202,11 +202,13 @@ class _ResultsFolder(object):
         if study_info_file.exists():
             with open(study_info_file) as file:
                 study_info = json.load(file)
+            if study_info['timestep'] == 1:
+                study_info['study_hours'] = \
+                    list(map(int, study_info['study_hours']))
         else:
             study_info = {}
             study_info['timestep'] = 1
-            study_info['study_hours'] = \
-                Wea.from_annual_values(Location(), [0] * 8760, [0] * 8760).hoys
+            study_info['study_hours'] = AnalysisPeriod().hoys
 
         return study_info['timestep'], study_info['study_hours']
 
@@ -230,6 +232,8 @@ class _ResultsFolder(object):
         """Get sun up hours from folder."""
         suh_fp = Path(self.folder, 'sun-up-hours.txt')
         sun_up_hours = np.loadtxt(suh_fp, dtype=float).tolist()
+        if self.timestep == 1:
+            sun_up_hours = list(map(int, sun_up_hours))
 
         return sun_up_hours
 
