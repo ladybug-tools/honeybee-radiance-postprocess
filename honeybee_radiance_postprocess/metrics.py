@@ -202,6 +202,9 @@ def udi_lower_array1d(
         # set total_occ to number of columns in array
         total_occ = array.size
 
+    if min_t == 0:
+        return np.float64(0)
+
     return np.float64(((array < min_t).sum() + sun_down_occ_hours) / total_occ * 100)
 
 
