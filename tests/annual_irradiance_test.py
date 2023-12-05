@@ -135,3 +135,12 @@ def test_results_sun_up_hours_to_annual_t3():
     annual_array = Results.values_to_annual(
         results.sun_up_hours, values, results.timestep, results.study_hours)
     assert annual_array.size == 8760 * 3
+
+
+def test_results_sun_up_hours_to_annual_t4():
+    folder = Path('./tests/assets/results_folders/results_irradiance_timestep_4')
+    results = AnnualIrradiance(folder)
+    values = np.random.rand(len(results.sun_up_hours))
+    annual_array = Results.values_to_annual(
+        results.sun_up_hours, values, results.timestep, results.study_hours)
+    assert annual_array.size == 8760 * 4
