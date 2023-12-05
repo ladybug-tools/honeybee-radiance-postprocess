@@ -690,13 +690,13 @@ class Results(_ResultsFolder):
         return total, grids_info
 
     def point_in_time(
-            self, datetime: Union[int, DateTime], states: DynamicSchedule = None,
+            self, datetime: Union[float, DateTime], states: DynamicSchedule = None,
             grids_filter: str = '*', res_type: str = 'total'
             ) -> type_hints.point_in_time:
         """Get point in time values.
 
         Args:
-            datetime: Hour of the as an integer or DateTime object.
+            datetime: Hour of the year as a float or DateTime object.
             states: A dictionary of states. Defaults to None.
             grids_filter: The name of a grid or a pattern to filter the grids.
                 Defaults to '*'.
@@ -707,7 +707,7 @@ class Results(_ResultsFolder):
         """
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
-        if isinstance(datetime, int):
+        if isinstance(datetime, float):
             dt = DateTime.from_hoy(datetime)
         elif isinstance(datetime, DateTime):
             dt = datetime
@@ -729,6 +729,46 @@ class Results(_ResultsFolder):
             else:
                 # datetime not in sun up hours, add zeros
                 pit_values.append(np.zeros(grid_info['count']))
+
+        return pit_values, grids_info
+
+    def point_in_time_to_folder(
+            self, target_folder: str, datetime: Union[float, DateTime],
+            states: DynamicSchedule = None, grids_filter: str = '*',
+            res_type: str = 'total'
+            ) -> type_hints.point_in_time:
+        """Get point in time values and write the values to a folder.
+
+        Args:
+            target_folder: Folder path to write annual metrics in. Usually this
+                folder is called 'metrics'.
+            datetime: Hour of the year as a float or DateTime object.
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+            res_type: Type of results to load. Defaults to 'total'.
+
+        Returns:
+            Tuple: A tuple with point in time values and grid information.
+        """
+        folder = Path(target_folder)
+        folder.mkdir(parents=True, exist_ok=True)
+
+        pit_values, grids_info = self.point_in_time(
+            datetime=datetime, states=states,
+            grids_filter=grids_filter, res_type=res_type)
+
+        metric_folder = folder.joinpath('point_in_time')
+
+        for count, grid_info in enumerate(grids_info):
+            d = pit_values[count]
+            full_id = grid_info['full_id']
+            output_file = metric_folder.joinpath(f'{full_id}.pit')
+            output_file.parent.mkdir(parents=True, exist_ok=True)
+            np.savetxt(output_file, d, fmt='%.2f')
+
+        info_file = metric_folder.joinpath('grids_info.json')
+        info_file.write_text(json.dumps(grids_info))
 
         return pit_values, grids_info
 
