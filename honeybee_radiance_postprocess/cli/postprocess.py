@@ -492,6 +492,62 @@ def annual_to_data(
         sys.exit(0)
 
 
+@post_process.command('point-in-time')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.argument(
+    'hoy', type=click.FLOAT
+)
+@click.option(
+    '--states', '-st', help='A JSON file with a dictionary of states. If states '
+    'are not provided the default states will be used for any aperture groups.',
+    default=None, show_default=True,
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
+    show_default=True
+)
+@click.option(
+    '--total/--direct', is_flag=True, default=True, help='Switch between total '
+    'and direct results. Default is total.'
+)
+@click.option(
+    '--sub-folder', '-sf', help='Optional relative path for subfolder to write output '
+    'metric files.', default='metrics'
+)
+def point_in_time(
+    folder, hoy, states, grids_filter, total, sub_folder
+):
+    """Get point in time values.
+
+    \b
+    Args:
+        folder: Results folder. This folder is an output folder of annual daylight
+            recipe. Folder should include grids_info.json and sun-up-hours.txt. The
+            command uses the list in grids_info.json to find the result files for each
+            sensor grid.
+        hoy: An HOY (point-in-time) for which to get the point-in-time values.
+    """
+    try:
+        if states:
+            states = DynamicSchedule.from_json(states)
+
+        res_type = 'total' if total is True else 'direct'
+
+        results = Results(folder)
+        results.point_in_time_to_folder(
+            sub_folder, datetime=hoy, states=states, grids_filter=grids_filter,
+            res_type=res_type)
+    except Exception:
+        _logger.exception('Failed to point in time values.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
 @post_process.command('annual-sunlight-exposure')
 @click.argument(
     'folder',
