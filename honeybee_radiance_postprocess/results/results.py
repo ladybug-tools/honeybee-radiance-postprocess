@@ -238,7 +238,7 @@ class _ResultsFolder(object):
     def _get_sun_up_hours_mask(self) -> List[int]:
         """Get a sun up hours masking array of the study hours."""
         sun_up_hours_mask = \
-            np.isin(self.study_hours, self.sun_up_hours)
+            np.where(np.isin(self.study_hours, self.sun_up_hours))[0]
 
         return sun_up_hours_mask
 
@@ -833,7 +833,7 @@ class Results(_ResultsFolder):
             else:
                 values = np.zeros(len(self.sun_up_hours))
             annual_array = Results.values_to_annual(
-                self.sun_up_hours, values, self.timestep)
+                self.sun_up_hours, values, self.timestep, self.study_hours)
             header = Header(self.datatype, self.unit, analysis_period)
             header.metadata['sensor grid'] = grid_info['full_id']
             header.metadata['sensor index'] = idx
