@@ -538,7 +538,7 @@ def point_in_time(
 
         res_type = 'total' if total is True else 'direct'
 
-        results = Results(folder)
+        results = AnnualDaylight(folder)
         results.point_in_time_to_folder(
             sub_folder, datetime=hoy, states=states, grids_filter=grids_filter,
             res_type=res_type)
@@ -683,6 +683,7 @@ def annual_metrics_file(
     Args:
         file: Annual illuminance file. This can be either a NumPy file or a
             binary Radiance file.
+        sun_up_hours: A file with the sun up hours of the study.
     """
     file = Path(file)
     # load file to array
@@ -692,8 +693,8 @@ def annual_metrics_file(
         array = binary_to_array(file)
 
     if study_info and os.path.isfile(study_info):
-        with open(study_info) as file:
-            study_info = json.load(file)
+        with open(study_info) as si_file:
+            study_info = json.load(si_file)
         timestep = study_info['timestep']
         study_hours = study_info['study_hours']
     else:
@@ -721,6 +722,7 @@ def annual_metrics_file(
 
     array_filter = np.apply_along_axis(
         filter_array, 1, array, mask=occ_mask)
+
     try:
         da = da_array2d(array_filter, total_occ=total_hours, threshold=threshold)
         cda = cda_array2d(array_filter, total_occ=total_hours, threshold=threshold)
