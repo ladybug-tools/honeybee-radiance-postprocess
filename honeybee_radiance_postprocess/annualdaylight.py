@@ -46,7 +46,7 @@ def metrics_to_files(ill_file, occ_pattern, output_folder, threshold=300,
             in the the occ_pattern.
 
     Returns:
-        Tuple(file.da, file.cda, file.luid, file.uid, file.hudi)
+        Tuple(file.da, file.cda, file.udi, file.udi, file.udi)
 
     """
     if not os.path.isdir(output_folder):
