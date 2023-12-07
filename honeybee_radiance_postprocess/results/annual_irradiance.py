@@ -172,11 +172,10 @@ class AnnualIrradiance(Results):
         }
         for metric, data in pattern.items():
             metric_folder = folder.joinpath(metric)
-            extension = metric.split('_')[0]
             for count, grid_info in enumerate(grids_info):
                 d = data[count]
                 full_id = grid_info['full_id']
-                output_file = metric_folder.joinpath(f'{full_id}.{extension}')
+                output_file = metric_folder.joinpath(f'{full_id}.res')
                 output_file.parent.mkdir(parents=True, exist_ok=True)
                 np.savetxt(output_file, d, fmt='%.2f')
 
