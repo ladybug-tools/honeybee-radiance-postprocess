@@ -954,7 +954,8 @@ class Results(_ResultsFolder):
         check_array_dim(values, 1)
         hours = np.array(hours)
         assert hours.shape == values.shape
-        indices = np.where(np.isin(study_hours, hours))[0]
+        full_ap = AnalysisPeriod(timestep=timestep)
+        indices = np.where(np.isin(full_ap.hoys, hours))[0]
         annual_array = np.repeat(base_value, 8760 * timestep).astype(np.float32)
         annual_array[indices] = values
 
