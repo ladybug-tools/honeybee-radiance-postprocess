@@ -949,3 +949,127 @@ def annual_irradiance_metrics(
         sys.exit(1)
     else:
         sys.exit(0)
+
+
+@post_process.command('convert-to-binary')
+@click.argument(
+    'input-matrix', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+)
+@click.option(
+    '--minimum', type=float, default='-inf', help='Minimum range for values to be '
+    'converted to 1.'
+)
+@click.option(
+    '--maximum', type=float, default='+inf', help='Maximum range for values to be '
+    'converted to 1.'
+)
+@click.option(
+    '--include-max/--exclude-max', is_flag=True, help='A flag to include the maximum '
+    'threshold itself. By default the threshold value will be included.', default=True
+)
+@click.option(
+    '--include-min/--exclude-min', is_flag=True, help='A flag to include the minimum '
+    'threshold itself. By default the threshold value will be included.', default=True
+)
+@click.option(
+    '--comply/--reverse', is_flag=True, help='A flag to reverse the selection logic. '
+    'This is useful for cases that you want to all the values outside a certain range '
+    'to be converted to 1. By default the input logic will be used as is.', default=True
+)
+@click.option(
+    '--name', '-n', help='Name of output file.', default='binary',
+    show_default=True
+)
+@click.option(
+    '--output-folder', '-of', help='Output folder.', default='.',
+    type=click.Path(exists=False, file_okay=False, dir_okay=True, resolve_path=True)
+)
+def convert_matrix_to_binary(
+    input_matrix, minimum, maximum, include_max, include_min, comply, name, output_folder
+):
+    """Postprocess a Radiance matrix and convert it to 0-1 values.
+
+    \b
+    This command is useful for translating Radiance results to outputs like
+    sunlight hours. Input matrix must be in ASCII or binary format. The input
+    Radiance file must have a header.
+
+    Args:
+        input-matrix: A Radiance matrix file.
+    """
+    array = binary_to_array(input_matrix)
+    minimum = float(minimum)
+    maximum = float(maximum)
+    try:
+        if include_max and include_min:
+            boolean_array = (array >= minimum) & (array <= maximum)
+        elif not include_max and not include_min:
+            boolean_array = (array > minimum) & (array < maximum)
+        elif include_max and not include_min:
+            boolean_array = (array > minimum) & (array <= maximum)
+        elif not include_max and include_min:
+            boolean_array = (array >= minimum) & (array < maximum)
+
+        if not comply:
+            # this will invert the boolean array
+            boolean_array = ~boolean_array
+        
+        binary_array = boolean_array.astype(int)
+        output_file = Path(output_folder, name)
+        output_file.parent.mkdir(parents=True, exist_ok=True)
+        np.save(output_file, binary_array)
+    except Exception:
+        _logger.exception('Failed to convert the input file to binary format.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('direct-sun-hours')
+@click.argument(
+    'input-matrix', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+)
+@click.option(
+    '--divisor', type=float, default=1, help='An optional number, that the summed '
+    'row will be divided by. For example, this can be a timestep, which can be used '
+    'to ensure that a summed row of irradiance yields cumulative radiation over '
+    'the entire time period of the matrix.'
+)
+@click.option(
+    '--output-folder', '-of', help='Output folder.', default='.',
+    type=click.Path(exists=False, file_okay=False, dir_okay=True, resolve_path=True)
+)
+def direct_sun_hours(
+    input_matrix, divisor, output_folder
+):
+    """Postprocess a Radiance matrix to direct sun hours and cumulative direct
+    sun hours.
+
+    \b
+    This command will convert values in the Radiance matrix file to 0-1 values.
+    The output will be a direct sun hours file, and a cumulative direct sun hours
+    file where the values are the summed values for each row.
+
+    Args:
+        input-matrix: A Radiance matrix file.
+    """
+    array = binary_to_array(input_matrix)
+
+    try:
+        boolean_array = (array > 0) & (array <= np.inf)
+
+        direct_sun_hours_array = boolean_array.astype(int)
+        cumulative_array = direct_sun_hours_array.sum(axis=1) / divisor
+
+        direct_sun_hours_file = Path(output_folder, 'direct_sun_hours')
+        direct_sun_hours_file.parent.mkdir(parents=True, exist_ok=True)
+        np.save(direct_sun_hours_file, direct_sun_hours_array)
+
+        cumulative_file = Path(output_folder, 'cumulative')
+        cumulative_file.parent.mkdir(parents=True, exist_ok=True)
+        np.save(cumulative_file, cumulative_array)
+    except Exception:
+        _logger.exception('Failed to convert the input file to direct sun hours.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
