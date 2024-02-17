@@ -1065,9 +1065,9 @@ def direct_sun_hours(
         direct_sun_hours_file.parent.mkdir(parents=True, exist_ok=True)
         np.save(direct_sun_hours_file, direct_sun_hours_array)
 
-        cumulative_file = Path(output_folder, 'cumulative')
+        cumulative_file = Path(output_folder, 'cumulative.res')
         cumulative_file.parent.mkdir(parents=True, exist_ok=True)
-        np.save(cumulative_file, cumulative_array)
+        np.savetxt(cumulative_file, cumulative_array, fmt='%.2f')
     except Exception:
         _logger.exception('Failed to convert the input file to direct sun hours.')
         sys.exit(1)
