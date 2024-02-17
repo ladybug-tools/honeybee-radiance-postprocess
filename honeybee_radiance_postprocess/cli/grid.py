@@ -31,7 +31,28 @@ def grid():
     '. Alternatively, the command will look for a _redist_info.json file inside the '
     'folder.', type=click.Path(file_okay=True, dir_okay=False, resolve_path=True)
 )
-def merge_grid_folder(input_folder, output_folder, extension, dist_info):
+@click.option(
+    '--output-extension', '-oe',
+    help='Output file extension. This is only used if as_text is set to True. '
+    'Otherwise the output extension will be npy.', default='ill', type=click.STRING
+)
+@click.option(
+    '--as-text', '-at',
+    help='Set to True if the output files should be saved as text instead of '
+    'NumPy files.', default=False, type=click.BOOL
+)
+@click.option(
+    '--fmt',
+    help='Format for the output files when saved as text.', default='%.2f',
+    type=click.STRING
+)
+@click.option(
+    '--delimiter',
+    help='Delimiter for the output files when saved as text.',
+    type=click.Choice(['space', 'tab']), default='tab'
+)
+def merge_grid_folder(input_folder, output_folder, extension, dist_info,
+                      output_extension, as_text, fmt, delimiter):
     """Restructure files in a distributed folder.
 
     \b
@@ -46,7 +67,9 @@ def merge_grid_folder(input_folder, output_folder, extension, dist_info):
         # handle optional case for Functions input
         if dist_info and not Path(dist_info).is_file():
             dist_info = None
-        restore_original_distribution(input_folder, output_folder, extension, dist_info)
+        restore_original_distribution(
+            input_folder, output_folder, extension, dist_info, output_extension,
+            as_text, fmt, delimiter)
     except Exception:
         _logger.exception('Failed to restructure data from folder.')
         sys.exit(1)
@@ -122,7 +145,8 @@ def merge_metrics_folder(input_folder, output_folder, dist_info, grids_info):
 
 
 def restore_original_distribution(
-        input_folder, output_folder, extension='npy', dist_info=None):
+        input_folder, output_folder, extension='npy', dist_info=None,
+        output_extension='ill', as_text=False, fmt='%.2f', delimiter='tab'):
     """Restructure files to the original distribution based on the distribution info.
     
     It will assume that the files in the input folder are NumPy files. However,
@@ -137,6 +161,12 @@ def restore_original_distribution(
             studies.
         dist_info: Path to dist_info.json file. If None, the function will try to load
             ``_redist_info.json`` file from inside the input_folder. (Default: None).
+        output_extension: Output file extension. This is only used if as_text
+            is set to True. Otherwise the output extension will be ```npy``.
+        as_text: Set to True if the output files should be saved as text instead
+            of NumPy files.
+        fmt: Format for the output files when saved as text.
+        delimiter: Delimiter for the output files when saved as text.
     """
     if not dist_info:
         _redist_info_file = Path(input_folder, '_redist_info.json')
@@ -178,7 +208,17 @@ def restore_original_distribution(
 
         out_array = np.concatenate(out_arrays)
         # save numpy array, .npy extension is added automatically
-        np.save(output_file, out_array)
+        if not as_text:
+            np.save(output_file, out_array)
+        else:
+            if output_extension.startswith('.'):
+                output_extension = output_extension[1:]
+            if delimiter == 'tab':
+                delimiter = '\t'
+            elif delimiter == 'space':
+                delimiter = ' '
+            np.savetxt(output_file.with_suffix(f'.{output_extension}'),
+                       out_array, fmt=fmt, delimiter=delimiter)
 
 
 def restore_original_distribution_metrics(
