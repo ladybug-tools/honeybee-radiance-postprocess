@@ -1058,7 +1058,7 @@ def direct_sun_hours(
     try:
         boolean_array = (array > 0) & (array <= np.inf)
 
-        direct_sun_hours_array = boolean_array.astype(int)
+        direct_sun_hours_array = boolean_array.astype(np.uint8)
         cumulative_array = direct_sun_hours_array.sum(axis=1) / divisor
 
         direct_sun_hours_file = Path(output_folder, 'direct_sun_hours')
