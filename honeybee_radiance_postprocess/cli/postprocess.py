@@ -1042,7 +1042,7 @@ def convert_matrix_to_binary(
 def direct_sun_hours(
     input_matrix, divisor, output_folder
 ):
-    """Postprocess a Radiance matrix to direct sun hours and cumulative direct
+    """Post-process a Radiance matrix to direct sun hours and cumulative direct
     sun hours.
 
     \b
