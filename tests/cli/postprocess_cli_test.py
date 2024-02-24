@@ -8,7 +8,7 @@ from ladybug.futil import nukedir
 from honeybee_radiance_postprocess.dynamic import DynamicSchedule, \
     ApertureGroupSchedule
 from honeybee_radiance_postprocess.cli.postprocess import annual_metrics, \
-    annual_metrics_file, peak_values
+    annual_metrics_file, peak_values, grid_summary_metric
 
 
 def test_annual_metrics():
@@ -92,3 +92,17 @@ def test_peak_values_coincident():
     assert output_folder.joinpath('peak_values').is_dir()
     assert max_hoys_file.is_file()
     nukedir(output_folder, rmdir=True)
+
+
+def test_grid_summary_metric():
+    runner = CliRunner()
+    folder = './tests/assets/sample_metrics'
+    output_file = Path( './tests/assets/sample_metrics/grid_summary.csv')
+    cmd_args = [
+        folder
+    ]
+
+    result = runner.invoke(grid_summary_metric, cmd_args)
+    assert result.exit_code == 0
+    assert output_file.is_file()
+    output_file.unlink()

@@ -782,7 +782,7 @@ def annual_metrics_file(
 @click.option(
     '--sub-folder/--main-folder', is_flag=True, default=True,
     help='If sub-folder is selected it will look for any sub-folders in the '
-    'folder argument. If main-folder is seleted it will look result files '
+    'folder argument. If main-folder is selected it will look for result files '
     'in the folder argument.'
 )
 def grid_summary_metric(
