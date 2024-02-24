@@ -119,7 +119,8 @@ def grid_summary(
     arrays = []
     for grid_info, grid_area in zip(grids_info, grid_areas):
         full_id = grid_info['full_id']
-        data = [full_id]
+        grid_name = grid_info['name']
+        data = [grid_name]
         for sf in sub_folders:
             grid_files = list(sf.glob(f'{full_id}.*'))
             assert len(grid_files) == 1

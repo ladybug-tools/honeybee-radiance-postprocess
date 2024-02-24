@@ -1,0 +1,1 @@
+[{"count": 24, "name": "TestRoom_1", "identifier": "TestRoom_1", "group": "", "full_id": "TestRoom_1", "light_path": [["Room1_South"], ["Room1_North"], ["__static_apertures__"]]}, {"count": 24, "name": "TestRoom_2", "identifier": "TestRoom_2", "group": "", "full_id": "TestRoom_2", "light_path": [["Room2_North1"], ["Room2_North2"], ["__static_apertures__"]]}]
