@@ -50,6 +50,7 @@ def grid_summary(
 
     # set up the default data types
     dtype_sensor_grid = ('Sensor Grid', 'O')
+    dtype_sensor_grid_id = ('Sensor Grid ID', 'O')
     dtype_base = [
         ('Mean', np.float32),
         ('Minimum', np.float32),
@@ -58,8 +59,8 @@ def grid_summary(
     ]
     dtype = []
 
-    # set up default format (for first column: str)
-    fmt = ['%s']
+    # set up default format (for first two columns: str)
+    fmt = ['%s', '%s']
 
     if grids_info is None:
         for sf in sub_folders:
@@ -78,6 +79,7 @@ def grid_summary(
 
 
     dtype.append(dtype_sensor_grid)
+    dtype.append(dtype_sensor_grid_id)
     for sf in sub_folders:
         _dtype = []
         _fmt = []
@@ -120,7 +122,7 @@ def grid_summary(
     for grid_info, grid_area in zip(grids_info, grid_areas):
         full_id = grid_info['full_id']
         grid_name = grid_info['name']
-        data = [grid_name]
+        data = [grid_name, full_id]
         for sf in sub_folders:
             grid_files = list(sf.glob(f'{full_id}.*'))
             assert len(grid_files) == 1
