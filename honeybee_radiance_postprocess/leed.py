@@ -244,6 +244,9 @@ def shade_transmittance_per_light_path(
             elif light_path != '__static_apertures__':
                 shade_transmittances[light_path].append(0.05)
                 shd_trans_dict[light_path] = 0.05
+            else:
+                shade_transmittances[light_path].append(1)
+                shd_trans_dict[light_path] = 1
     else:
         shd_trans = float(shade_transmittance)
         for light_path in light_paths:
@@ -253,6 +256,9 @@ def shade_transmittance_per_light_path(
             if light_path != '__static_apertures__':
                 shade_transmittances[light_path].append(shd_trans)
                 shd_trans_dict[light_path] = shd_trans
+            else:
+                shade_transmittances[light_path].append(1)
+                shd_trans_dict[light_path] = 1
 
     return shade_transmittances
 
