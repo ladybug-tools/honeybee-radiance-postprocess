@@ -164,13 +164,13 @@ class _ResultsFolder(object):
                 grid_info['light_path'] = [['__static_apertures__']]
                 light_paths = grid_info['light_path']
             for light_path in light_paths:
-                light_path = light_path[0]
-                if light_path in lp:
-                    continue
-                if light_path == '__static_apertures__':
-                    lp.insert(0, light_path)
-                else:
-                    lp.append(light_path)
+                for elem in light_path:
+                    if elem in lp:
+                        continue
+                    if elem == '__static_apertures__':
+                        lp.insert(0, elem)
+                    else:
+                        lp.append(elem)
             if not light_paths and '__static_apertures__' not in lp:
                 lp.insert(0, '__static_apertures__')
 
@@ -1186,7 +1186,7 @@ class Results(_ResultsFolder):
         Returns:
             dict: A filtered states dictionary.
         """
-        light_paths = [lp[0] for lp in grid_info['light_path']]
+        light_paths = [elem for lp in grid_info['light_path'] for elem in lp]
         if states:
             states = states.filter_by_identifiers(light_paths)
         else:
