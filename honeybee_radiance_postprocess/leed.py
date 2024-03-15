@@ -61,16 +61,20 @@ def _create_grid_summary(
     if area_weighted:
         _grid_summary = {
             grid_id: {
+                'name': grid_name,
+                'full_id': grid_id,
                 'ase': round(ase_grid, 2),
                 'sda': round(sda_grid, 2),
                 'floor_area_passing_ase': round(pass_ase, 2),
                 'floor_area_passing_sda': round(pass_sda, 2),
-                'total_floor_area': total_floor
+                'total_floor_area': round(total_floor, 2)
             }
         }
     else:
         _grid_summary = {
             grid_id: {
+                'name': grid_name,
+                'full_id': grid_id,
                 'ase': round(ase_grid, 2),
                 'sda': round(sda_grid, 2),
                 'sensor_count_passing_ase': int(round(pass_ase, 2)),
