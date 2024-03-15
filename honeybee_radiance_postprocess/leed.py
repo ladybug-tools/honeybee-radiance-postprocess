@@ -25,12 +25,12 @@ from .util import filter_array, recursive_dict_merge
 
 
 def _create_grid_summary(
-    grid_name, sda_grid, ase_grid, pass_sda, pass_ase, total_floor,
+    grid_info, sda_grid, ase_grid, pass_sda, pass_ase, total_floor,
     area_weighted=True):
     """Create a LEED summary for a single grid.
 
     Args:
-        grid_name: Name of grid.
+        grid_info: Grid information.
         sda_grid: Spatial Daylight Autonomy.
         ase_grid: Annual Sunlight Exposure.
         pass_sda: The percentage of the sensor points or floor area that
@@ -45,8 +45,10 @@ def _create_grid_summary(
         Tuple:
         -   summary_grid: Summary of each grid individually.
     """
+    grid_id = grid_info['full_id']
+    grid_name = grid_info['name']
     grid_summary = {
-        grid_name: {}
+        grid_id: {}
     }
     if ase_grid > 10:
         ase_note = (
@@ -54,11 +56,11 @@ def _create_grid_summary(
             f'{grid_name}. Identify in writing how the space is designed to '
             'address glare.'
         )
-        grid_summary[grid_name]['ase_note'] = ase_note
+        grid_summary[grid_id]['ase_note'] = ase_note
 
     if area_weighted:
         _grid_summary = {
-            grid_name: {
+            grid_id: {
                 'ase': round(ase_grid, 2),
                 'sda': round(sda_grid, 2),
                 'floor_area_passing_ase': round(pass_ase, 2),
@@ -68,7 +70,7 @@ def _create_grid_summary(
         }
     else:
         _grid_summary = {
-            grid_name: {
+            grid_id: {
                 'ase': round(ase_grid, 2),
                 'sda': round(sda_grid, 2),
                 'sensor_count_passing_ase': int(round(pass_ase, 2)),
@@ -111,7 +113,6 @@ def _leed_summary(
         total_area_pass_sda = 0
         for (pass_ase, pass_sda, grid_area, grid_info) in \
             zip(pass_ase_grids, pass_sda_grids, grid_areas, grids_info):
-            grid_name = grid_info['name']
             total_grid_area = grid_area.sum()
             area_pass_ase = grid_area[pass_ase].sum()
             area_pass_sda = grid_area[pass_sda].sum()
@@ -120,7 +121,7 @@ def _leed_summary(
             # grid summary
             grid_summary = \
                 _create_grid_summary(
-                    grid_name, sda_grid, ase_grid, area_pass_sda, area_pass_ase,
+                    grid_info, sda_grid, ase_grid, area_pass_sda, area_pass_ase,
                     total_grid_area, area_weighted=True
                 )
 
@@ -142,7 +143,6 @@ def _leed_summary(
         total_sensor_count_pass_sda = 0
         for (pass_ase, pass_sda, grid_info) in \
             zip(pass_ase_grids, pass_sda_grids, grids_info):
-            grid_name = grid_info['name']
             grid_count = grid_info['count']
             sensor_count_pass_ase = pass_ase.sum()
             sensor_count_pass_sda = pass_sda.sum()
@@ -151,7 +151,7 @@ def _leed_summary(
             # grid summary
             grid_summary = \
                 _create_grid_summary(
-                    grid_name, sda_grid, ase_grid, sensor_count_pass_sda,
+                    grid_info, sda_grid, ase_grid, sensor_count_pass_sda,
                     sensor_count_pass_ase, grid_count, area_weighted=False
                 )
 
