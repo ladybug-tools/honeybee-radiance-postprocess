@@ -8,6 +8,8 @@ import numpy as np
 
 from honeybee.model import Model
 
+from ..vis_metadata import _abnt_nbr_15575_daylight_levels_vis_metadata
+
 
 _logger = logging.getLogger(__name__)
 
@@ -98,8 +100,14 @@ def abnt_nbr_15575(
 
         if not sub_folder.exists():
             sub_folder.mkdir(parents=True, exist_ok=True)
+        illuminance_levels_folder = sub_folder.joinpath('illuminance_levels')
+        if not illuminance_levels_folder.exists():
+            illuminance_levels_folder.mkdir(parents=True, exist_ok=True)
+
         summary_file = sub_folder.joinpath('abnt_nbr_15575.json')
         folder_names = ['4_930AM', '4_330PM', '10_930AM', '10_330PM']
+
+        metric_info_dict = _abnt_nbr_15575_daylight_levels_vis_metadata()
         summary_output = {}
         for _subfolder in folder_names:
             res_folder = folder.joinpath(_subfolder, 'results')
@@ -117,12 +125,12 @@ def abnt_nbr_15575(
                 y_coords = sensor_points[:, 1]
                 x, y = sensor_grid.mesh.center.x, sensor_grid.mesh.center.y
                 f_xy = perform_interpolation(x, y, x_coords, y_coords, pit_values)
-                
+
                 if f_xy >= 120:
                     level = 'Superior'
                 elif f_xy >= 90:
                     level = 'Intermediário'
-                elif f_xy >= 60:
+                elif f_xy >= 60: # add check for ground floor (48 lux)
                     level = 'Mínimo'
                 else:
                     level = 'Não atende'
@@ -135,11 +143,28 @@ def abnt_nbr_15575(
                     }
                 )
 
+                conditions = [pit_values >= 120, pit_values >= 90, pit_values >= 60, pit_values < 60]
+                conditions_values = [3, 2, 1, 0]
+                illuminance_level = np.select(conditions, conditions_values)
+
+                ill_level_file = illuminance_levels_folder.joinpath(_subfolder, f'{grid_info["full_id"]}.res')
+                ill_level_file.parent.mkdir(parents=True, exist_ok=True)
+                np.savetxt(ill_level_file, illuminance_level, fmt='%d')
+
+                grids_info_file = illuminance_levels_folder.joinpath(_subfolder, 'grids_info.json')
+                grids_info_file.write_text(json.dumps(grids_info, indent=2))
+
+                vis_data = metric_info_dict[_subfolder]
+                vis_metadata_file = illuminance_levels_folder.joinpath(_subfolder, 'vis_metadata.json')
+                vis_metadata_file.write_text(json.dumps(vis_data, indent=4))
+
             summary_output[_subfolder] = sub_output
+
+            grids_info_file = folder.joinpath(_subfolder, 'grids_info.json')
+            grids_info_file.write_text(json.dumps(grids_info, indent=2))
 
         with summary_file.open(mode='w', encoding='utf-8') as output_file:
             json.dump(summary_output, output_file, indent=4, ensure_ascii=False)
-
 
     except Exception:
         _logger.exception('Failed to calculate ABNT NBR 15575 metrics.')
