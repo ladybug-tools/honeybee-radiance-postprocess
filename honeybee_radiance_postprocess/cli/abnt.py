@@ -105,10 +105,12 @@ def abnt_nbr_15575(
             illuminance_levels_folder.mkdir(parents=True, exist_ok=True)
 
         summary_file = sub_folder.joinpath('abnt_nbr_15575.json')
+        summary_rooms_file = sub_folder.joinpath('abnt_nbr_15575_rooms.json')
         folder_names = ['4_930AM', '4_330PM', '10_930AM', '10_330PM']
 
         metric_info_dict = _abnt_nbr_15575_daylight_levels_vis_metadata()
         summary_output = {}
+        summary_rooms_output = {}
         for _subfolder in folder_names:
             res_folder = folder.joinpath(_subfolder, 'results')
             with open(res_folder.joinpath('grids_info.json')) as data_f:
@@ -134,6 +136,19 @@ def abnt_nbr_15575(
                     level = 'Mínimo'
                 else:
                     level = 'Não atende'
+
+                room_summary = \
+                    summary_rooms_output.get(grid_info['full_id'], None)
+                if room_summary is None:
+                    summary_rooms_output[grid_info['full_id']] = {
+                        'nível': level,
+                        'iluminância': f_xy,
+                        'grids_info': grid_info
+                    }
+                else:
+                    if f_xy < room_summary['iluminância']:
+                        room_summary['nível'] = level
+                        room_summary['iluminância'] = f_xy
 
                 sub_output.append(
                     {
@@ -165,6 +180,9 @@ def abnt_nbr_15575(
 
         with summary_file.open(mode='w', encoding='utf-8') as output_file:
             json.dump(summary_output, output_file, indent=4, ensure_ascii=False)
+
+        with summary_rooms_file.open(mode='w', encoding='utf-8') as output_file:
+            json.dump(summary_rooms_output, output_file, indent=4, ensure_ascii=False)
 
     except Exception:
         _logger.exception('Failed to calculate ABNT NBR 15575 metrics.')
