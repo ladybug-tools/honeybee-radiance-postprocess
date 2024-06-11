@@ -7,6 +7,7 @@ import click
 import numpy as np
 
 from honeybee.model import Model
+from ladybug_geometry.geometry3d.face import Face3D
 
 from ..vis_metadata import _abnt_nbr_15575_daylight_levels_vis_metadata
 
@@ -56,7 +57,8 @@ def abnt_nbr_15575(
         return x1, x2, y1, y2
 
     def get_value(x, y, x_coords, y_coords, values):
-        index = np.where((x_coords == x) & (y_coords == y))
+        tolerance = 0.001
+        index = np.where((np.abs(x_coords - x) <= tolerance) & (np.abs(y_coords - y) <= tolerance))
         return values[index][0]
 
     def perform_interpolation(x, y, x_coords, y_coords, pit_values):
@@ -111,6 +113,7 @@ def abnt_nbr_15575(
         metric_info_dict = _abnt_nbr_15575_daylight_levels_vis_metadata()
         summary_output = {}
         summary_rooms_output = {}
+        pof_sensor_grids = {}
         for _subfolder in folder_names:
             res_folder = folder.joinpath(_subfolder, 'results')
             with open(res_folder.joinpath('grids_info.json')) as data_f:
@@ -125,7 +128,22 @@ def abnt_nbr_15575(
 
                 x_coords = sensor_points[:, 0]
                 y_coords = sensor_points[:, 1]
-                x, y = sensor_grid.mesh.center.x, sensor_grid.mesh.center.y
+
+                pof_sensor_grid = \
+                    pof_sensor_grids.get(grid_info['full_id'], None)
+                # if pof is not calculated for this grid
+                if pof_sensor_grid is None:
+                    faces_3d = [Face3D(face_vertices) for face_vertices in sensor_grid.mesh.face_vertices]
+                    face_3d_union = Face3D.join_coplanar_faces(faces_3d, 0.05)
+                    assert len(face_3d_union) == 1
+                    if face_3d_union[0].is_convex:
+                        centroid = face_3d_union[0].centroid
+                        pof_sensor_grids[grid_info['full_id']] = (centroid.x, centroid.y)
+                    else:
+                        pof = face_3d_union[0].pole_of_inaccessibility(0.01)
+                        pof_sensor_grids[grid_info['full_id']] = (pof.x, pof.y)
+
+                x, y = pof_sensor_grids[grid_info['full_id']]
                 f_xy = perform_interpolation(x, y, x_coords, y_coords, pit_values)
 
                 if f_xy >= 120:
