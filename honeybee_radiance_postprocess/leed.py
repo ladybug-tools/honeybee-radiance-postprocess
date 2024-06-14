@@ -351,7 +351,11 @@ def leed_states_schedule(
                 array = np.apply_along_axis(filter_array, 1, array, occ_mask)
                 full_direct.append(array)
                 full_thresh.append((array >= 1000).sum(axis=0))
-                shd_trans_array.append(shade_transmittances[light_path][1])
+                #shd_trans_array.append(shade_transmittances[light_path][1])
+                shd_trans_array.append(
+                    results._get_array(grid_info, light_path, state=1,
+                                       res_type='direct')
+                )
 
             # sum the array element-wise
             full_direct_sum = sum(full_direct)
@@ -499,8 +503,13 @@ def leed_states_schedule(
                     if shd_trans == 1:
                         combination_arrays.append(array)
                     else:
-                        combination_arrays.append(array * shd_trans)
+                    #     combination_arrays.append(array * shd_trans)
+                        combination_arrays.append(
+                            results._get_array(grid_info, light_path, state=1,
+                                            res_type='direct')
+                        )
                 combination_array = sum(combination_arrays)
+                #print((combination_array >= 1000).sum(axis=0))
                 combination_percentage = \
                     (combination_array >= 1000).sum(axis=0) / grid_count
                 array_list_combinations.append(combination_percentage)

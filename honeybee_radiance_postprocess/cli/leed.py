@@ -41,7 +41,7 @@ def leed():
 )
 @click.option(
     '--sub-folder', '-sf', help='Relative path for subfolder to write output '
-    'files.', default='leed_summary'
+    'files.', default='leed_summary', show_default=True
 )
 def daylight_option_one(
     folder, shade_transmittance, shade_transmittance_file, grids_filter,
