@@ -106,8 +106,9 @@ def abnt_nbr_15575(
         if not illuminance_levels_folder.exists():
             illuminance_levels_folder.mkdir(parents=True, exist_ok=True)
 
-        summary_file = sub_folder.joinpath('abnt_nbr_15575.json')
-        summary_rooms_file = sub_folder.joinpath('abnt_nbr_15575_rooms.json')
+        summary_json = sub_folder.joinpath('abnt_nbr_15575.json')
+        summary_rooms_json = sub_folder.joinpath('abnt_nbr_15575_rooms.json')
+        summary_rooms_csv = sub_folder.joinpath('abnt_nbr_15575_rooms.csv')
         folder_names = ['4_930AM', '4_330PM', '10_930AM', '10_330PM']
 
         metric_info_dict = _abnt_nbr_15575_daylight_levels_vis_metadata()
@@ -196,11 +197,45 @@ def abnt_nbr_15575(
             grids_info_file = folder.joinpath(_subfolder, 'grids_info.json')
             grids_info_file.write_text(json.dumps(grids_info, indent=2))
 
-        with summary_file.open(mode='w', encoding='utf-8') as output_file:
+        with summary_json.open(mode='w', encoding='utf-8') as output_file:
             json.dump(summary_output, output_file, indent=4, ensure_ascii=False)
 
-        with summary_rooms_file.open(mode='w', encoding='utf-8') as output_file:
+        with summary_rooms_json.open(mode='w', encoding='utf-8') as output_file:
             json.dump(summary_rooms_output, output_file, indent=4, ensure_ascii=False)
+
+        # set up the default data types
+        dtype = [
+            ('Sensor Grid', 'O'),
+            ('Sensor Grid ID', 'O'),
+            ('Nível', 'O'),
+            ('Iluminância', np.float32)
+        ]
+
+        # set up format
+        fmt = ['%s', '%s', '%s', '%.2f']
+
+        arrays = []
+        for room_summary in summary_rooms_output.values():
+            full_id = room_summary['grids_info']['full_id']
+            grid_name = room_summary['grids_info']['name']
+            illuminance_level = room_summary['nível']
+            illuminance = room_summary['iluminância']
+            data = [grid_name, full_id, illuminance_level, illuminance]
+
+            arrays.append(tuple(data))
+
+        # create structured array
+        struct_array = np.array(arrays, dtype=dtype)
+
+        header = [dt[0] for dt in dtype]
+        # write header to summary_rooms_csv
+        with summary_rooms_csv.open(mode='w', encoding='utf-8') as output_file:
+            output_file.write(','.join(header))
+            output_file.write('\n') # add newline after header
+
+        # write structured array to summary_rooms_csv
+        with summary_rooms_csv.open(mode='a', encoding='utf-8') as output_file:
+            np.savetxt(output_file, struct_array, delimiter=',', fmt=fmt)
 
     except Exception:
         _logger.exception('Failed to calculate ABNT NBR 15575 metrics.')
