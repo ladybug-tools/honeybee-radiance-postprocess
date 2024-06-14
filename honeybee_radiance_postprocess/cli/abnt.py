@@ -110,6 +110,12 @@ def abnt_nbr_15575(
         summary_rooms_json = sub_folder.joinpath('abnt_nbr_15575_rooms.json')
         summary_rooms_csv = sub_folder.joinpath('abnt_nbr_15575_rooms.csv')
         folder_names = ['4_930AM', '4_330PM', '10_930AM', '10_330PM']
+        pit_mapper = {
+            '4_930AM': 'Abril 09:30',
+            '4_330PM': 'Abril 15:30',
+            '10_930AM': 'Outubro 09:30',
+            '10_330PM': 'Outubro 15:30'
+        }
 
         metric_info_dict = _abnt_nbr_15575_daylight_levels_vis_metadata()
         summary_output = {}
@@ -162,12 +168,14 @@ def abnt_nbr_15575(
                     summary_rooms_output[grid_info['full_id']] = {
                         'nível': level,
                         'iluminância': f_xy,
-                        'grids_info': grid_info
+                        'grids_info': grid_info,
+                        pit_mapper[_subfolder]: f_xy,
                     }
                 else:
                     if f_xy < room_summary['iluminância']:
                         room_summary['nível'] = level
                         room_summary['iluminância'] = f_xy
+                    room_summary[pit_mapper[_subfolder]] = f_xy
 
                 sub_output.append(
                     {
@@ -207,21 +215,26 @@ def abnt_nbr_15575(
         dtype = [
             ('Sensor Grid', 'O'),
             ('Sensor Grid ID', 'O'),
-            ('Nível', 'O'),
-            ('Iluminância', np.float32)
+            ('Abril 09:30', np.float32),
+            ('Abril 15:30', np.float32),
+            ('Outubro 09:30', np.float32),
+            ('Outubro 15:30', np.float32),
+            ('Atendimento', 'O')
         ]
 
         # set up format
-        fmt = ['%s', '%s', '%s', '%.2f']
+        fmt = ['%s', '%s', '%.2f', '%.2f', '%.2f', '%.2f', '%s']
 
         arrays = []
         for room_summary in summary_rooms_output.values():
-            full_id = room_summary['grids_info']['full_id']
-            grid_name = room_summary['grids_info']['name']
-            illuminance_level = room_summary['nível']
-            illuminance = room_summary['iluminância']
-            data = [grid_name, full_id, illuminance_level, illuminance]
-
+            data = []
+            data.append(room_summary['grids_info']['full_id'])
+            data.append(room_summary['grids_info']['name'])
+            data.append(room_summary['Abril 09:30'])
+            data.append(room_summary['Abril 15:30'])
+            data.append(room_summary['Outubro 09:30'])
+            data.append(room_summary['Outubro 15:30'])
+            data.append(room_summary['nível'])
             arrays.append(tuple(data))
 
         # create structured array
