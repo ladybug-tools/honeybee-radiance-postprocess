@@ -106,8 +106,6 @@ def abnt_nbr_15575(
         if not illuminance_levels_folder.exists():
             illuminance_levels_folder.mkdir(parents=True, exist_ok=True)
 
-        summary_json = sub_folder.joinpath('abnt_nbr_15575.json')
-        summary_rooms_json = sub_folder.joinpath('abnt_nbr_15575_rooms.json')
         summary_rooms_csv = sub_folder.joinpath('abnt_nbr_15575_rooms.csv')
         folder_names = ['4_930AM', '4_330PM', '10_930AM', '10_330PM']
         pit_mapper = {
@@ -205,12 +203,6 @@ def abnt_nbr_15575(
             grids_info_file = folder.joinpath(_subfolder, 'grids_info.json')
             grids_info_file.write_text(json.dumps(grids_info, indent=2))
 
-        with summary_json.open(mode='w', encoding='utf-8') as output_file:
-            json.dump(summary_output, output_file, indent=4, ensure_ascii=False)
-
-        with summary_rooms_json.open(mode='w', encoding='utf-8') as output_file:
-            json.dump(summary_rooms_output, output_file, indent=4, ensure_ascii=False)
-
         # set up the default data types
         dtype = [
             ('Sensor Grid', 'O'),
@@ -228,8 +220,8 @@ def abnt_nbr_15575(
         arrays = []
         for room_summary in summary_rooms_output.values():
             data = []
-            data.append(room_summary['grids_info']['full_id'])
             data.append(room_summary['grids_info']['name'])
+            data.append(room_summary['grids_info']['full_id'])
             data.append(room_summary['Abril 09:30'])
             data.append(room_summary['Abril 15:30'])
             data.append(room_summary['Outubro 09:30'])
