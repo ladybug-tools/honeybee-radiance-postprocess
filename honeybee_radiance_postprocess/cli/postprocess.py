@@ -770,7 +770,7 @@ def annual_metrics_file(
     '--grids-info', '-gi', help='An optional JSON file with grid information. '
     'If no file is provided the command will look for a file in the folder.',
     default=None, show_default=True,
-    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
     '--name', '-n', help='Optional filename of grid summary.',
@@ -801,9 +801,11 @@ def grid_summary_metric(
         folder = Path(folder)
 
         # get grids information
-        if grids_info:
+        if grids_info and Path(grid_metrics).is_file():
             with open(grids_info) as gi:
                 grids_info = json.load(gi)
+        else:
+            grids_info = None
 
         # get grid metrics
         if grid_metrics and Path(grid_metrics).is_file():
