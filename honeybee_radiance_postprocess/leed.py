@@ -478,9 +478,9 @@ def leed_states_schedule(
                     (combination_array >= 1000).sum(axis=0) / grid_count
                 array_list_combinations.append(combination_percentage)
             array_combinations = np.array(array_list_combinations)
-            array_combinations[array_combinations > 0.02] = np.NINF
+            array_combinations[array_combinations > 0.02] = -np.inf
 
-            grid_comply = np.where(np.all(array_combinations==np.NINF, axis=0))[0]
+            grid_comply = np.where(np.all(array_combinations==-np.inf, axis=0))[0]
             if grid_comply.size != 0:
                 grid_comply = np.array(results.sun_up_hours)[grid_comply]
                 fail_to_comply[grid_info['name']] = \
