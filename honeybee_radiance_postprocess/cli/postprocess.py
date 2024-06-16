@@ -792,6 +792,9 @@ def grid_summary_metric(
 ):
     """Calculate a grid summary.
 
+    If the grids info file is omitted it is a requirement that there is a grids
+    info file in the main folder or in each sub folder.
+
     \b
     Args:
         folder: A folder with results.
@@ -801,7 +804,7 @@ def grid_summary_metric(
         folder = Path(folder)
 
         # get grids information
-        if grids_info and Path(grid_metrics).is_file():
+        if grids_info and Path(grids_info).is_file():
             with open(grids_info) as gi:
                 grids_info = json.load(gi)
         else:
