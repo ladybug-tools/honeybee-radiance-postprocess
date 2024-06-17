@@ -8,6 +8,7 @@ import numpy as np
 
 from honeybee.model import Model
 from ladybug_geometry.geometry3d.face import Face3D
+from ladybug_geometry.geometry3d.pointvector import Point3D
 
 from ..vis_metadata import _abnt_nbr_15575_daylight_levels_vis_metadata
 
@@ -143,12 +144,13 @@ def abnt_nbr_15575(
                     assert len(face_3d_union) == 1
                     if face_3d_union[0].is_convex:
                         centroid = face_3d_union[0].centroid
-                        pof_sensor_grids[grid_info['full_id']] = (centroid.x, centroid.y)
+                        pof_sensor_grids[grid_info['full_id']] = centroid
                     else:
                         pof = face_3d_union[0].pole_of_inaccessibility(0.01)
-                        pof_sensor_grids[grid_info['full_id']] = (pof.x, pof.y)
+                        pof_sensor_grids[grid_info['full_id']] = pof
 
-                x, y = pof_sensor_grids[grid_info['full_id']]
+                x = pof_sensor_grids[grid_info['full_id']].x
+                y = pof_sensor_grids[grid_info['full_id']].y
                 f_xy = perform_interpolation(x, y, x_coords, y_coords, pit_values)
 
                 if f_xy >= 120:
@@ -241,6 +243,10 @@ def abnt_nbr_15575(
         # write structured array to summary_rooms_csv
         with summary_rooms_csv.open(mode='a', encoding='utf-8') as output_file:
             np.savetxt(output_file, struct_array, delimiter=',', fmt=fmt)
+
+        center_points_file = sub_folder.joinpath('center_points.json')
+        data = [pof.to_dict() for pof in pof_sensor_grids.values()]
+        center_points_file.write_text(json.dumps(data, indent=4))
 
     except Exception:
         _logger.exception('Failed to calculate ABNT NBR 15575 metrics.')
