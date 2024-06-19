@@ -25,7 +25,8 @@ from .util import filter_array, recursive_dict_merge
 
 
 def _create_grid_summary(
-    grid_info, sda_grid, ase_grid, pass_sda, pass_ase, total_floor,
+    grid_info, sda_grid, sda_blinds_up_grid, sda_blinds_down_grid, ase_grid,
+    pass_sda, pass_sda_blind_up, pass_sda_blinds_down, pass_ase, total_floor,
     area_weighted=True):
     """Create a LEED summary for a single grid.
 
@@ -65,6 +66,8 @@ def _create_grid_summary(
                 'full_id': grid_id,
                 'ase': round(ase_grid, 2),
                 'sda': round(sda_grid, 2),
+                'sda_blinds_up': round(sda_blinds_up_grid, 2),
+                'sda_blinds_down': round(sda_blinds_down_grid, 2),
                 'floor_area_passing_ase': round(pass_ase, 2),
                 'floor_area_passing_sda': round(pass_sda, 2),
                 'total_floor_area': round(total_floor, 2)
@@ -77,6 +80,8 @@ def _create_grid_summary(
                 'full_id': grid_id,
                 'ase': round(ase_grid, 2),
                 'sda': round(sda_grid, 2),
+                'sda_blinds_up': round(sda_blinds_up_grid, 2),
+                'sda_blinds_down': round(sda_blinds_down_grid, 2),
                 'sensor_count_passing_ase': int(round(pass_ase, 2)),
                 'sensor_count_passing_sda': int(round(pass_sda, 2)),
                 'total_sensor_count': total_floor
@@ -90,8 +95,9 @@ def _create_grid_summary(
 
 def _leed_summary(
     pass_ase_grids: list, pass_sda_grids: list, grids_info: list,
-    grid_areas: list) -> Tuple[dict, dict]:
-    """_summary_
+    grid_areas: list, pass_sda_blinds_up_grids: list,
+    pass_sda_blinds_down_grids: list) -> Tuple[dict, dict]:
+    """Create combined summary and summary for each grid individually.
 
     Args:
         pass_ase_grids: A list where each sublist is a list of True/False that
@@ -115,18 +121,29 @@ def _leed_summary(
         total_area = 0
         total_area_pass_ase = 0
         total_area_pass_sda = 0
-        for (pass_ase, pass_sda, grid_area, grid_info) in \
-            zip(pass_ase_grids, pass_sda_grids, grid_areas, grids_info):
+        for (pass_ase, pass_sda, grid_area, grid_info, pass_sda_blinds_up,
+             pass_sda_blinds_down) in \
+            zip(pass_ase_grids, pass_sda_grids, grid_areas, grids_info,
+                pass_sda_blinds_up_grids, pass_sda_blinds_down_grids):
             total_grid_area = grid_area.sum()
+
             area_pass_ase = grid_area[pass_ase].sum()
-            area_pass_sda = grid_area[pass_sda].sum()
             ase_grid = (total_grid_area - area_pass_ase) / total_grid_area * 100
+
+            area_pass_sda = grid_area[pass_sda].sum()
+            area_pass_sda_blind_up = grid_area[pass_sda_blinds_up].sum()
+            area_pass_sda_blinds_down = grid_area[pass_sda_blinds_down].sum()
             sda_grid = area_pass_sda / total_grid_area * 100
+            sda_blinds_up_grid = area_pass_sda_blind_up / total_grid_area * 100
+            sda_blinds_down_grid = area_pass_sda_blinds_down / total_grid_area * 100
+
             # grid summary
             grid_summary = \
                 _create_grid_summary(
-                    grid_info, sda_grid, ase_grid, area_pass_sda, area_pass_ase,
-                    total_grid_area, area_weighted=True
+                    grid_info, sda_grid, sda_blinds_up_grid, sda_blinds_down_grid,
+                    ase_grid, area_pass_sda, area_pass_sda_blind_up,
+                    area_pass_sda_blinds_down, area_pass_ase, total_grid_area,
+                    area_weighted=True
                 )
 
             recursive_dict_merge(summary_grid, grid_summary)
@@ -145,18 +162,28 @@ def _leed_summary(
         total_sensor_count = 0
         total_sensor_count_pass_ase = 0
         total_sensor_count_pass_sda = 0
-        for (pass_ase, pass_sda, grid_info) in \
-            zip(pass_ase_grids, pass_sda_grids, grids_info):
+        for (pass_ase, pass_sda, grid_info, pass_sda_blinds_up,
+             pass_sda_blinds_down) in \
+            zip(pass_ase_grids, pass_sda_grids, grids_info,
+                pass_sda_blinds_up_grids, pass_sda_blinds_down_grids):
             grid_count = grid_info['count']
             sensor_count_pass_ase = pass_ase.sum()
-            sensor_count_pass_sda = pass_sda.sum()
             ase_grid = (grid_count - sensor_count_pass_ase) / grid_count * 100
+
+            sensor_count_pass_sda = pass_sda.sum()
+            sensor_count_pass_sda_blinds_up = pass_sda_blinds_up.sum()
+            sensor_count_pass_sda_blinds_down = pass_sda_blinds_down.sum()
             sda_grid = sensor_count_pass_sda / grid_count * 100
+            sda_blinds_up_grid = sensor_count_pass_sda_blinds_up / grid_count * 100
+            sda_blinds_down_grid = sensor_count_pass_sda_blinds_down / grid_count * 100
+
             # grid summary
             grid_summary = \
                 _create_grid_summary(
-                    grid_info, sda_grid, ase_grid, sensor_count_pass_sda,
-                    sensor_count_pass_ase, grid_count, area_weighted=False
+                    grid_info, sda_grid, sda_blinds_up_grid, sda_blinds_down_grid,
+                    ase_grid, sensor_count_pass_sda, sensor_count_pass_sda_blinds_up,
+                    sensor_count_pass_sda_blinds_down, sensor_count_pass_ase,
+                    grid_count, area_weighted=False
                 )
 
             recursive_dict_merge(summary_grid, grid_summary)
@@ -628,9 +655,13 @@ def leed_option_one(
     # spatial daylight autonomy
     da_grids = []
     pass_sda_grids = []
+    pass_sda_blinds_up_grids = []
+    pass_sda_blinds_down_grids = []
     for grid_info in grids_info:
         light_paths = [lp[0] for lp in grid_info['light_path']]
         arrays = []
+        arrays_blinds_up = []
+        arrays_blinds_down = []
         # combine total array for all light paths
         for light_path in light_paths:
             array = results._get_array(grid_info, light_path, res_type='total')
@@ -641,19 +672,31 @@ def leed_option_one(
                 shd_trans_array = states_schedule[light_path][sun_up_hours]
                 shd_trans_array = shd_trans_array[occ_mask.astype(bool)]
                 arrays.append(array_filter * shd_trans_array)
+                arrays_blinds_up.append(array_filter)
+                arrays_blinds_down.append(array_filter * shd_trans_dict[light_path])
             else:
                 arrays.append(array_filter)
+                arrays_blinds_up.append(array_filter)
+                arrays_blinds_down.append(array_filter)
         array = sum(arrays)
+        array_blinds_up = sum(arrays_blinds_up)
+        array_blinds_down = sum(arrays_blinds_down)
         # calculate da per grid
         da_grid = da_array2d(array, total_occ=total_occ, threshold=threshold)
         da_grids.append(da_grid)
+        da_blinds_up_grid = da_array2d(
+            array_blinds_up, total_occ=total_occ, threshold=threshold)
+        da_blinds_down_grid = da_array2d(
+            array_blinds_down, total_occ=total_occ, threshold=threshold)
         # calculate sda per grid
-        pass_sda = da_grid >= target_time
-        pass_sda_grids.append(pass_sda)
+        pass_sda_grids.append(da_grid >= target_time)
+        pass_sda_blinds_up_grids.append(da_blinds_up_grid >= target_time)
+        pass_sda_blinds_down_grids.append(da_blinds_down_grid >= target_time)
 
     # create summaries for all grids and each grid individually
     summary, summary_grid = _leed_summary(
-        pass_ase_grids, pass_sda_grids, grids_info, grid_areas=grid_areas)
+        pass_ase_grids, pass_sda_grids, grids_info, grid_areas,
+        pass_sda_blinds_up_grids, pass_sda_blinds_down_grids)
 
     # credits
     if not fail_to_comply:
