@@ -882,7 +882,7 @@ class Results(_ResultsFolder):
                 else:
                     values = np.zeros(len(self.sun_up_hours))
                 annual_array = Results.values_to_annual(
-                    self.sun_up_hours, values, self.timestep, self.study_hours)
+                    self.sun_up_hours, values, self.timestep)
                 header = Header(self.datatype, self.unit, analysis_period)
                 header.metadata['sensor grid'] = grid_id
                 header.metadata['sensor index'] = idx
@@ -931,7 +931,7 @@ class Results(_ResultsFolder):
     def values_to_annual(
             hours: Union[List[float], np.ndarray],
             values: Union[List[float], np.ndarray],
-            timestep: int, study_hours: list, base_value: int = 0) -> np.ndarray:
+            timestep: int, base_value: int = 0) -> np.ndarray:
         """Map a 1D NumPy array based on a set of hours to an annual array.
 
         This method creates an array with a base value of length 8760 and
@@ -944,7 +944,6 @@ class Results(_ResultsFolder):
             values: A list of values to map to an annual array. This can be a
                 regular list or a 1D NumPy array.
             timestep: Time step of the simulation.
-            study_hours: Study hours of the simulation.
             base_value: A value that will be applied for all the base array.
 
         Returns:
