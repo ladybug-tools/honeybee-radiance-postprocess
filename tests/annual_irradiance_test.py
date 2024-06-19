@@ -119,12 +119,12 @@ def test_results_sample_annual_data_to_folder_all_sensors():
     nukedir(target_folder, True)
 
 
-def test_results_sun_up_hours_tos_annual():
+def test_results_sun_up_hours_to_annual():
     folder = Path('./tests/assets/results_folders/results_irradiance')
     results = AnnualIrradiance(folder)
     values = np.random.rand(len(results.sun_up_hours))
     annual_array = Results.values_to_annual(
-        results.sun_up_hours, values, results.timestep, results.study_hours)
+        results.sun_up_hours, values, results.timestep)
     assert annual_array.size == 8760
 
 
@@ -133,7 +133,7 @@ def test_results_sun_up_hours_to_annual_t3():
     results = AnnualIrradiance(folder)
     values = np.random.rand(len(results.sun_up_hours))
     annual_array = Results.values_to_annual(
-        results.sun_up_hours, values, results.timestep, results.study_hours)
+        results.sun_up_hours, values, results.timestep)
     assert annual_array.size == 8760 * 3
 
 
@@ -142,5 +142,5 @@ def test_results_sun_up_hours_to_annual_t4():
     results = AnnualIrradiance(folder)
     values = np.random.rand(len(results.sun_up_hours))
     annual_array = Results.values_to_annual(
-        results.sun_up_hours, values, results.timestep, results.study_hours)
+        results.sun_up_hours, values, results.timestep)
     assert annual_array.size == 8760 * 4

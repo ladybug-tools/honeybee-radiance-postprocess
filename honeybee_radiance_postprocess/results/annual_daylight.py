@@ -2,6 +2,8 @@ import json
 from pathlib import Path
 from typing import Tuple, List
 import numpy as np
+import itertools
+from collections import defaultdict
 
 from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.datacollection import HourlyContinuousCollection
@@ -16,7 +18,7 @@ from ..util import filter_array
 from ..annualdaylight import _annual_daylight_vis_metadata
 from ..electriclight import array_to_dimming_fraction
 from .. import type_hints
-from ..dynamic import DynamicSchedule
+from ..dynamic import DynamicSchedule, ApertureGroupSchedule
 from .results import Results
 
 
@@ -682,3 +684,70 @@ class AnnualDaylight(Results):
 
         info_file = uniformity_ratio_folder.joinpath('grids_info.json')
         info_file.write_text(json.dumps(grids_info))
+
+    def dynamic_schedule_from_sensor_maximum(
+            self, sensor_index: dict, grids_filter: str = '*',
+            maximum: float = 3000, res_type: str = 'total') -> DynamicSchedule:
+        """Calculate a DynamicSchedule from a sensor and a maximum allowed
+        illuminance.
+
+        Args:
+            sensor_index: A dictionary with grids as keys and a list of sensor
+                indices as values. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+            maximum: A float value of the maximum illuminance allowed for the
+                sensor.
+            res_type: Type of results to load. Defaults to 'total'.
+
+        Returns:
+            DynamicSchedule object.
+        """
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+
+        aperture_group_schedules = []
+        for grid_info in grids_info:
+            control_sensor = sensor_index.get(grid_info['full_id'], None)
+            if control_sensor is None:
+                continue
+            assert len(control_sensor) == 1, ('Expected one control sensor for '
+                f'grid {grid_info["name"]}. Received {len(control_sensor)} '
+                'control sensors.')
+            control_sensor_index = control_sensor[0]
+            light_paths = [lp[0] for lp in grid_info['light_path']]
+            lp_states = {key: self.valid_states[key] for key in light_paths if key in self.valid_states}
+
+            keys, values = zip(*lp_states.items())
+            combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
+            array_list_combinations = []
+            for combination in combinations:
+                combination_arrays = []
+                for light_path, state_index in combination.items():
+                    array = self._get_array(
+                        grid_info, light_path, state=state_index, res_type=res_type)
+                    sensor_array = array[control_sensor_index,:]
+                    combination_arrays.append(sensor_array)
+                combination_array = sum(combination_arrays)
+                array_list_combinations.append(combination_array)
+            array_combinations = np.array(array_list_combinations)
+            array_combinations[array_combinations > maximum] = -np.inf
+            max_indices = array_combinations.argmax(axis=0)
+            combinations = [combinations[idx] for idx in max_indices]
+
+            states_schedule = defaultdict(list)
+            for combination in combinations:
+                for light_path, state_index in combination.items():
+                    if light_path != '__static_apertures__':
+                        states_schedule[light_path].append(state_index)
+
+            # map states to 8760 values
+            for light_path, state_indices in states_schedule.items():
+                mapped_states = self.values_to_annual(
+                    self.sun_up_hours, state_indices, self.timestep)
+                mapped_states = mapped_states.astype(int)
+                aperture_group_schedules.append(
+                    ApertureGroupSchedule(light_path, mapped_states.tolist()))
+
+        dyn_sch = DynamicSchedule.from_group_schedules(aperture_group_schedules)
+
+        return dyn_sch

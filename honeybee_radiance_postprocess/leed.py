@@ -235,7 +235,7 @@ def _ase_hourly_percentage(
     occupancy_hoys = schedule_to_hoys(results.schedule, results.sun_up_hours)
     # map states to 8760 values
     percentage_above = results.values_to_annual(
-        occupancy_hoys, percentage_above, results.timestep, results.study_hours)
+        occupancy_hoys, percentage_above, results.timestep)
     header = Header(Fraction('Percentage above 1000 direct lux'), '%',
                     AnalysisPeriod(results.timestep),
                     metadata={'SensorGrid': grid_info['name']})
@@ -529,7 +529,7 @@ def leed_states_schedule(
     # map states to 8760 values
     for light_path, shd_trans in states_schedule.items():
         mapped_states = results.values_to_annual(
-            occupancy_hoys, shd_trans, results.timestep, results.study_hours)
+            occupancy_hoys, shd_trans, results.timestep)
         states_schedule[light_path] = mapped_states
 
     return states_schedule, fail_to_comply, shd_trans_dict
