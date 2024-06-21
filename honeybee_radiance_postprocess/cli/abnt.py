@@ -161,8 +161,15 @@ def abnt_nbr_15575(
                 # if pof is not calculated for this grid
                 if pof_sensor_grid is None:
                     if room_center:
-                        pof_sensor_grids[grid_info['full_id']] = \
-                            room.center + Vector3D(0, 0, 0.75)
+                        floor_face = Face3D.join_coplanar_faces(
+                            room.horizontal_floor_boundaries(), 0.05
+                        )[0]
+                        if floor_face.is_convex:
+                            pof_sensor_grids[grid_info['full_id']] = \
+                                floor_face.centroid + Vector3D(0, 0, 0.75)
+                        else:
+                            pof_sensor_grids[grid_info['full_id']] = \
+                                floor_face.pole_of_inaccessibility(0.01) + Vector3D(0, 0, 0.75)
                     else:
                         faces_3d = [Face3D(face_vertices) for face_vertices in sensor_grid.mesh.face_vertices]
                         face_3d_union = Face3D.join_coplanar_faces(faces_3d, 0.05)
