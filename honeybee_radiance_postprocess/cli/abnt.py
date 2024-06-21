@@ -8,7 +8,7 @@ import numpy as np
 
 from honeybee.model import Model
 from ladybug_geometry.geometry3d.face import Face3D
-from ladybug_geometry.geometry3d.pointvector import Point3D
+from ladybug_geometry.geometry3d.pointvector import Vector3D
 
 from ..vis_metadata import _abnt_nbr_15575_daylight_levels_vis_metadata
 
@@ -29,12 +29,16 @@ def abnt():
 @click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option(
+    '--room-center/--grid-center', '-rc/-gc', help='Flag to note whether the '
+    'evaluation of the center is at the room center or the grid center.',
+    default=True, show_default=True)
+@click.option(
     '--sub-folder', '-sf', help='Relative path for subfolder to write output '
     'files.', default='abnt_nbr_15575', type=click.Path(
     exists=False, file_okay=False, dir_okay=True, resolve_path=True, path_type=Path)
 )
 def abnt_nbr_15575(
-    folder, model_file, sub_folder
+    folder, model_file, room_center, sub_folder
 ):
     """Calculate metrics for ABNT NBR 15575.
 
@@ -97,7 +101,7 @@ def abnt_nbr_15575(
 
     try:
         folder = Path(folder)
-        hb_model = Model.from_file(model_file)
+        hb_model: Model = Model.from_file(model_file)
         sensor_grids = hb_model.properties.radiance.sensor_grids
         sg_full_identifier = {sg.full_identifier: sg for sg in sensor_grids}
 
@@ -139,15 +143,22 @@ def abnt_nbr_15575(
                     pof_sensor_grids.get(grid_info['full_id'], None)
                 # if pof is not calculated for this grid
                 if pof_sensor_grid is None:
-                    faces_3d = [Face3D(face_vertices) for face_vertices in sensor_grid.mesh.face_vertices]
-                    face_3d_union = Face3D.join_coplanar_faces(faces_3d, 0.05)
-                    assert len(face_3d_union) == 1
-                    if face_3d_union[0].is_convex:
-                        centroid = face_3d_union[0].centroid
-                        pof_sensor_grids[grid_info['full_id']] = centroid
+                    if room_center:
+                        room = hb_model.rooms_by_identifier(
+                            [sensor_grid.room_identifier]
+                        )[0]
+                        pof_sensor_grids[grid_info['full_id']] = \
+                            room.center + Vector3D(0, 0, 0.75)
                     else:
-                        pof = face_3d_union[0].pole_of_inaccessibility(0.01)
-                        pof_sensor_grids[grid_info['full_id']] = pof
+                        faces_3d = [Face3D(face_vertices) for face_vertices in sensor_grid.mesh.face_vertices]
+                        face_3d_union = Face3D.join_coplanar_faces(faces_3d, 0.05)
+                        assert len(face_3d_union) == 1
+                        if face_3d_union[0].is_convex:
+                            centroid = face_3d_union[0].centroid
+                            pof_sensor_grids[grid_info['full_id']] = centroid
+                        else:
+                            pof = face_3d_union[0].pole_of_inaccessibility(0.01)
+                            pof_sensor_grids[grid_info['full_id']] = pof
 
                 x = pof_sensor_grids[grid_info['full_id']].x
                 y = pof_sensor_grids[grid_info['full_id']].y
