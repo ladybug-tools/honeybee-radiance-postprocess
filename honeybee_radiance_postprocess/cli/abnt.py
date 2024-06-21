@@ -7,6 +7,7 @@ import click
 import numpy as np
 
 from honeybee.model import Model
+from honeybee.room import Room
 from ladybug_geometry.geometry3d.face import Face3D
 from ladybug_geometry.geometry3d.pointvector import Vector3D
 
@@ -29,6 +30,12 @@ def abnt():
 @click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option(
+    '--ground-level', '-gl', help='A value to define the height of the ground '
+    'level. This will make sure that rooms below this height will not be '
+    'counted as ground level rooms.',
+    default=0, show_default=True, type=click.FLOAT
+)
+@click.option(
     '--room-center/--grid-center', '-rc/-gc', help='Flag to note whether the '
     'evaluation of the center is at the room center or the grid center.',
     default=True, show_default=True)
@@ -38,7 +45,7 @@ def abnt():
     exists=False, file_okay=False, dir_okay=True, resolve_path=True, path_type=Path)
 )
 def abnt_nbr_15575(
-    folder, model_file, room_center, sub_folder
+    folder, model_file, ground_level, room_center, sub_folder
 ):
     """Calculate metrics for ABNT NBR 15575.
 
@@ -102,6 +109,14 @@ def abnt_nbr_15575(
     try:
         folder = Path(folder)
         hb_model: Model = Model.from_file(model_file)
+        grouped_rooms, floor_heights = Room.group_by_floor_height(hb_model.rooms)
+
+        # pick the first group >= to ground level
+        for gr, fh in zip(grouped_rooms, floor_heights):
+            if fh >= ground_level:
+                ground_level_rooms = gr
+                break
+
         sensor_grids = hb_model.properties.radiance.sensor_grids
         sg_full_identifier = {sg.full_identifier: sg for sg in sensor_grids}
 
@@ -139,14 +154,13 @@ def abnt_nbr_15575(
                 x_coords = sensor_points[:, 0]
                 y_coords = sensor_points[:, 1]
 
+                room = hb_model.rooms_by_identifier([sensor_grid.room_identifier])[0]
+
                 pof_sensor_grid = \
                     pof_sensor_grids.get(grid_info['full_id'], None)
                 # if pof is not calculated for this grid
                 if pof_sensor_grid is None:
                     if room_center:
-                        room = hb_model.rooms_by_identifier(
-                            [sensor_grid.room_identifier]
-                        )[0]
                         pof_sensor_grids[grid_info['full_id']] = \
                             room.center + Vector3D(0, 0, 0.75)
                     else:
@@ -164,11 +178,16 @@ def abnt_nbr_15575(
                 y = pof_sensor_grids[grid_info['full_id']].y
                 f_xy = perform_interpolation(x, y, x_coords, y_coords, pit_values)
 
+                if room in ground_level_rooms:
+                    minimo = 48
+                else:
+                    minimo = 60
+
                 if f_xy >= 120:
                     level = 'Superior'
                 elif f_xy >= 90:
                     level = 'Intermediário'
-                elif f_xy >= 60: # add check for ground floor (48 lux)
+                elif f_xy >= minimo: # add check for ground floor (48 lux)
                     level = 'Mínimo'
                 else:
                     level = 'Não atende'
