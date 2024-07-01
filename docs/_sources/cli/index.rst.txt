@@ -1,0 +1,18 @@
+CLI
+===
+
+
+Commands
+--------
+.. toctree::
+   :maxdepth: 1
+
+   main
+   grid
+   two_phase
+   leed
+   mtxop
+   schedule
+   postprocess
+   translate
+   abnt
