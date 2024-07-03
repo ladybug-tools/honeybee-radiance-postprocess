@@ -4,6 +4,7 @@ from pathlib import Path
 from itertools import islice, cycle
 from typing import Tuple, Union, List
 import numpy as np
+import itertools
 
 from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.datacollection import HourlyContinuousCollection
@@ -1334,3 +1335,24 @@ class Results(_ResultsFolder):
                     valid_states[light_path] = list(range(len(states)))
 
         return valid_states
+
+    def _light_paths_from_grid_info(self, grid_info: Union[dict, str]) -> list:
+        if isinstance(grid_info, str):
+            for _grid_info in self.grids_info:
+                if _grid_info['full_id'] == grid_info:
+                    grid_info = _grid_info
+                    break
+            else:
+                raise Exception(f'Grid info with full_id "{grid_info}" not found.')
+        light_paths = [elem for lp in grid_info['light_path'] for elem in lp]
+
+        return light_paths
+
+    def _get_state_combinations(self, grid_info: Union[dict, str]) -> List[dict]:
+        light_paths = self._light_paths_from_grid_info(grid_info)
+        valid_states = self._get_valid_states()
+        filtered_states = {lp: valid_states[lp] for lp in light_paths}
+        keys, values = zip(*filtered_states.items())
+        combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
+
+        return combinations
