@@ -714,11 +714,9 @@ class AnnualDaylight(Results):
                 f'grid {grid_info["name"]}. Received {len(control_sensor)} '
                 'control sensors.')
             control_sensor_index = control_sensor[0]
-            light_paths = [lp[0] for lp in grid_info['light_path']]
-            lp_states = {key: self.valid_states[key] for key in light_paths if key in self.valid_states}
 
-            keys, values = zip(*lp_states.items())
-            combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
+            combinations = self._get_state_combinations(grid_info)
+
             array_list_combinations = []
             for combination in combinations:
                 combination_arrays = []
