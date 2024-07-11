@@ -22,6 +22,7 @@ from .metrics import da_array2d, ase_array2d
 from .annual import schedule_to_hoys, occupancy_schedule_8_to_6
 from .results.annual_daylight import AnnualDaylight
 from .util import filter_array, recursive_dict_merge
+from .dynamic import DynamicSchedule, ApertureGroupSchedule
 
 
 def _create_grid_summary(
@@ -296,7 +297,8 @@ def shade_transmittance_per_light_path(
 
 def leed_states_schedule(
         results: Union[str, AnnualDaylight], grids_filter: str = '*',
-        shade_transmittance: Union[float, dict] = 0.05
+        shade_transmittance: Union[float, dict] = 0.05,
+        use_states: bool = False
         ) -> Tuple[dict, dict]:
     """Calculate a schedule of each aperture group for LEED compliant sDA.
 
@@ -315,6 +317,9 @@ def leed_states_schedule(
             keys, and the value for each key is the shade transmittance. Values
             for shade transmittance must be 1 > value > 0.
             Defaults to 0.05.
+        use_states: A boolean to note whether to use the simulated states. Set
+            to True to use the simulated states. The default is False which will
+            use the shade transmittance instead.
 
     Returns:
         Tuple: A tuple with a dictionary of the annual schedule and a
@@ -335,12 +340,8 @@ def leed_states_schedule(
     shd_trans_dict = {}
 
     for grid_info in grids_info:
-        grid_id = grid_info['full_id']
         grid_count = grid_info['count']
         light_paths = [lp[0] for lp in grid_info['light_path']]
-
-        shade_transmittances = shade_transmittance_per_light_path(
-            light_paths, shade_transmittance, shd_trans_dict)
 
         if len(light_paths) > 6:
             full_direct = []
@@ -491,23 +492,30 @@ def leed_states_schedule(
                         states_schedule[light_path].append(shd_trans)
 
         else:
-            keys, values = zip(*shade_transmittances.items())
-            combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
+            if use_states:
+                combinations = results._get_state_combinations(grid_info)
+            else:
+                shade_transmittances = shade_transmittance_per_light_path(
+                    light_paths, shade_transmittance, shd_trans_dict)
+                keys, values = zip(*shade_transmittances.items())
+                combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
 
             array_list_combinations = []
             for combination in combinations:
                 combination_arrays = []
-                for light_path, shd_trans in combination.items():
-                    array = results._get_array(
-                        grid_info, light_path, res_type='direct')
-                    if shd_trans == 1:
-                        combination_arrays.append(array)
-                    else:
-                    #     combination_arrays.append(array * shd_trans)
+                for light_path, value in combination.items():
+                    if use_states:
                         combination_arrays.append(
-                            results._get_array(grid_info, light_path, state=1,
+                            results._get_array(grid_info, light_path, state=value,
                                             res_type='direct')
                         )
+                    else:
+                        array = results._get_array(
+                            grid_info, light_path, res_type='direct')
+                        if value == 1:
+                            combination_arrays.append(array)
+                        else:
+                            combination_arrays.append(array * value)
                 combination_array = sum(combination_arrays)
                 #print((combination_array >= 1000).sum(axis=0))
                 combination_percentage = \
@@ -529,17 +537,28 @@ def leed_states_schedule(
             combinations = [combinations[idx] for idx in max_indices]
             # merge the combinations of dicts
             for combination in combinations:
-                for light_path, shd_trans in combination.items():
+                for light_path, value in combination.items():
                     if light_path != '__static_apertures__':
-                        states_schedule[light_path].append(shd_trans)
+                        states_schedule[light_path].append(value)
 
     occupancy_hoys = schedule_to_hoys(schedule, results.sun_up_hours)
 
     # map states to 8760 values
-    for light_path, shd_trans in states_schedule.items():
-        mapped_states = results.values_to_annual(
-            occupancy_hoys, shd_trans, results.timestep)
-        states_schedule[light_path] = mapped_states
+    if use_states:
+        aperture_group_schedules = []
+        for identifier, values in states_schedule.items():
+            mapped_states = results.values_to_annual(
+                occupancy_hoys, values, results.timestep, dtype=np.int32)
+            aperture_group_schedules.append(
+                ApertureGroupSchedule(identifier, mapped_states.tolist())
+            )
+        states_schedule = \
+            DynamicSchedule.from_group_schedules(aperture_group_schedules)
+    else:
+        for light_path, shd_trans in states_schedule.items():
+            mapped_states = results.values_to_annual(
+                occupancy_hoys, shd_trans, results.timestep)
+            states_schedule[light_path] = mapped_states
 
     return states_schedule, fail_to_comply, shd_trans_dict
 
@@ -547,9 +566,9 @@ def leed_states_schedule(
 def leed_option_one(
         results: Union[str, AnnualDaylight], grids_filter: str = '*',
         shade_transmittance: Union[float, dict] = 0.05,
-        states_schedule: dict = None, threshold: float = 300,
-        direct_threshold: float = 1000, occ_hours: int = 250,
-        target_time: float = 50, sub_folder: str = None):
+        use_states: bool = False, states_schedule: dict = None,
+        threshold: float = 300, direct_threshold: float = 1000,
+        occ_hours: int = 250, target_time: float = 50, sub_folder: str = None):
     """Calculate credits for LEED v4.1 Daylight Option 1.
 
     Args:
@@ -562,6 +581,9 @@ def leed_option_one(
             keys, and the value for each key is the shade transmittance. Values
             for shade transmittance must be 1 > value > 0.
             Defaults to 0.05.
+        use_states: A boolean to note whether to use the simulated states. Set
+            to True to use the simulated states. The default is False which will
+            use the shade transmittance instead.
         states_schedule: A custom dictionary of shading states. In case this is
             left empty, the function will calculate a shading schedule by using
             the shade_transmittance input. If a states schedule is provided it
@@ -607,7 +629,7 @@ def leed_option_one(
     if not states_schedule:
         states_schedule, fail_to_comply, shd_trans_dict = \
             leed_states_schedule(results, grids_filter=grids_filter,
-                shade_transmittance=shade_transmittance)
+                shade_transmittance=shade_transmittance, use_states=use_states)
     else:
         raise NotImplementedError(
             'Custom input for argument states_schedule is not yet implemented.'
@@ -672,22 +694,38 @@ def leed_option_one(
         arrays_blinds_up = []
         arrays_blinds_down = []
         # combine total array for all light paths
-        for light_path in light_paths:
-            array = results._get_array(grid_info, light_path, res_type='total')
-            array_filter = np.apply_along_axis(
-                filter_array, 1, array, occ_mask)
-            if light_path != '__static_apertures__':
-                sun_up_hours = np.array(results.sun_up_hours).astype(int)
-                shd_trans_array = states_schedule[light_path][sun_up_hours]
-                shd_trans_array = shd_trans_array[occ_mask.astype(bool)]
-                arrays.append(array_filter * shd_trans_array)
+        if use_states:
+            array = results._array_from_states(grid_info, states=states_schedule)
+            array_filter = np.apply_along_axis(filter_array, 1, array, occ_mask)
+
+            for light_path in light_paths:
+                array_blinds_up = results._get_array(
+                    grid_info, light_path, state=0, res_type='total')
+                array_filter = np.apply_along_axis(
+                    filter_array, 1, array_blinds_up, occ_mask)
                 arrays_blinds_up.append(array_filter)
-                arrays_blinds_down.append(array_filter * shd_trans_dict[light_path])
-            else:
-                arrays.append(array_filter)
-                arrays_blinds_up.append(array_filter)
+                array_blinds_down = results._get_array(
+                    grid_info, light_path, state=1, res_type='total')
+                array_filter = np.apply_along_axis(
+                    filter_array, 1, array_blinds_down, occ_mask)
                 arrays_blinds_down.append(array_filter)
-        array = sum(arrays)
+        else:
+            for light_path in light_paths:
+                array = results._get_array(grid_info, light_path, res_type='total')
+                array_filter = np.apply_along_axis(
+                    filter_array, 1, array, occ_mask)
+                if light_path != '__static_apertures__':
+                    sun_up_hours = np.array(results.sun_up_hours).astype(int)
+                    shd_trans_array = states_schedule[light_path][sun_up_hours]
+                    shd_trans_array = shd_trans_array[occ_mask.astype(bool)]
+                    arrays.append(array_filter * shd_trans_array)
+                    arrays_blinds_up.append(array_filter)
+                    arrays_blinds_down.append(array_filter * shd_trans_dict[light_path])
+                else:
+                    arrays.append(array_filter)
+                    arrays_blinds_up.append(array_filter)
+                    arrays_blinds_down.append(array_filter)
+            array = sum(arrays)
         array_blinds_up = sum(arrays_blinds_up)
         array_blinds_down = sum(arrays_blinds_down)
         # calculate da per grid
@@ -744,7 +782,10 @@ def leed_option_one(
         hourly_data = HourlyContinuousCollection(header=header, values=values.tolist())
         return hourly_data.to_dict()
 
-    states_schedule = {k:to_datacollection(k, v) for k, v in states_schedule.items()}
+    if use_states:
+        states_schedule = {k:to_datacollection(k, v) for k, v in states_schedule.to_dict().items()}
+    else:
+        states_schedule = {k:to_datacollection(k, v) for k, v in states_schedule.items()}
 
     if sub_folder:
         folder = Path(sub_folder)
