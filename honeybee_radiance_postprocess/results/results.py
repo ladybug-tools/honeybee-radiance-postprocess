@@ -932,7 +932,8 @@ class Results(_ResultsFolder):
     def values_to_annual(
             hours: Union[List[float], np.ndarray],
             values: Union[List[float], np.ndarray],
-            timestep: int, base_value: int = 0) -> np.ndarray:
+            timestep: int, base_value: int = 0,
+            dtype: np.dtype = np.float32) -> np.ndarray:
         """Map a 1D NumPy array based on a set of hours to an annual array.
 
         This method creates an array with a base value of length 8760 and
@@ -946,6 +947,7 @@ class Results(_ResultsFolder):
                 regular list or a 1D NumPy array.
             timestep: Time step of the simulation.
             base_value: A value that will be applied for all the base array.
+            dtype: A NumPy dtype for the annual array.
 
         Returns:
             A 1D NumPy array.
@@ -956,7 +958,7 @@ class Results(_ResultsFolder):
         assert hours.shape == values.shape
         full_ap = AnalysisPeriod(timestep=timestep)
         indices = np.where(np.isin(full_ap.hoys, hours))[0]
-        annual_array = np.repeat(base_value, 8760 * timestep).astype(np.float32)
+        annual_array = np.repeat(base_value, 8760 * timestep).astype(dtype)
         annual_array[indices] = values
 
         return annual_array
