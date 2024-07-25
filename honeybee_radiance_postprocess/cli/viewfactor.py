@@ -50,8 +50,7 @@ def view_factor():
     'octree files will be written.'
 )
 @click.option(
-    '--name', default='view_factor', help='File name, which will be used for the '
-    'rebuilt sensor-grid, the matrix and the resulting CSV with view factors.'
+    '--name', default='view_factor', help='File name of the view factor file.'
 )
 def rcontrib_command_with_view_postprocess(
         octree, sensor_grid, modifiers, ray_count, rad_params, rad_params_locked,
@@ -118,11 +117,8 @@ def rcontrib_command_with_view_postprocess(
             s_facs = np.sum(sens_chunk, axis=0) / (math.pi * ray_count)
             view_fac_mtx.append(s_facs)
 
-        # write the final view factors into a CSV file
-        view_file = os.path.join(folder, '{}.csv'.format(name))
-        with open(view_file, 'w') as v_file:
-            for facs in view_fac_mtx:
-                v_file.write(','.join((str(v) for v in facs)) + '\n')
+        np.save(os.path.join(folder, '{}'.format(name)), view_fac_mtx)
+
     except Exception:
         _logger.exception('Failed to compute view factor contributions.')
         sys.exit(1)
