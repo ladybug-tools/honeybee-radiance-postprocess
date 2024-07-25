@@ -84,6 +84,7 @@ def rgb_to_illuminance(
         # save direct sunlight illuminance
         direct_output = Path(output_folder, direct_name)
         direct_output.parent.mkdir(parents=True, exist_ok=True)
+
         np.save(direct_output, direct_sunlight_illuminance)
 
     except Exception:
