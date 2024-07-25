@@ -65,6 +65,8 @@ def smallest_dtype(array: np.ndarray) -> Tuple[np.signedinteger, np.floating]:
         return smallest_integer_dtype(array)
     elif np.issubdtype(array, np.floating):
         return smallest_float_dtype(array)
+    else:
+        raise TypeError(f'Expected integer or floating dtype. Got {array.dtype}')
 
 
 def set_smallest_dtype(array: np.ndarray) -> np.ndarray:
