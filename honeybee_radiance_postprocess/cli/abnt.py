@@ -62,10 +62,21 @@ def abnt_nbr_15575(
             a requirement that the sensor grids have Meshes.
     """
     def find_surrounding_points(x, y, x_coords, y_coords):
-        x1 = np.max(x_coords[x_coords <= x]) if np.any(x_coords <= x) else x_coords[0]
-        x2 = np.min(x_coords[x_coords > x]) if np.any(x_coords > x) else x_coords[-1]
-        y1 = np.max(y_coords[y_coords <= y]) if np.any(y_coords <= y) else y_coords[0]
-        y2 = np.min(y_coords[y_coords > y]) if np.any(y_coords > y) else y_coords[-1]
+        """Find the four nearest points and return the minimum and maximum
+        x and y values."""
+        # calculate Euclidean distances
+        distances = np.sqrt((x_coords - x)**2 + (y_coords - y)**2)
+        # get the four nearest points
+        if len(distances) < 4:
+            # if the grid for some reason has less than four sensors
+            nearest_indices = np.argsort(distances)[:len(distances)]
+        else:
+            nearest_indices = np.argsort(distances)[:4]
+        x_values = x_coords[nearest_indices]
+        y_values = y_coords[nearest_indices]
+        x1, x2 = min(x_values), max(x_values)
+        y1, y2 = min(y_values), max(y_values)
+
         return x1, x2, y1, y2
 
     def get_value(x, y, x_coords, y_coords, values):
@@ -73,7 +84,7 @@ def abnt_nbr_15575(
         index = np.where((np.abs(x_coords - x) <= tolerance) & (np.abs(y_coords - y) <= tolerance))
         return values[index][0]
 
-    def perform_interpolation(x, y, x_coords, y_coords, pit_values):
+    def perform_interpolation(x, y, x_coords, y_caoords, pit_values):
         x1, x2, y1, y2 = find_surrounding_points(x, y, x_coords, y_coords)
 
         # extract the illuminance values at the surrounding points
@@ -153,7 +164,6 @@ def abnt_nbr_15575(
 
                 x_coords = sensor_points[:, 0]
                 y_coords = sensor_points[:, 1]
-
                 room = hb_model.rooms_by_identifier([sensor_grid.room_identifier])[0]
 
                 pof_sensor_grid = \
