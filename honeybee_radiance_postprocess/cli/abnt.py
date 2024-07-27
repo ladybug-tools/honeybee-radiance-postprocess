@@ -248,20 +248,24 @@ def abnt_nbr_15575(
                             room.horizontal_floor_boundaries(), 0.05
                         )[0]
                         if floor_face.is_convex:
-                            pof_sensor_grids[grid_info['full_id']] = \
-                                floor_face.centroid + Vector3D(0, 0, np.mean(z_coords))
+                            centroid = floor_face.centroid
                         else:
-                            pof_sensor_grids[grid_info['full_id']] = \
-                                floor_face.pole_of_inaccessibility(0.01) + Vector3D(0, 0, np.mean(z_coords))
+                            centroid = floor_face.pole_of_inaccessibility(0.01)
+                        dz = np.mean(z_coords) - centroid.z
+                        pof_sensor_grids[grid_info['full_id']] = \
+                            centroid + Vector3D(0, 0, dz)
                     else:
-                        faces_3d = [Face3D(face_vertices) for face_vertices in sensor_grid.mesh.face_vertices]
-                        face_3d_union = Face3D.join_coplanar_faces(faces_3d, 0.05)
+                        faces_3d = [
+                            Face3D(face_vertices) for face_vertices in sensor_grid.mesh.face_vertices]
+                        face_3d_union = Face3D.join_coplanar_faces(
+                            faces_3d, 0.05)
                         assert len(face_3d_union) == 1
                         if face_3d_union[0].is_convex:
                             centroid = face_3d_union[0].centroid
                             pof_sensor_grids[grid_info['full_id']] = centroid
                         else:
-                            pof = face_3d_union[0].pole_of_inaccessibility(0.01)
+                            pof = face_3d_union[0].pole_of_inaccessibility(
+                                0.01)
                             pof_sensor_grids[grid_info['full_id']] = pof
 
                 x = pof_sensor_grids[grid_info['full_id']].x
