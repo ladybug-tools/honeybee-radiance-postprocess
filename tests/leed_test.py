@@ -4,7 +4,7 @@ import json
 
 from ladybug.futil import nukedir
 from honeybee_radiance_postprocess.results.annual_daylight import AnnualDaylight
-from honeybee_radiance_postprocess.leed import leed_option_one
+from honeybee_radiance_postprocess.leed.leed import leed_option_one
 
 
 def test_results_leed_option_one_shade_transmittance_file():
