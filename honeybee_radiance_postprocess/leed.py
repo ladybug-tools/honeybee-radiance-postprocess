@@ -18,6 +18,7 @@ from honeybee.model import Model
 from honeybee.units import conversion_factor_to_meters
 from honeybee_radiance.writer import _filter_by_pattern
 from honeybee_radiance.postprocess.annual import filter_schedule_by_hours
+
 from .metrics import da_array2d, ase_array2d
 from .annual import schedule_to_hoys, occupancy_schedule_8_to_6
 from .results.annual_daylight import AnnualDaylight
@@ -27,8 +28,7 @@ from .dynamic import DynamicSchedule, ApertureGroupSchedule
 
 def _create_grid_summary(
     grid_info, sda_grid, sda_blinds_up_grid, sda_blinds_down_grid, ase_grid,
-    pass_sda, pass_sda_blind_up, pass_sda_blinds_down, pass_ase, total_floor,
-    area_weighted=True):
+    pass_sda, pass_ase, total_floor, area_weighted=True):
     """Create a LEED summary for a single grid.
 
     Args:
@@ -142,8 +142,7 @@ def _leed_summary(
             grid_summary = \
                 _create_grid_summary(
                     grid_info, sda_grid, sda_blinds_up_grid, sda_blinds_down_grid,
-                    ase_grid, area_pass_sda, area_pass_sda_blind_up,
-                    area_pass_sda_blinds_down, area_pass_ase, total_grid_area,
+                    ase_grid, area_pass_sda, area_pass_ase, total_grid_area,
                     area_weighted=True
                 )
 
@@ -182,8 +181,7 @@ def _leed_summary(
             grid_summary = \
                 _create_grid_summary(
                     grid_info, sda_grid, sda_blinds_up_grid, sda_blinds_down_grid,
-                    ase_grid, sensor_count_pass_sda, sensor_count_pass_sda_blinds_up,
-                    sensor_count_pass_sda_blinds_down, sensor_count_pass_ase,
+                    ase_grid, sensor_count_pass_sda, sensor_count_pass_ase,
                     grid_count, area_weighted=False
                 )
 
@@ -292,7 +290,7 @@ def shade_transmittance_per_light_path(
                 shade_transmittances[light_path].append(1)
                 shd_trans_dict[light_path] = 1
 
-    return shade_transmittances
+    return shade_transmittances, shd_trans_dict
 
 
 def leed_states_schedule(
@@ -495,7 +493,7 @@ def leed_states_schedule(
             if use_states:
                 combinations = results._get_state_combinations(grid_info)
             else:
-                shade_transmittances = shade_transmittance_per_light_path(
+                shade_transmittances, shd_trans_dict = shade_transmittance_per_light_path(
                     light_paths, shade_transmittance, shd_trans_dict)
                 keys, values = zip(*shade_transmittances.items())
                 combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
@@ -774,16 +772,21 @@ def leed_option_one(
     # convert to datacollection
     def to_datacollection(aperture_group: str, values: np.ndarray):
         # convert values to 0 and 1 (0 = no shading, 1 = shading)
-        values[values == 1] = 0
-        values[values == shd_trans_dict[aperture_group]] = 1
-        header = Header(data_type=GenericType(aperture_group, ''), unit='',
-                        analysis_period=AnalysisPeriod(),
-                        metadata={'Shade Transmittance': shd_trans_dict[aperture_group]})
-        hourly_data = HourlyContinuousCollection(header=header, values=values.tolist())
+        if shd_trans_dict:
+            values[values == 1] = 0
+            values[values == shd_trans_dict[aperture_group]] = 1
+            header = Header(data_type=GenericType(aperture_group, ''), unit='',
+                            analysis_period=AnalysisPeriod(),
+                            metadata={'Shade Transmittance': shd_trans_dict[aperture_group]})
+            hourly_data = HourlyContinuousCollection(header=header, values=values.tolist())
+        else:
+            header = Header(data_type=GenericType(aperture_group, ''), unit='',
+                            analysis_period=AnalysisPeriod())
+            hourly_data = HourlyContinuousCollection(header=header, values=values)
         return hourly_data.to_dict()
 
     if use_states:
-        states_schedule = {k:to_datacollection(k, v) for k, v in states_schedule.to_dict().items()}
+        states_schedule = {k:to_datacollection(k, v['schedule']) for k, v in states_schedule.to_dict().items()}
     else:
         states_schedule = {k:to_datacollection(k, v) for k, v in states_schedule.items()}
 
