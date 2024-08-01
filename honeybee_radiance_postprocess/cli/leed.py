@@ -5,7 +5,7 @@ import logging
 import os
 import click
 
-from ..leed import leed_option_one
+from ..leed.leed import leed_option_one
 from ..results.annual_daylight import AnnualDaylight
 
 _logger = logging.getLogger(__name__)

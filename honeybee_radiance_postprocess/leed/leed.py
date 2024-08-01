@@ -19,11 +19,12 @@ from honeybee.units import conversion_factor_to_meters
 from honeybee_radiance.writer import _filter_by_pattern
 from honeybee_radiance.postprocess.annual import filter_schedule_by_hours
 
-from .metrics import da_array2d, ase_array2d
-from .annual import schedule_to_hoys, occupancy_schedule_8_to_6
-from .results.annual_daylight import AnnualDaylight
-from .util import filter_array, recursive_dict_merge
-from .dynamic import DynamicSchedule, ApertureGroupSchedule
+from ..metrics import da_array2d, ase_array2d
+from ..annual import schedule_to_hoys, occupancy_schedule_8_to_6
+from ..results.annual_daylight import AnnualDaylight
+from ..util import filter_array, recursive_dict_merge
+from ..dynamic import DynamicSchedule, ApertureGroupSchedule
+from .leed_schedule import shd_trans_schedule_descending
 
 
 def _create_grid_summary(
@@ -341,154 +342,21 @@ def leed_states_schedule(
         grid_count = grid_info['count']
         light_paths = [lp[0] for lp in grid_info['light_path']]
 
+        shade_transmittances, shd_trans_dict = (
+            shade_transmittance_per_light_path(
+                light_paths, shade_transmittance, shd_trans_dict
+            )
+        )
+
         if len(light_paths) > 6:
-            full_direct = []
-            full_thresh = []
-            shd_trans_array = []
-            for light_path in light_paths:
-                array = results._get_array(grid_info, light_path, res_type='direct')
-                array = np.apply_along_axis(filter_array, 1, array, occ_mask)
-                full_direct.append(array)
-                full_thresh.append((array >= 1000).sum(axis=0))
-                #shd_trans_array.append(shade_transmittances[light_path][1])
-                shd_trans_array.append(
-                    results._get_array(grid_info, light_path, state=1,
-                                       res_type='direct')
+            if use_states:
+                raise NotImplementedError(
+                    "Option uses_states=True is not implemented for sensor grids with more than 6 light paths."
                 )
-
-            # sum the array element-wise
-            full_direct_sum = sum(full_direct)
-
-            # create base list of shading combinations (all set to 1)
-            combinations = [
-                {light_path: 1 for light_path in light_paths} \
-                    for i in range(full_direct_sum.shape[1])
-            ]
-
-            # find the percentage of floor area >= 1000 lux
-            direct_pct_above = (full_direct_sum >= 1000).sum(axis=0) / grid_count
-
-            # find the indices where the percentage of floor area is > 2%
-            above_2_indices = np.where(direct_pct_above > 0.02)[0]
-
-            # get an array of only the relevant hours
-            direct_sum = np.take(full_direct_sum, above_2_indices, axis=1)
-
-            # get an array of only the relevant hours
-            direct = np.take(full_direct, above_2_indices, axis=2)
-
-            # get an array of only the relevant hours
-            thresh = np.take(full_thresh, above_2_indices, axis=1)
-
-            # sort and get indices. Negate the array to get descending order
-            sort_thresh = np.argsort(-thresh, axis=0).transpose()
-
-            _combinations = []
-            _combinations.insert(0, (np.arange(full_direct_sum.shape[1]), combinations))
-
-            if np.any(above_2_indices):
-                for idx in range(len(full_direct)):
-                    # take column
-                    sort_indices = np.take(sort_thresh, idx, axis=1)
-
-                    # map light path identifiers
-                    light_path_ids = np.take(light_paths, sort_indices)
-
-                    # get a list of shade transmittances
-                    shd_trans_array = np.take(shd_trans_array, sort_indices)
-
-                    # create combination for the subset
-                    _subset_combination = [
-                        {light_path: _shd_trans} for light_path, _shd_trans in \
-                            zip(light_path_ids, shd_trans_array)
-                    ]
-                    _combinations.insert(0, (above_2_indices, _subset_combination))
-
-                    # take the values from each array by indexing
-                    direct_array = \
-                        direct[sort_indices, :, range(len(sort_indices))].transpose()
-
-                    # subtract the illuminance values
-                    direct_sum = direct_sum - (direct_array * (1 - shd_trans_array))
-
-                    # find the percentage of floor area >= 1000 lux
-                    direct_pct_above = (direct_sum >= 1000).sum(axis=0) / grid_count
-
-                    # find the indices where the percentage of floor area is > 2%
-                    above_2_indices = np.where(direct_pct_above > 0.02)[0]
-
-                    # break if there are no hours above 2%
-                    if not np.any(above_2_indices):
-                        break
-
-                    # update variables for the next iteration
-                    direct_sum = np.take(direct_sum, above_2_indices, axis=1)
-                    direct = np.take(direct, above_2_indices, axis=2)
-                    thresh = np.take(thresh, above_2_indices, axis=1)
-                    sort_thresh = np.take(sort_thresh, above_2_indices, axis=0)
-                    shd_trans_array = np.take(shd_trans_array, above_2_indices)
-
-                if np.any(above_2_indices):
-                    # take column
-                    sort_indices = np.take(sort_thresh, idx, axis=1)
-
-                    # map light path identifiers
-                    light_path_ids = np.take(light_paths, sort_indices)
-
-                    # get a list of shade transmittances
-                    shd_trans_array = np.take(shd_trans_array, sort_indices)
-
-                    # create combination for the subset
-                    _subset_combination = [
-                        {light_path: _shd_trans} for light_path, _shd_trans in \
-                            zip(light_path_ids, shd_trans_array)
-                    ]
-                    _combinations.insert(0, (above_2_indices, _subset_combination))
-
-                    # there are hours not complying with the 2% rule
-                    previous_indices = []
-                    previous_combination = []
-                    grid_comply = []
-                    # merge the combinations from the iterations of the subsets
-                    for i, subset in enumerate(_combinations):
-                        if i == 0:
-                            previous_indices = subset[0]
-                        else:
-                            _indices = subset[0]
-                            grid_comply = []
-                            for _pr_idx in previous_indices:
-                                grid_comply.append(_indices[_pr_idx])
-                            previous_indices = grid_comply
-                    # convert indices to sun up hours indices
-                    filter_indices = np.where(occ_mask.astype(bool))[0]
-                    grid_comply = [filter_indices[_gc] for _gc in grid_comply]
-                    grid_comply = np.array(results.sun_up_hours)[grid_comply]
-                    fail_to_comply[grid_info['name']] = \
-                        [int(hoy) for hoy in grid_comply]
-
-                previous_indices = None
-                previous_combination = None
-                # merge the combinations from the iterations of the subsets
-                for i, subset in enumerate(_combinations):
-                    if i == 0:
-                        previous_indices, previous_combination = subset
-                    else:
-                        _indices, _combination = subset
-                        for _pr_idx, _pr_comb in \
-                            zip(previous_indices, previous_combination):
-                            for light_path, _shd_trans in _pr_comb.items():
-                                _combination[_pr_idx][light_path] = _shd_trans
-                        previous_indices = _indices
-                        previous_combination = _combination
-
-                combinations = _combination
-
-            # merge the combinations of dicts
-            for combination in combinations:
-                for light_path, shd_trans in combination.items():
-                    if light_path != '__static_apertures__':
-                        states_schedule[light_path].append(shd_trans)
-
+            else:
+                states_schedule, fail_to_comply = shd_trans_schedule_descending(
+                    results, grid_info, light_paths, shade_transmittances, occ_mask,
+                    states_schedule, fail_to_comply)
         else:
             if use_states:
                 combinations = results._get_state_combinations(grid_info)
@@ -505,7 +373,7 @@ def leed_states_schedule(
                     if use_states:
                         combination_arrays.append(
                             results._get_array(grid_info, light_path, state=value,
-                                            res_type='direct')
+                                               res_type='direct')
                         )
                     else:
                         array = results._get_array(
@@ -515,7 +383,7 @@ def leed_states_schedule(
                         else:
                             combination_arrays.append(array * value)
                 combination_array = sum(combination_arrays)
-                #print((combination_array >= 1000).sum(axis=0))
+
                 combination_percentage = \
                     (combination_array >= 1000).sum(axis=0) / grid_count
                 array_list_combinations.append(combination_percentage)
@@ -528,8 +396,9 @@ def leed_states_schedule(
                 fail_to_comply[grid_info['name']] = \
                     [int(hoy) for hoy in grid_comply]
 
-            array_combinations_filter = \
-                np.apply_along_axis(filter_array, 1, array_combinations, occ_mask)
+            array_combinations_filter = np.apply_along_axis(
+                filter_array, 1, array_combinations, occ_mask
+            )
             max_indices = array_combinations_filter.argmax(axis=0)
             # select the combination for each hour
             combinations = [combinations[idx] for idx in max_indices]
@@ -772,17 +641,17 @@ def leed_option_one(
     # convert to datacollection
     def to_datacollection(aperture_group: str, values: np.ndarray):
         # convert values to 0 and 1 (0 = no shading, 1 = shading)
-        if shd_trans_dict:
+        if use_states:
+            header = Header(data_type=GenericType(aperture_group, ''), unit='',
+                            analysis_period=AnalysisPeriod())
+            hourly_data = HourlyContinuousCollection(header=header, values=values)
+        else:
             values[values == 1] = 0
             values[values == shd_trans_dict[aperture_group]] = 1
             header = Header(data_type=GenericType(aperture_group, ''), unit='',
                             analysis_period=AnalysisPeriod(),
                             metadata={'Shade Transmittance': shd_trans_dict[aperture_group]})
             hourly_data = HourlyContinuousCollection(header=header, values=values.tolist())
-        else:
-            header = Header(data_type=GenericType(aperture_group, ''), unit='',
-                            analysis_period=AnalysisPeriod())
-            hourly_data = HourlyContinuousCollection(header=header, values=values)
         return hourly_data.to_dict()
 
     if use_states:
