@@ -24,7 +24,7 @@ from ..annual import schedule_to_hoys, occupancy_schedule_8_to_6
 from ..results.annual_daylight import AnnualDaylight
 from ..util import filter_array, recursive_dict_merge
 from ..dynamic import DynamicSchedule, ApertureGroupSchedule
-from .leed_schedule import shd_trans_schedule_descending
+from .leed_schedule import shd_trans_schedule_descending, states_schedule_descending
 
 
 def _create_grid_summary(
@@ -348,11 +348,11 @@ def leed_states_schedule(
             )
         )
 
-        if len(light_paths) > 6:
+        if len(light_paths) > 1:
             if use_states:
-                raise NotImplementedError(
-                    "Option uses_states=True is not implemented for sensor grids with more than 6 light paths."
-                )
+                states_schedule, fail_to_comply = states_schedule_descending(
+                    results, grid_info, light_paths, occ_mask,
+                    states_schedule, fail_to_comply)
             else:
                 states_schedule, fail_to_comply = shd_trans_schedule_descending(
                     results, grid_info, light_paths, shade_transmittances, occ_mask,
@@ -370,6 +370,7 @@ def leed_states_schedule(
             for combination in combinations:
                 combination_arrays = []
                 for light_path, value in combination.items():
+                    print(value)
                     if use_states:
                         combination_arrays.append(
                             results._get_array(grid_info, light_path, state=value,
