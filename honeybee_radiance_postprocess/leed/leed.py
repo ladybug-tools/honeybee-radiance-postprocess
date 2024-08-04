@@ -348,7 +348,7 @@ def leed_states_schedule(
             )
         )
 
-        if len(light_paths) > 1:
+        if len(light_paths) > 6:
             if use_states:
                 states_schedule, fail_to_comply = states_schedule_descending(
                     results, grid_info, light_paths, occ_mask,
@@ -370,7 +370,6 @@ def leed_states_schedule(
             for combination in combinations:
                 combination_arrays = []
                 for light_path, value in combination.items():
-                    print(value)
                     if use_states:
                         combination_arrays.append(
                             results._get_array(grid_info, light_path, state=value,
