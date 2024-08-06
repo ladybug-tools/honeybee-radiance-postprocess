@@ -208,7 +208,7 @@ def states_schedule_descending(
 
             # Use advanced indexing to replace values in new_array for these hours
             for hour_idx, array_idx in zip(replace_indices, array_indices):
-                new_array[:, :, hour_idx] = full_direct_blinds[
+                new_array[array_idx, :, hour_idx] = full_direct_blinds[
                     array_idx, :, hour_idx
                 ]
 
@@ -223,8 +223,9 @@ def states_schedule_descending(
             combinations.append(hour_dict)
 
         final_summed_array = np.sum(new_array, axis=0)
-        final_percentage_sensors_summed = np.sum(
-            final_summed_array >= 1000, axis=0) / grid_count
+        final_percentage_sensors_summed = (
+            final_summed_array >= 1000).sum(
+            axis=0) / grid_count
         final_indices_above_2_percent = np.where(
             final_percentage_sensors_summed > 0.02)[0]
         if np.any(final_indices_above_2_percent):

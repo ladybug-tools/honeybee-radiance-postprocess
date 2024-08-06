@@ -1249,7 +1249,7 @@ class Results(_ResultsFolder):
                     _array = self._get_array(
                         grid_info, light_path, state=state, res_type=res_type)
                     # get indices and add values to base array
-                    states_indicies = (states_array == state)
+                    states_indicies = states_array == state
                     array[:, states_indicies] += _array[:, states_indicies]
                 arrays.append(array)
         array = sum(arrays)
