@@ -567,7 +567,7 @@ def point_in_time(
     default=1000, type=float, show_default=True
 )
 @click.option(
-    '--occ_hours', '-oh', help='The number of occupied hours that cannot '
+    '--occ-hours', '-oh', help='The number of occupied hours that cannot '
     'receive more than the direct_threshold.', default=250, type=int,
     show_default=True
 )
