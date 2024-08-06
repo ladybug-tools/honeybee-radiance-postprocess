@@ -564,6 +564,7 @@ def leed_option_one(
         if use_states:
             array = results._array_from_states(grid_info, states=states_schedule)
             array = np.apply_along_axis(filter_array, 1, array, occ_mask)
+
             for light_path in light_paths:
                 # do an extra pass to calculate with blinds always up or down
                 array_blinds_up = results._get_array(
@@ -595,6 +596,7 @@ def leed_option_one(
                     arrays_blinds_up.append(array_filter)
                     arrays_blinds_down.append(array_filter)
             array = sum(arrays)
+
         array_blinds_up = sum(arrays_blinds_up)
         array_blinds_down = sum(arrays_blinds_down)
         # calculate da per grid
