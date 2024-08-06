@@ -1221,7 +1221,6 @@ class Results(_ResultsFolder):
         Returns:
             A NumPy array based on the states settings.
         """
-        grid_count = grid_info['count']
         # get states that are relevant for the grid
         states = self._filter_grid_states(grid_info, states=states)
 
@@ -1229,29 +1228,35 @@ class Results(_ResultsFolder):
         for light_path, gr_schedule in states.dynamic_schedule.items():
             if gr_schedule.is_static:
                 state = gr_schedule.schedule[0]
+                # if state is -1 we continue since it is "turned off"
                 if state == -1:
                     continue
+                # load static array (state is static)
                 array = self._get_array(
                     grid_info, light_path, state=state, res_type=res_type)
                 arrays.append(array)
             else:
-                # create default 0 array
-                array = np.zeros((grid_count, len(self.sun_up_hours)))
+                # create default 0 array, we will add to this later
+                array = np.zeros((grid_info['count'], len(self.sun_up_hours)))
                 # slice states to match sun up hours
-                states_array = np.array(gr_schedule.schedule)[list(map(int, self.sun_up_hours))]
-                for state in set(states_array.tolist()):
+                states_array = np.array(gr_schedule.schedule)[
+                    list(map(int, self.sun_up_hours))]
+                for state in np.unique(states_array):
                     if state == -1:
+                        # if state is -1 we continue since it is "turned off"
                         continue
+                    # load static array (state is static)
                     _array = self._get_array(
                         grid_info, light_path, state=state, res_type=res_type)
-                    conds = [states_array == state, states_array != state]
-                    array = np.select(conds, [_array, array])
+                    # get indices and add values to base array
+                    states_indicies = (states_array == state)
+                    array[:, states_indicies] += _array[:, states_indicies]
                 arrays.append(array)
         array = sum(arrays)
 
         if not np.any(array):
             if zero_array:
-                array = np.zeros((grid_count, len(self.sun_up_hours)))
+                array = np.zeros((grid_info['count'], len(self.sun_up_hours)))
             else:
                 array = np.array([])
 
