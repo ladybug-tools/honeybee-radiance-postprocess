@@ -563,9 +563,9 @@ def leed_option_one(
         # combine total array for all light paths
         if use_states:
             array = results._array_from_states(grid_info, states=states_schedule)
-            array_filter = np.apply_along_axis(filter_array, 1, array, occ_mask)
-
+            array = np.apply_along_axis(filter_array, 1, array, occ_mask)
             for light_path in light_paths:
+                # do an extra pass to calculate with blinds always up or down
                 array_blinds_up = results._get_array(
                     grid_info, light_path, state=0, res_type='total')
                 array_filter = np.apply_along_axis(
@@ -578,7 +578,8 @@ def leed_option_one(
                 arrays_blinds_down.append(array_filter)
         else:
             for light_path in light_paths:
-                array = results._get_array(grid_info, light_path, res_type='total')
+                array = results._get_array(
+                    grid_info, light_path, res_type='total')
                 array_filter = np.apply_along_axis(
                     filter_array, 1, array, occ_mask)
                 if light_path != '__static_apertures__':
@@ -587,7 +588,8 @@ def leed_option_one(
                     shd_trans_array = shd_trans_array[occ_mask.astype(bool)]
                     arrays.append(array_filter * shd_trans_array)
                     arrays_blinds_up.append(array_filter)
-                    arrays_blinds_down.append(array_filter * shd_trans_dict[light_path])
+                    arrays_blinds_down.append(
+                        array_filter * shd_trans_dict[light_path])
                 else:
                     arrays.append(array_filter)
                     arrays_blinds_up.append(array_filter)
