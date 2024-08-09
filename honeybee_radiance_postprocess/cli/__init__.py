@@ -8,6 +8,7 @@ from .postprocess import post_process
 from .schedule import schedule
 from .translate import translate
 from .viewfactor import view_factor
+from .merge import merge
 
 
 # command group for all postprocess extension commands.
@@ -24,6 +25,7 @@ postprocess.add_command(post_process, name='post-process')
 postprocess.add_command(schedule)
 postprocess.add_command(translate)
 postprocess.add_command(view_factor)
+postprocess.add_command(merge)
 
 # add postprocess sub-commands to honeybee CLI
 main.add_command(postprocess)
