@@ -21,26 +21,25 @@ def binary_to_array(
     Returns:
         A NumPy array.
     """
+    if (nrows or ncols or ncomp or fmt) is None:
+        # get nrows, ncols and header line count
+        nrows, ncols, ncomp, line_count, fmt = binary_mtx_dimension(binary_file)
     with open(binary_file, 'rb') as reader:
-        if (nrows or ncols or ncomp or fmt) is None:
-            # get nrows, ncols and header line count
-            nrows, ncols, ncomp, line_count, fmt = binary_mtx_dimension(binary_file)
-        with open(binary_file, 'rb') as reader:
-            # skip first n lines from reader
-            for i in range(line_count):
-                reader.readline()
+        # skip first n lines from reader
+        for i in range(line_count):
+            reader.readline()
 
-            if fmt == 'ascii':
-                array = np.loadtxt(reader, dtype=np.float32)
-            elif fmt == 'float':
-                array = np.fromfile(reader, dtype=np.float32)
-            elif fmt == 'double':
-                array = np.fromfile(reader, dtype=np.float64)
+        if fmt == 'ascii':
+            array = np.loadtxt(reader, dtype=np.float32)
+        elif fmt == 'float':
+            array = np.fromfile(reader, dtype=np.float32)
+        elif fmt == 'double':
+            array = np.fromfile(reader, dtype=np.float64)
 
-            if ncomp != 1:
-                array = array.reshape(nrows, ncols, ncomp)
-            else:
-                array = array.reshape(nrows, ncols)
+        if ncomp != 1:
+            array = array.reshape(nrows, ncols, ncomp)
+        else:
+            array = array.reshape(nrows, ncols)
 
     return array
 
