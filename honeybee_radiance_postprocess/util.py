@@ -5,7 +5,7 @@ import numpy as np
 from honeybee_radiance.writer import _filter_by_pattern
 
 
-def binary_mtx_dimension(filepath: str) -> Tuple[int, int, int, int]:
+def binary_mtx_dimension(filepath: str) -> Tuple[int, int, int, int, str]:
     """Return binary Radiance matrix dimensions if exist.
 
     This function returns NROWS, NCOLS, NCOMP and number of header lines including the
@@ -15,7 +15,7 @@ def binary_mtx_dimension(filepath: str) -> Tuple[int, int, int, int]:
         filepath: Full path to Radiance file.
 
     Returns:
-        nrows, ncols, ncomp, line_count
+        nrows, ncols, ncomp, line_count, fmt
     """
     try:
         inf = open(filepath, 'rb', encoding='utf-8')
@@ -42,6 +42,7 @@ def binary_mtx_dimension(filepath: str) -> Tuple[int, int, int, int]:
             if line[:6] == 'NCOMP=':
                 ncomp = int(line.split('=')[-1])
             if line[:7] == 'FORMAT=':
+                fmt = line.split('=')[-1]
                 break
 
         if not nrows or not ncols:
@@ -51,7 +52,7 @@ def binary_mtx_dimension(filepath: str) -> Tuple[int, int, int, int]:
                 f'elements.'
             )
             raise ValueError(error_message)
-        return nrows, ncols, ncomp, len(header_lines) + 1
+        return nrows, ncols, ncomp, len(header_lines) + 1, fmt
     finally:
         inf.close()
 
