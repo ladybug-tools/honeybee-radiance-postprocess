@@ -245,8 +245,9 @@ def abnt_nbr_15575(
                 if pof_sensor_grid is None:
                     if room_center:
                         floor_face = Face3D.join_coplanar_faces(
-                            room.horizontal_floor_boundaries(), 0.05
-                        )[0]
+                            room.horizontal_floor_boundaries(
+                                tolerance=0.001),
+                            0.05)[0]
                         if floor_face.is_convex:
                             centroid = floor_face.centroid
                         else:
@@ -256,7 +257,9 @@ def abnt_nbr_15575(
                             centroid + Vector3D(0, 0, dz)
                     else:
                         faces_3d = [
-                            Face3D(face_vertices) for face_vertices in sensor_grid.mesh.face_vertices]
+                            Face3D(face_vertices)
+                            for face_vertices in
+                            sensor_grid.mesh.face_vertices]
                         face_3d_union = Face3D.join_coplanar_faces(
                             faces_3d, 0.05)
                         assert len(face_3d_union) == 1
