@@ -207,10 +207,10 @@ def abnt_nbr_15575(
         summary_rooms_csv = sub_folder.joinpath('abnt_nbr_15575_rooms.csv')
         folder_names = ['4_930AM', '4_330PM', '10_930AM', '10_330PM']
         pit_mapper = {
-            '4_930AM': 'Abril 09:30',
-            '4_330PM': 'Abril 15:30',
-            '10_930AM': 'Outubro 09:30',
-            '10_330PM': 'Outubro 15:30'
+            '4_930AM': '23 de abril 09:30',
+            '4_330PM': '23 de abril 15:30',
+            '10_930AM': '23 de outubro 09:30',
+            '10_330PM': '23 de outubro 15:30'
         }
 
         metric_info_dict = _abnt_nbr_15575_daylight_levels_vis_metadata()
@@ -284,31 +284,31 @@ def abnt_nbr_15575(
                 if f_xy >= 120:
                     level = 'Superior'
                 elif f_xy >= 90:
-                    level = 'Intermediário'
+                    level = 'Intermediario'
                 elif f_xy >= minimo:  # add check for ground floor (48 lux)
-                    level = 'Mínimo'
+                    level = 'Minimo'
                 else:
-                    level = 'Não atende'
+                    level = 'Nao atende'
 
                 room_summary = \
                     summary_rooms_output.get(grid_info['full_id'], None)
                 if room_summary is None:
                     summary_rooms_output[grid_info['full_id']] = {
-                        'nível': level,
-                        'iluminância': f_xy,
+                        'nivel': level,
+                        'iluminancia': f_xy,
                         'grids_info': grid_info,
                         pit_mapper[_subfolder]: f_xy,
                     }
                 else:
-                    if f_xy < room_summary['iluminância']:
-                        room_summary['nível'] = level
-                        room_summary['iluminância'] = f_xy
+                    if f_xy < room_summary['iluminancia']:
+                        room_summary['nivel'] = level
+                        room_summary['iluminancia'] = f_xy
                     room_summary[pit_mapper[_subfolder]] = f_xy
 
                 sub_output.append(
                     {
-                        'nível': level,
-                        'iluminância': f_xy,
+                        'nivel': level,
+                        'iluminancia': f_xy,
                         'grids_info': grid_info
                     }
                 )
@@ -341,10 +341,10 @@ def abnt_nbr_15575(
         dtype = [
             ('Sensor Grid', 'O'),
             ('Sensor Grid ID', 'O'),
-            ('Abril 09:30', np.float32),
-            ('Abril 15:30', np.float32),
-            ('Outubro 09:30', np.float32),
-            ('Outubro 15:30', np.float32),
+            ('23 de abril 09:30', np.float32),
+            ('23 de abril 15:30', np.float32),
+            ('23 de outubro 09:30', np.float32),
+            ('23 de outubro 15:30', np.float32),
             ('Atendimento', 'O')
         ]
 
@@ -356,11 +356,11 @@ def abnt_nbr_15575(
             data = []
             data.append(room_summary['grids_info']['name'])
             data.append(room_summary['grids_info']['full_id'])
-            data.append(room_summary['Abril 09:30'])
-            data.append(room_summary['Abril 15:30'])
-            data.append(room_summary['Outubro 09:30'])
-            data.append(room_summary['Outubro 15:30'])
-            data.append(room_summary['nível'])
+            data.append(room_summary['23 de abril 09:30'])
+            data.append(room_summary['23 de abril 15:30'])
+            data.append(room_summary['23 de outubro 09:30'])
+            data.append(room_summary['23 de outubro 15:30'])
+            data.append(room_summary['nivel'])
             arrays.append(tuple(data))
 
         # create structured array
