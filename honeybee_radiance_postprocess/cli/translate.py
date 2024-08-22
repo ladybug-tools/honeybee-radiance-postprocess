@@ -8,6 +8,7 @@ import click
 import json
 
 from ..reader import binary_to_array
+from ..util import get_delimiter
 
 _logger = logging.getLogger(__name__)
 
@@ -69,10 +70,14 @@ def npy_to_txt(npy_file, name, output_folder, extension, output_format):
     '--output-folder', '-of', help='Output folder.', default='.',
     type=click.Path(exists=False, file_okay=False, dir_okay=True, resolve_path=True)
 )
-def txt_to_npy(txt_file, name, output_folder):
+@click.option(
+    '--delimiter', '-d', help='Delimiter in the text file.', default='\t',
+    type=click.Choice(['\t', ' ', ',', ';', 'tab', 'space', 'comma', 'semicolon'])
+)
+def txt_to_npy(txt_file, name, output_folder, delimiter):
     """Convert a text file to npy file.
 
-    This command reads a space or tab separated text file saves it as a NumPy file. As
+    This command reads a separated text file and saves it as a NumPy file. As
     an example the input file could be the annual illuminance values.
 
     \b
@@ -80,7 +85,8 @@ def txt_to_npy(txt_file, name, output_folder):
         txt-file: Path to text file.
     """
     try:
-        array = np.loadtxt(txt_file, dtype=np.float32)
+        delimiter = get_delimiter(delimiter)
+        array = np.genfromtxt(txt_file, dtype=np.float32, delimiter=delimiter)
         output = Path(output_folder, name)
         output.parent.mkdir(parents=True, exist_ok=True)
         np.save(output, array)
