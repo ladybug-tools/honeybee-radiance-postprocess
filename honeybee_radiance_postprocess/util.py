@@ -168,3 +168,16 @@ def _filter_grids_by_pattern(grids_info, filter_pattern):
     grids = _filter_by_pattern(grids_info, filter=filter_pattern)
 
     return grids
+
+
+def get_delimiter(delimiter_input):
+    if delimiter_input == 'tab' or delimiter_input == '\t':
+        return '\t'
+    elif delimiter_input == 'space' or delimiter_input == ' ':
+        return ' '
+    elif delimiter_input == 'comma' or delimiter_input == ',':
+        return ','
+    elif delimiter_input == 'semicolon' or delimiter_input == ';':
+        return ';'
+    else:
+        raise ValueError(f'Unsupported delimiter: {delimiter_input}')
