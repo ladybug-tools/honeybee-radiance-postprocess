@@ -30,13 +30,17 @@ def translate():
     type=click.Path(exists=False, file_okay=False, dir_okay=True, resolve_path=True)
 )
 @click.option(
-    '--extension', '-ext', help='Output file extension', default='.txt', show_default=True
+    '--extension', '-ext', help='Output file extension', default='txt', show_default=True
 )
 @click.option(
     '--output-format', '-fmt', help='Output format for each element in the array',
     default='%.7e', show_default=True
 )
-def npy_to_txt(npy_file, name, output_folder, extension, output_format):
+@click.option(
+    '--delimiter', '-d', help='Delimiter in the text file.', default='\t',
+    type=click.Choice(['\t', ' ', ',', ';', 'tab', 'space', 'comma', 'semicolon'])
+)
+def npy_to_txt(npy_file, name, output_folder, extension, output_format, delimiter):
     """Convert a npy file to text file.
 
     This command reads a NumPy array from a npy file and saves it as readable file. The
@@ -47,10 +51,11 @@ def npy_to_txt(npy_file, name, output_folder, extension, output_format):
         npy-file: Path to npy file.
     """
     try:
+        delimiter = get_delimiter(delimiter)
         array = np.load(npy_file)
-        output = Path(output_folder, name + extension)
+        output = Path(output_folder, f'{name}.{extension}')
         output.parent.mkdir(parents=True, exist_ok=True)
-        np.savetxt(output, array, fmt=output_format, delimiter='\t')
+        np.savetxt(output, array, fmt=output_format, delimiter=delimiter)
 
     except Exception:
         _logger.exception('Converting npy file to text file failed.')
