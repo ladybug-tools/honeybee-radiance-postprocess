@@ -146,7 +146,8 @@ def merge_metrics_folder(input_folder, output_folder, dist_info, grids_info):
 
 def restore_original_distribution(
         input_folder, output_folder, extension='npy', dist_info=None,
-        output_extension='ill', as_text=False, fmt='%.2f', delimiter='tab'):
+        output_extension='ill', as_text=False, fmt='%.2f', input_delimiter=',',
+        delimiter='tab'):
     """Restructure files to the original distribution based on the distribution info.
     
     It will assume that the files in the input folder are NumPy files. However,
@@ -166,6 +167,8 @@ def restore_original_distribution(
         as_text: Set to True if the output files should be saved as text instead
             of NumPy files.
         fmt: Format for the output files when saved as text.
+        input_delimiter: Delimiter for the input files. This is used only if the
+            input files are text files.
         delimiter: Delimiter for the output files when saved as text.
     """
     if not dist_info:
@@ -200,8 +203,16 @@ def restore_original_distribution(
                 src_file = new_file
                 try:
                     array = np.load(src_file)
-                except Exception:
-                    array = binary_to_array(src_file)
+                except:
+                    try:
+                        array = binary_to_array(src_file)
+                    except:
+                        try:
+                            array = np.loadtxt(
+                                src_file, delimiter=input_delimiter)
+                        except Exception:
+                            raise RuntimeError(
+                                f'Failed to load input file "{src_file}"')
             slice_array = array[st:end+1,:]
 
             out_arrays.append(slice_array)
@@ -217,6 +228,8 @@ def restore_original_distribution(
                 delimiter = '\t'
             elif delimiter == 'space':
                 delimiter = ' '
+            elif delimiter == 'comma':
+                delimiter = ','
             np.savetxt(output_file.with_suffix(f'.{output_extension}'),
                        out_array, fmt=fmt, delimiter=delimiter)
 
