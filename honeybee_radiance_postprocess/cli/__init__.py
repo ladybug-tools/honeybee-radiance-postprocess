@@ -9,6 +9,8 @@ from .schedule import schedule
 from .translate import translate
 from .viewfactor import view_factor
 from .merge import merge
+from .datacollection import datacollection
+from .comfort_map import comfort_map
 
 
 # command group for all postprocess extension commands.
@@ -26,6 +28,8 @@ postprocess.add_command(schedule)
 postprocess.add_command(translate)
 postprocess.add_command(view_factor)
 postprocess.add_command(merge)
+postprocess.add_command(datacollection, name='data-collection')
+postprocess.add_command(comfort_map)
 
 # add postprocess sub-commands to honeybee CLI
 main.add_command(postprocess)
