@@ -7,16 +7,16 @@ from ladybug.datatype.generic import GenericType
 def _abnt_nbr_15575_daylight_levels_vis_metadata():
     """Return visualization metadata for ABNT NBR 15575 Daylight levels."""
     level_value = {
-        0: 'Nao atende',
-        1: 'Minimo',
-        2: 'Intermediario',
+        0: 'Não atende',
+        1: 'Mínimo',
+        2: 'Intermediário',
         3: 'Superior'
     }
 
     colors = [Color(255, 198, 143), Color(255, 255, 209), Color(192, 231, 189), Color(83, 169, 206)]
     illuminance_levels_lpar = \
         LegendParameters(min=0, max=3, colors=colors, segment_count=4,
-                         title='Niveis de iluminamento')
+                         title='Níveis de iluminamento')
     illuminance_levels_lpar.ordinal_dictionary = level_value
 
     metric_info_dict = {
