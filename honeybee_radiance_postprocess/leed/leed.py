@@ -557,9 +557,11 @@ def leed_option_one(
     pass_sda_blinds_down_grids = []
     for grid_info in grids_info:
         light_paths = [lp[0] for lp in grid_info['light_path']]
-        arrays = []
-        arrays_blinds_up = []
-        arrays_blinds_down = []
+        base_zero_array = np.apply_along_axis(filter_array, 1, np.zeros(
+            (grid_info['count'], len(results.sun_up_hours))), occ_mask)
+        arrays = [base_zero_array.copy()]
+        arrays_blinds_up = [base_zero_array.copy()]
+        arrays_blinds_down = [base_zero_array.copy()]
         # combine total array for all light paths
         if use_states:
             array = results._array_from_states(grid_info, states=states_schedule)
@@ -567,16 +569,24 @@ def leed_option_one(
 
             for light_path in light_paths:
                 # do an extra pass to calculate with blinds always up or down
-                array_blinds_up = results._get_array(
-                    grid_info, light_path, state=0, res_type='total')
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array_blinds_up, occ_mask)
-                arrays_blinds_up.append(array_filter)
-                array_blinds_down = results._get_array(
-                    grid_info, light_path, state=1, res_type='total')
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array_blinds_down, occ_mask)
-                arrays_blinds_down.append(array_filter)
+                if light_path != '__static_apertures__':
+                    array_blinds_up = results._get_array(
+                        grid_info, light_path, state=0, res_type='total')
+                    array_filter = np.apply_along_axis(
+                        filter_array, 1, array_blinds_up, occ_mask)
+                    arrays_blinds_up.append(array_filter)
+                    array_blinds_down = results._get_array(
+                        grid_info, light_path, state=1, res_type='total')
+                    array_filter = np.apply_along_axis(
+                        filter_array, 1, array_blinds_down, occ_mask)
+                    arrays_blinds_down.append(array_filter)
+                else:
+                    static_array = results._get_array(
+                        grid_info, light_path, state=0, res_type='total')
+                    array_filter = np.apply_along_axis(
+                        filter_array, 1, static_array, occ_mask)
+                    arrays_blinds_up.append(array_filter)
+                    arrays_blinds_down.append(array_filter)
         else:
             for light_path in light_paths:
                 array = results._get_array(
