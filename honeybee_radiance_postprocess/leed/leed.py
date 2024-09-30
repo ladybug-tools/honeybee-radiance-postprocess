@@ -564,7 +564,7 @@ def leed_option_one(
         arrays_blinds_down = [base_zero_array.copy()]
         # combine total array for all light paths
         if use_states:
-            array = results._array_from_states(grid_info, states=states_schedule)
+            array = results._array_from_states(grid_info, states=states_schedule, zero_array=True)
             array = np.apply_along_axis(filter_array, 1, array, occ_mask)
 
             for light_path in light_paths:
