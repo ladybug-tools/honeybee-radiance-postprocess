@@ -1,4 +1,4 @@
-"""Module for dynamic LEED schedules."""
+"""Module for dynamic LM schedules."""
 from typing import Tuple
 import numpy as np
 
