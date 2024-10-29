@@ -169,7 +169,7 @@ def _well_summary(
     return summary, summary_grid
 
 
-def well_well_well(
+def well_annual_daylight(
         results: Union[str, AnnualDaylight], grids_filter: str = '*',
         shade_transmittance: Union[float, dict] = 0.05,
         use_states: bool = False, states_schedule: dict = None,
