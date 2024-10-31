@@ -10,6 +10,286 @@ from ..annual import occupancy_schedule_8_to_6
 from ..results.annual_daylight import AnnualDaylight
 
 
+program_type_metrics = {
+    'BREEAM::Education_buildings::Preschools': [
+        {
+            'type': 'Education buildings',
+            'credits': 2,
+            'area': 80,
+            'average_daylight_illuminance': {
+                'illuminance': 300,
+                'hours': 2000
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 90,
+                'hours': 2000
+            }
+        }
+    ],
+    'BREEAM::Education_buildings::Higher_education': [
+        {
+            'type': 'Education buildings',
+            'credits': 2,
+            'area': 80,
+            'average_daylight_illuminance': {
+                'illuminance': 300,
+                'hours': 2000
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 90,
+                'hours': 2000
+            }
+        },
+        {
+            'type': 'Education buildings',
+            'credits': 1,
+            'area': 60,
+            'average_daylight_illuminance': {
+                'illuminance': 300,
+                'hours': 2000
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 90,
+                'hours': 2000
+            }
+        }
+    ],
+    'BREEAM::Healthcare_buildings::Staff_and_public_areas': [
+        {
+            'type': 'Healthcare buildings',
+            'credits': 2,
+            'area': 80,
+            'average_daylight_illuminance': {
+                'illuminance': 300,
+                'hours': 2650
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 90,
+                'hours': 2650
+            }
+        },
+        {
+            'type': 'Healthcare buildings',
+            'credits': 1,
+            'area': 80,
+            'average_daylight_illuminance': {
+                'illuminance': 300,
+                'hours': 2000
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 90,
+                'hours': 2000
+            }
+        }
+    ],
+    'BREEAM::Healthcare_buildings::Patients_areas_and_consulting_rooms': [
+        {
+            'type': 'Healthcare buildings',
+            'credits': 2,
+            'area': 80,
+            'average_daylight_illuminance': {
+                'illuminance': 300,
+                'hours': 2650
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 90,
+                'hours': 2650
+            }
+        },
+        {
+            'type': 'Healthcare buildings',
+            'credits': 1,
+            'area': 80,
+            'average_daylight_illuminance': {
+                'illuminance': 300,
+                'hours': 2000
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 90,
+                'hours': 2000
+            }
+        }
+    ],
+    'BREEAM::Multi_residential_buildings::Kitchen': [
+        {
+            'type': 'Multi-residential buildings',
+            'credits': 2,
+            'area': 100,
+            'average_daylight_illuminance': {
+                'illuminance': 100,
+                'hours': 3450
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 30,
+                'hours': 3450
+            }
+        }
+    ],
+    'BREEAM::Multi_residential_buildings::Living_rooms_dining_rooms_studies': [
+        {
+            'type': 'Multi-residential buildings',
+            'credits': 2,
+            'area': 100,
+            'average_daylight_illuminance': {
+                'illuminance': 100,
+                'hours': 3450
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 30,
+                'hours': 3450
+            }
+        }
+    ],
+    'BREEAM::Multi_residential_buildings::Non_residential_or_communal_spaces': [
+        {
+            'type': 'Multi-residential buildings',
+            'credits': 2,
+            'area': 80,
+            'average_daylight_illuminance': {
+                'illuminance': 200,
+                'hours': 2650
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 60,
+                'hours': 2650
+            }
+        }
+    ],
+    'BREEAM::Retail_buildings::Sales_areas': [
+        {
+            'type': 'Retail buildings',
+            'credits': 1,
+            'area': 35,
+            'average_daylight_illuminance': {
+                'illuminance': 200,
+                'hours': 2650
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 200,
+                'hours': 2650
+            }
+        }
+    ],
+    'BREEAM::Retail_buildings::Other_occupied_areas': [
+        {
+            'type': 'Retail buildings',
+            'credits': 1,
+            'area': 80,
+            'average_daylight_illuminance': {
+                'illuminance': 200,
+                'hours': 2650
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 60,
+                'hours': 2650
+            }
+        }
+    ],
+    'BREEAM::Prison_buildings::Cells_and_custody_cells': [
+        {
+            'type': 'Prison buildings',
+            'credits': 2,
+            'area': 80,
+            'average_daylight_illuminance': {
+                'illuminance': 100,
+                'hours': 3150
+            },
+            'minimum_daylight_illuminance': None
+        }
+    ],
+    'BREEAM::Prison_buildings::Internal_association_or_atrium': [
+        {
+            'type': 'Prison buildings',
+            'credits': 2,
+            'area': 80,
+            'average_daylight_illuminance': {
+                'illuminance': 300,
+                'hours': 2650
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 210,
+                'hours': 2650
+            }
+        }
+    ],
+    'BREEAM::Prison_buildings::Patient_care_spaces': [
+        {
+            'type': 'Prison buildings',
+            'credits': 2,
+            'area': 80,
+            'average_daylight_illuminance': {
+                'illuminance': 300,
+                'hours': 2650
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 210,
+                'hours': 2650
+            }
+        }
+    ],
+    'BREEAM::Prison_buildings::Teaching_lecture_and_seminar_spaces': [
+        {
+            'type': 'Prison buildings',
+            'credits': 2,
+            'area': 80,
+            'average_daylight_illuminance': {
+                'illuminance': 300,
+                'hours': 2000
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 90,
+                'hours': 2000
+            }
+        }
+    ],
+    'BREEAM::Office_buildings::Occupied_spaces': [
+        {
+            'type': 'Office buildings',
+            'credits': 2,
+            'area': 80,
+            'average_daylight_illuminance': {
+                'illuminance': 300,
+                'hours': 2000
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 90,
+                'hours': 2000
+            }
+        }
+    ],
+    'BREEAM::Crèche_buildings::Occupied_spaces': [
+        {
+            'type': 'Crèche buildings',
+            'credits': 2,
+            'area': 80,
+            'average_daylight_illuminance': {
+                'illuminance': 300,
+                'hours': 2000
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 90,
+                'hours': 2000
+            }
+        }
+    ],
+    'BREEAM::Other_buildings::Occupied_spaces': [
+        {
+            'type': 'Other buildings',
+            'credits': 1,
+            'area': 80,
+            'average_daylight_illuminance': {
+                'illuminance': 300,
+                'hours': 2000
+            },
+            'minimum_daylight_illuminance': {
+                'illuminance': 90,
+                'hours': 2000
+            }
+        }
+    ]
+}
+
+
 def breeam_daylight_assessment_4b(
         results: Union[str, AnnualDaylight],
         grids_filter: str = '*',
