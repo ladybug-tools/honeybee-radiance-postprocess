@@ -305,21 +305,9 @@ def breeam_daylight_assessment_4b(
 
     Returns:
         Tuple:
-        -   summary: Summary of all grids combined.
-        -   summary_grid: Summary of each grid individually.
-        -   da_grids: List of daylight autonomy values for each grid. Each item
-                in the list is a NumPy array of DA values.
-        -   states_schedule: A dictionary of annual shading schedules for each
-                aperture group.
-        -   grids_info: Grid information.
     """
-    schedule = occupancy_schedule_8_to_6(as_list=True)
-
     if not isinstance(results, AnnualDaylight):
-        results = AnnualDaylight(results, schedule=schedule)
-    else:
-        # set schedule to default leed schedule
-        results.schedule = schedule
+        results = AnnualDaylight(results)
 
     grids_info = results._filter_grids(grids_filter=grids_filter)
 
@@ -338,6 +326,8 @@ def breeam_daylight_assessment_4b(
                     grid_areas[s_grid.identifier] = None
                 hb_room = hb_model.rooms_by_identifier([s_grid.room_identifier])[0]
                 program_type_id = hb_room.properties.energy.program_type.identifier
+                if program_type_id not in program_type_metrics:
+                    program_type_id = 'BREEAM::Office_buildings::Occupied_spaces'
                 grid_program_types[s_grid.identifier] = program_type_id
     if not grid_areas:
         grid_areas = {grid_info['full_id']: None for grid_info in grids_info}
@@ -451,5 +441,5 @@ def breeam_daylight_assessment_4b(
 
     if sub_folder:
         pass
-
+    print(credit_summary)
     return credit_summary, program_summary
