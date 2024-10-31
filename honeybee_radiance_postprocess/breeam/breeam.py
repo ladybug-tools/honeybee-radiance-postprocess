@@ -441,8 +441,10 @@ def breeam_daylight_assessment_4b(
         _building_type_summary['type'] = building_type
         if all([v['comply'] for v in summary]):
             _building_type_summary['comply'] = True
+            _building_type_summary['credits'] = min([v['credits'] for v in summary])
         else:
             _building_type_summary['comply'] = False
+            _building_type_summary['credits'] = 0
         _building_type_summary['total_area'] = sum([v['total_area'] for v in summary])
 
         credit_summary.append(_building_type_summary)
