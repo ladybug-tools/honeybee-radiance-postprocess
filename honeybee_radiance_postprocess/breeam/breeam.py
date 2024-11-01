@@ -1,12 +1,12 @@
 """Functions for BREEAM post-processing."""
 from typing import Union
 from pathlib import Path
+import json
 import numpy as np
 
 from honeybee.model import Model
 from honeybee_radiance.writer import _filter_by_pattern
 
-from ..annual import occupancy_schedule_8_to_6
 from ..results.annual_daylight import AnnualDaylight
 
 
@@ -291,8 +291,7 @@ program_type_metrics = {
 
 
 def breeam_daylight_assessment_4b(
-        results: Union[str, AnnualDaylight],
-        grids_filter: str = '*',
+        results: Union[str, AnnualDaylight], grids_filter: str = '*',
         sub_folder: str = None):
     """Calculate credits for BREEAM 4b.
 
@@ -305,6 +304,8 @@ def breeam_daylight_assessment_4b(
 
     Returns:
         Tuple:
+        -   credit_summary: Summary of each building type.
+        -   program_summary: Summary of program type / space type.
     """
     if not isinstance(results, AnnualDaylight):
         results = AnnualDaylight(results)
@@ -312,7 +313,7 @@ def breeam_daylight_assessment_4b(
     grids_info = results._filter_grids(grids_filter=grids_filter)
 
     # check to see if there is a HBJSON with sensor grid meshes for areas
-    grid_areas, units_conversion = {}, 1
+    grid_areas = {}
     grid_program_types = {}
     for base_file in Path(results.folder).parent.iterdir():
         if base_file.suffix in ('.hbjson', '.hbpkl'):
@@ -440,6 +441,12 @@ def breeam_daylight_assessment_4b(
         credit_summary.append(_building_type_summary)
 
     if sub_folder:
-        pass
-    print(credit_summary)
+        folder = Path(sub_folder)
+        folder.mkdir(parents=True, exist_ok=True)
+
+        credit_summary_file = folder.joinpath('summary.json')
+        credit_summary_file.write_text(json.dumps(credit_summary, indent=2))
+        program_summary_file = folder.joinpath('program_summary.json')
+        program_summary_file.write_text(json.dumps(program_summary, indent=2))
+
     return credit_summary, program_summary
