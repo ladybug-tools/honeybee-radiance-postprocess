@@ -6,6 +6,9 @@ with open("README.md", "r") as fh:
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
+with open('extras-requirements.txt') as f:
+    extras_requirements = f.read().splitlines()
+
 setuptools.setup(
     name="honeybee-radiance-postprocess",
     use_scm_version=True,
@@ -19,6 +22,7 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude=["tests*"]),
     include_package_data=True,
     install_requires=requirements,
+    extras_require={'full': extras_requirements},
     entry_points={
         "console_scripts": [
             "honeybee-radiance-postprocess = honeybee_radiance_postprocess.cli:postprocess"

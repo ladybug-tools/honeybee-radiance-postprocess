@@ -28,6 +28,7 @@ COPY honeybee_radiance_postprocess ${LIBRARYDIR}/honeybee_radiance_postprocess
 COPY .git ${LIBRARYDIR}/.git
 COPY README.md ${LIBRARYDIR}
 COPY requirements.txt ${LIBRARYDIR}
+COPY extras-requirements.txt ${LIBRARYDIR}
 COPY setup.py ${LIBRARYDIR}
 COPY setup.cfg ${LIBRARYDIR}
 COPY LICENSE ${LIBRARYDIR}
@@ -35,7 +36,7 @@ COPY LICENSE ${LIBRARYDIR}
 # Switch user back to modify packages
 USER root
 RUN pip3 install --no-cache-dir setuptools wheel \
-    && pip3 install --no-cache-dir ./honeybee-radiance-postprocess \
+    && pip3 install --no-cache-dir ./honeybee-radiance-postprocess[full] \
     && apt-get -y --purge remove git \
     && apt-get -y clean \
     && apt-get -y autoremove \
