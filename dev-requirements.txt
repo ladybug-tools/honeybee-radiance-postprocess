@@ -1,3 +1,4 @@
+honeybee-energy>=1.109.14
 pytest==8.3.2;python_version>='3.6'
 Sphinx==8.0.2;python_version>='3.6'
 sphinx-bootstrap-theme==0.8.1
