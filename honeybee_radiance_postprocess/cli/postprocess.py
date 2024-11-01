@@ -23,6 +23,7 @@ from .two_phase import two_phase
 from .leed import leed
 from .abnt import abnt
 from .well import well
+from .breeam import breeam
 from ..helper import model_grid_areas, grid_summary
 
 _logger = logging.getLogger(__name__)
@@ -36,6 +37,8 @@ post_process.add_command(two_phase)
 post_process.add_command(leed)
 post_process.add_command(abnt)
 post_process.add_command(well)
+post_process.add_command(breeam)
+
 
 @post_process.command('annual-daylight')
 @click.argument(
