@@ -1,0 +1,260 @@
+[
+  {
+    "count": 253,
+    "name": "Grid 1 [Room_1]",
+    "identifier": "Grid_506213f4",
+    "group": "",
+    "full_id": "Grid_506213f4",
+    "light_path": [
+      [
+        "Room_1_ApertureGroup_0"
+      ],
+      [
+        "Room_1_ApertureGroup_1"
+      ],
+      [
+        "Room_1_ApertureGroup_2"
+      ]
+    ]
+  },
+  {
+    "count": 187,
+    "name": "Grid 2 [Room_2]",
+    "identifier": "Grid_67ea5e0e",
+    "group": "",
+    "full_id": "Grid_67ea5e0e",
+    "light_path": [
+      [
+        "Room_2_ApertureGroup_0"
+      ],
+      [
+        "Room_2_ApertureGroup_1"
+      ]
+    ]
+  },
+  {
+    "count": 391,
+    "name": "Grid 3 [Room_3]",
+    "identifier": "Grid_4fd53f84",
+    "group": "",
+    "full_id": "Grid_4fd53f84",
+    "light_path": [
+      [
+        "Room_3_ApertureGroup_0"
+      ]
+    ]
+  },
+  {
+    "count": 253,
+    "name": "Grid 4 [Room_4]",
+    "identifier": "Grid_07541d07",
+    "group": "",
+    "full_id": "Grid_07541d07",
+    "light_path": [
+      [
+        "Room_4_ApertureGroup_0"
+      ],
+      [
+        "Room_4_ApertureGroup_1"
+      ]
+    ]
+  },
+  {
+    "count": 408,
+    "name": "Grid 5 [Room_6]",
+    "identifier": "Grid_4451693e",
+    "group": "",
+    "full_id": "Grid_4451693e",
+    "light_path": [
+      [
+        "Room_6_ApertureGroup_0"
+      ]
+    ]
+  },
+  {
+    "count": 276,
+    "name": "Grid 6 [Room_7]",
+    "identifier": "Grid_725fc66b",
+    "group": "",
+    "full_id": "Grid_725fc66b",
+    "light_path": [
+      [
+        "Room_7_ApertureGroup_0"
+      ],
+      [
+        "Room_7_ApertureGroup_1"
+      ],
+      [
+        "Room_7_ApertureGroup_2"
+      ]
+    ]
+  },
+  {
+    "count": 253,
+    "name": "Grid 7 [Room_8]",
+    "identifier": "Grid_e2bce6cc",
+    "group": "",
+    "full_id": "Grid_e2bce6cc",
+    "light_path": [
+      [
+        "Room_8_ApertureGroup_0"
+      ],
+      [
+        "Room_8_ApertureGroup_1"
+      ]
+    ]
+  },
+  {
+    "count": 391,
+    "name": "Grid 8 [Room_10]",
+    "identifier": "Grid_d7e7fda5",
+    "group": "",
+    "full_id": "Grid_d7e7fda5",
+    "light_path": [
+      [
+        "Room_10_ApertureGroup_0"
+      ]
+    ]
+  },
+  {
+    "count": 408,
+    "name": "Grid 9 [Room_11]",
+    "identifier": "Grid_99606fd8",
+    "group": "",
+    "full_id": "Grid_99606fd8",
+    "light_path": [
+      [
+        "Room_11_ApertureGroup_0"
+      ]
+    ]
+  },
+  {
+    "count": 253,
+    "name": "Grid 10 [Room_12]",
+    "identifier": "Grid_5798f7ee",
+    "group": "",
+    "full_id": "Grid_5798f7ee",
+    "light_path": [
+      [
+        "Room_12_ApertureGroup_0"
+      ],
+      [
+        "Room_12_ApertureGroup_1"
+      ]
+    ]
+  },
+  {
+    "count": 276,
+    "name": "Grid 11 [Room_14]",
+    "identifier": "Grid_010c14a7",
+    "group": "",
+    "full_id": "Grid_010c14a7",
+    "light_path": [
+      [
+        "Room_14_ApertureGroup_0"
+      ],
+      [
+        "Room_14_ApertureGroup_1"
+      ],
+      [
+        "Room_14_ApertureGroup_2"
+      ]
+    ]
+  },
+  {
+    "count": 253,
+    "name": "Grid 12 [Room_15]",
+    "identifier": "Grid_9a059893",
+    "group": "",
+    "full_id": "Grid_9a059893",
+    "light_path": [
+      [
+        "Room_15_ApertureGroup_0"
+      ],
+      [
+        "Room_15_ApertureGroup_1"
+      ],
+      [
+        "Room_15_ApertureGroup_2"
+      ]
+    ]
+  },
+  {
+    "count": 408,
+    "name": "Grid 13 [Room_16]",
+    "identifier": "Grid_7b9e04c2",
+    "group": "",
+    "full_id": "Grid_7b9e04c2",
+    "light_path": [
+      [
+        "Room_16_ApertureGroup_0"
+      ]
+    ]
+  },
+  {
+    "count": 408,
+    "name": "Grid 14 [Room_17]",
+    "identifier": "Grid_deadf762",
+    "group": "",
+    "full_id": "Grid_deadf762",
+    "light_path": [
+      [
+        "Room_17_ApertureGroup_0"
+      ]
+    ]
+  },
+  {
+    "count": 253,
+    "name": "Grid 15 [Room_5]",
+    "identifier": "Grid_4dc60dbd",
+    "group": "",
+    "full_id": "Grid_4dc60dbd",
+    "light_path": [
+      [
+        "Room_5_ApertureGroup_0"
+      ],
+      [
+        "Room_5_ApertureGroup_1"
+      ],
+      [
+        "Room_5_ApertureGroup_2"
+      ]
+    ]
+  },
+  {
+    "count": 253,
+    "name": "Grid 16 [Room_9]",
+    "identifier": "Grid_33925632",
+    "group": "",
+    "full_id": "Grid_33925632",
+    "light_path": [
+      [
+        "Room_9_ApertureGroup_0"
+      ],
+      [
+        "Room_9_ApertureGroup_1"
+      ],
+      [
+        "Room_9_ApertureGroup_2"
+      ]
+    ]
+  },
+  {
+    "count": 253,
+    "name": "Grid 17 [Room_13]",
+    "identifier": "Grid_492a8b90",
+    "group": "",
+    "full_id": "Grid_492a8b90",
+    "light_path": [
+      [
+        "Room_13_ApertureGroup_0"
+      ],
+      [
+        "Room_13_ApertureGroup_1"
+      ],
+      [
+        "Room_13_ApertureGroup_2"
+      ]
+    ]
+  }
+]
