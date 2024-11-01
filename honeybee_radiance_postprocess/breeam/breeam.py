@@ -325,7 +325,7 @@ def breeam_daylight_assessment_4b(
             if base_file.suffix in ('.hbjson', '.hbpkl'):
                 hb_model: Model = Model.from_file(base_file)
                 found_file = True
-            break
+                break
         if not found_file:
             raise FileNotFoundError(
                 'Found no hbjson or hbpkl file in parent of results folder.')
