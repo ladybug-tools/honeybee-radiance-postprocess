@@ -291,12 +291,16 @@ program_type_metrics = {
 
 
 def breeam_daylight_assessment_4b(
-        results: Union[str, AnnualDaylight], grids_filter: str = '*',
-        sub_folder: str = None):
+        results: Union[str, AnnualDaylight], model: Union[str, Path, Model] = None,
+        grids_filter: str = '*', sub_folder: str = None):
     """Calculate credits for BREEAM 4b.
 
     Args:
         results: Path to results folder or a Results class object.
+        model: A model as a path or a HB Model object. If None, the function
+            will look for a model in the parent of the results folder. If a model
+            does not exist in this directory the function will raise an error.
+            Defaults to None.
         grids_filter: The name of a grid or a pattern to filter the grids.
             Defaults to '*'.
         sub_folder: Relative path for a subfolder to write the output. If None,
@@ -315,21 +319,35 @@ def breeam_daylight_assessment_4b(
     # check to see if there is a HBJSON with sensor grid meshes for areas
     grid_areas = {}
     grid_program_types = {}
-    for base_file in Path(results.folder).parent.iterdir():
-        if base_file.suffix in ('.hbjson', '.hbpkl'):
-            hb_model: Model = Model.from_file(base_file)
-            filt_grids = _filter_by_pattern(
-                hb_model.properties.radiance.sensor_grids, filter=grids_filter)
-            for s_grid in filt_grids:
-                if s_grid.mesh is not None:
-                    grid_areas[s_grid.identifier] = np.array(s_grid.mesh.face_areas).sum()
-                else:
-                    grid_areas[s_grid.identifier] = None
-                hb_room = hb_model.rooms_by_identifier([s_grid.room_identifier])[0]
-                program_type_id = hb_room.properties.energy.program_type.identifier
-                if program_type_id not in program_type_metrics:
-                    program_type_id = 'BREEAM::Office_buildings::Occupied_spaces'
-                grid_program_types[s_grid.identifier] = program_type_id
+    if model is None:
+        found_file = False
+        for base_file in Path(results.folder).parent.iterdir():
+            if base_file.suffix in ('.hbjson', '.hbpkl'):
+                hb_model: Model = Model.from_file(base_file)
+                found_file = True
+            break
+        if not found_file:
+            raise FileNotFoundError(
+                'Found no hbjson or hbpkl file in parent of results folder.')
+    else:
+        if isinstance(model, Model):
+            hb_model = model
+        else:
+            hb_model = Model.from_file(model)
+
+    filt_grids = _filter_by_pattern(
+        hb_model.properties.radiance.sensor_grids, filter=grids_filter)
+    for s_grid in filt_grids:
+        if s_grid.mesh is not None:
+            grid_areas[s_grid.identifier] = np.array(s_grid.mesh.face_areas).sum()
+        else:
+            grid_areas[s_grid.identifier] = None
+        hb_room = hb_model.rooms_by_identifier([s_grid.room_identifier])[0]
+        program_type_id = hb_room.properties.energy.program_type.identifier
+        if program_type_id not in program_type_metrics:
+            program_type_id = 'BREEAM::Office_buildings::Occupied_spaces'
+        grid_program_types[s_grid.identifier] = program_type_id
+
     if not grid_areas:
         grid_areas = {grid_info['full_id']: None for grid_info in grids_info}
 
