@@ -1,4 +1,4 @@
-"""Test cli postprocess module."""
+"""Test cli two_phase module."""
 from pathlib import Path
 
 from click.testing import CliRunner

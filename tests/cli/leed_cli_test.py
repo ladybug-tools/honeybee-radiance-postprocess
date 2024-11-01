@@ -1,4 +1,4 @@
-"""Test cli mtxop module."""
+"""Test cli leed module."""
 import os
 
 from click.testing import CliRunner
