@@ -514,6 +514,7 @@ def leed_option_one(
                 if s_grid.mesh is not None:
                     grid_areas.append(s_grid.mesh.face_areas)
             grid_areas = [np.array(grid) for grid in grid_areas]
+            break
     if not grid_areas:
         grid_areas = [None] * len(grids_info)
 
