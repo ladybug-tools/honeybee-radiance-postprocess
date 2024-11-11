@@ -398,11 +398,12 @@ def breeam_daylight_assessment_4b(
 
             type_summary[program_type][grid_info['full_id']].append(metrics_summary)
 
-    program_summary = {}
+    program_summary = []
     for program_type, grid_summary in type_summary.items():
-        program_summary[program_type] = {}
-        program_summary[program_type]['credits'] = 0  # set 0 by default
-        program_summary[program_type]['comply'] = False  # set False by default
+        program_type_summary = {}
+        program_type_summary['program_type'] = program_type
+        program_type_summary['credits'] = 0  # set 0 by default
+        program_type_summary['comply'] = False  # set False by default
 
         metrics_summary = {}
         for grid_id, metrics_list in grid_summary.items():
@@ -429,24 +430,26 @@ def breeam_daylight_assessment_4b(
                         metric_summary['comply'] = False
 
         for credit, metric_summary in metrics_summary.items():
-            if metric_summary['comply'] and credit > program_summary[program_type]['credits']:
-                program_summary[program_type]['comply'] = True
-                program_summary[program_type]['credits'] = credit
-                program_summary[program_type]['total_area'] = metric_summary['total_area']
-                program_summary[program_type]['area_comply'] = metric_summary['area_comply']
-                program_summary[program_type]['area_comply_%'] = metric_summary['area_comply_%']
-                program_summary[program_type]['type'] = metric_summary['type']
+            if metric_summary['comply'] and credit > program_type_summary['credits']:
+                program_type_summary['comply'] = True
+                program_type_summary['credits'] = credit
+                program_type_summary['total_area'] = metric_summary['total_area']
+                program_type_summary['area_comply'] = metric_summary['area_comply']
+                program_type_summary['area_comply_%'] = metric_summary['area_comply_%']
+                program_type_summary['type'] = metric_summary['type']
             else:
-                program_summary[program_type]['total_area'] = metric_summary['total_area']
-                program_summary[program_type]['area_comply'] = metric_summary['area_comply']
-                program_summary[program_type]['area_comply_%'] = metric_summary['area_comply_%']
-                program_summary[program_type]['type'] = metric_summary['type']
+                program_type_summary['total_area'] = metric_summary['total_area']
+                program_type_summary['area_comply'] = metric_summary['area_comply']
+                program_type_summary['area_comply_%'] = metric_summary['area_comply_%']
+                program_type_summary['type'] = metric_summary['type']
+
+        program_summary.append(program_type_summary)
 
     building_type_summary = {}
-    for program_type, summary in program_summary.items():
-        if summary['type'] not in building_type_summary:
-            building_type_summary[summary['type']] = []
-        building_type_summary[summary['type']].append(summary)
+    for _program_summary in program_summary:
+        if _program_summary['type'] not in building_type_summary:
+            building_type_summary[_program_summary['type']] = []
+        building_type_summary[_program_summary['type']].append(_program_summary)
 
     credit_summary = []
     for building_type, summary in building_type_summary.items():
