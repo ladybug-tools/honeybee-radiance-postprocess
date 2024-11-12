@@ -195,12 +195,14 @@ def well_annual_daylight(
 
     Returns:
         Tuple:
-        -   summary: Summary of all grids combined.
-        -   summary_grid: Summary of each grid individually.
+        -   well_summary: Summary of WELL analysis.
+        -   ies_lm_summary: Summary of IES LM analysis.
+        -   ies_lm_summary_grid: Summary of IES LM analysis for each grid.
         -   da_grids: List of daylight autonomy values for each grid. Each item
                 in the list is a NumPy array of DA values.
         -   states_schedule: A dictionary of annual shading schedules for each
                 aperture group.
+        -   fail_to_comply: A dictionary with the hoys where the 2% rule failed.
         -   grids_info: Grid information.
     """
     schedule = occupancy_schedule_8_to_6(as_list=True)
@@ -297,6 +299,7 @@ def well_annual_daylight(
         pass_sda_blinds_up_grids, pass_sda_blinds_down_grids)
 
     well_summary = {}
+    well_summary['method'] = 'IES LM-83-12'
 
     # credits
     if not fail_to_comply:

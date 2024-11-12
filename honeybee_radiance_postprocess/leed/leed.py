@@ -477,6 +477,7 @@ def leed_option_one(
                 array of hours above 1000 lux.
         -   states_schedule: A dictionary of annual shading schedules for each
                 aperture group.
+        -   fail_to_comply: A dictionary with the hoys where the 2% rule failed.            
         -   grids_info: Grid information.
     """
     # use default leed occupancy schedule
