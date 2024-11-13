@@ -165,31 +165,17 @@ def _well_summary(
 
 def well_annual_daylight(
         results: Union[str, AnnualDaylight], grids_filter: str = '*',
-        states_schedule: dict = None, threshold: float = 300, target_time: float = 50,
-        sub_folder: str = None):
+        states_schedule: dict = None, sub_folder: str = None):
     """Calculate credits for WELL L06.
 
     Args:
         results: Path to results folder or a Results class object.
         grids_filter: The name of a grid or a pattern to filter the grids.
             Defaults to '*'.
-        shade_transmittance: A value to use as a multiplier in place of solar
-            shading. This input can be either a single value that will be used
-            for all aperture groups, or a dictionary where aperture groups are
-            keys, and the value for each key is the shade transmittance. Values
-            for shade transmittance must be 1 > value > 0.
-            Defaults to 0.05.
-        use_states: A boolean to note whether to use the simulated states. Set
-            to True to use the simulated states. The default is False which will
-            use the shade transmittance instead.
         states_schedule: A custom dictionary of shading states. In case this is
             left empty, the function will calculate a shading schedule by using
             the shade_transmittance input. If a states schedule is provided it
             will check that it is complying with the 2% rule. Defaults to None.
-        threshold: Threshold value for daylight autonomy. Default: 300.
-        target_time: A minimum threshold of occupied time (eg. 50% of the
-            time), above which a given sensor passes and contributes to the
-            spatial daylight autonomy. Defaults to 50.
         sub_folder: Relative path for a subfolder to write the output. If None,
             the files will not be written. Defaults to None.
 
@@ -243,10 +229,14 @@ def well_annual_daylight(
         grid_areas = [None] * len(grids_info)
 
     # spatial daylight autonomy
-    da_grids = []
-    pass_sda_grids = []
-    pass_sda_blinds_up_grids = []
-    pass_sda_blinds_down_grids = []
+    l06_da_grids = []
+    l06_pass_sda_grids = []
+    l06_pass_sda_blinds_up_grids = []
+    l06_pass_sda_blinds_down_grids = []
+    l01_da_grids = []
+    l01_pass_sda_grids = []
+    l01_pass_sda_blinds_up_grids = []
+    l01_pass_sda_blinds_down_grids = []
     for grid_info in grids_info:
         light_paths = [lp[0] for lp in grid_info['light_path']]
         base_zero_array = np.apply_along_axis(filter_array, 1, np.zeros(
@@ -281,57 +271,93 @@ def well_annual_daylight(
         array_blinds_up = sum(arrays_blinds_up)
         array_blinds_down = sum(arrays_blinds_down)
         # calculate da per grid
-        da_grid = da_array2d(array, total_occ=total_occ, threshold=threshold)
+        da_grid = da_array2d(array, total_occ=total_occ, threshold=300)
 
-        da_grids.append(da_grid)
+        l06_da_grids.append(da_grid)
         da_blinds_up_grid = da_array2d(
-            array_blinds_up, total_occ=total_occ, threshold=threshold)
+            array_blinds_up, total_occ=total_occ, threshold=300)
         da_blinds_down_grid = da_array2d(
-            array_blinds_down, total_occ=total_occ, threshold=threshold)
+            array_blinds_down, total_occ=total_occ, threshold=300)
         # calculate sda per grid
-        pass_sda_grids.append(da_grid >= target_time)
-        pass_sda_blinds_up_grids.append(da_blinds_up_grid >= target_time)
-        pass_sda_blinds_down_grids.append(da_blinds_down_grid >= target_time)
+        l06_pass_sda_grids.append(da_grid >= 50)
+        l06_pass_sda_blinds_up_grids.append(da_blinds_up_grid >= 50)
+        l06_pass_sda_blinds_down_grids.append(da_blinds_down_grid >= 50)
+
+        array_blinds_up = sum(arrays_blinds_up)
+        array_blinds_down = sum(arrays_blinds_down)
+        # calculate da per grid
+        da_grid = da_array2d(array, total_occ=total_occ, threshold=200)
+
+        l01_da_grids.append(da_grid)
+        da_blinds_up_grid = da_array2d(
+            array_blinds_up, total_occ=total_occ, threshold=200)
+        da_blinds_down_grid = da_array2d(
+            array_blinds_down, total_occ=total_occ, threshold=200)
+        # calculate sda per grid
+        l01_pass_sda_grids.append(da_grid >= 40)
+        l01_pass_sda_blinds_up_grids.append(da_blinds_up_grid >= 40)
+        l01_pass_sda_blinds_down_grids.append(da_blinds_down_grid >= 40)
 
     # create summaries for all grids and each grid individually
-    ies_lm_summary, ies_lm_summary_grid = _well_summary(
-        pass_sda_grids, grids_info, grid_areas,
-        pass_sda_blinds_up_grids, pass_sda_blinds_down_grids)
+    l06_ies_lm_summary, l06_ies_lm_summary_grid = _well_summary(
+        l06_pass_sda_grids, grids_info, grid_areas,
+        l06_pass_sda_blinds_up_grids, l06_pass_sda_blinds_down_grids)
+    l01_ies_lm_summary, l01_ies_lm_summary_grid = _well_summary(
+        l01_pass_sda_grids, grids_info, grid_areas,
+        l01_pass_sda_blinds_up_grids, l01_pass_sda_blinds_down_grids)
 
-    well_summary = {}
-    well_summary['method'] = 'IES LM-83-12'
+    l06_well_summary = {}
+    l01_well_summary = {}
+    l06_well_summary['method'] = 'IES LM-83-12'
+    l01_well_summary['method'] = 'IES LM-83-12'
 
     # credits
     if not fail_to_comply:
-        if ies_lm_summary['sda'] >= 75:
-            ies_lm_summary['credits'] = 3
-            well_summary['credits'] = 2
-        elif ies_lm_summary['sda'] >= 55:
-            ies_lm_summary['credits'] = 2
-            well_summary['credits'] = 1
-        elif ies_lm_summary['sda'] >= 40:
-            ies_lm_summary['credits'] = 1
-            well_summary['credits'] = 0
+        if l06_ies_lm_summary['sda'] >= 75:
+            l06_ies_lm_summary['credits'] = 3
+            l06_well_summary['credits'] = 2
+        elif l06_ies_lm_summary['sda'] >= 55:
+            l06_ies_lm_summary['credits'] = 2
+            l06_well_summary['credits'] = 1
+        elif l06_ies_lm_summary['sda'] >= 40:
+            l06_ies_lm_summary['credits'] = 1
+            l06_well_summary['credits'] = 0
         else:
-            ies_lm_summary['credits'] = 0
-            well_summary['credits'] = 0
+            l06_ies_lm_summary['credits'] = 0
+            l06_well_summary['credits'] = 0
 
-        if all(grid_summary['sda'] >= 55 for grid_summary in ies_lm_summary_grid.values()):
-            if ies_lm_summary['credits'] <= 2:
-                ies_lm_summary['credits'] += 1
+        if all(grid_summary['sda'] >= 55 for grid_summary in l06_ies_lm_summary_grid.values()):
+            if l06_ies_lm_summary['credits'] <= 2:
+                l06_ies_lm_summary['credits'] += 1
             else:
-                ies_lm_summary['credits'] = 'Exemplary performance'
+                l06_ies_lm_summary['credits'] = 'Exemplary performance'
+
+        if l01_ies_lm_summary['sda'] >= 30:
+            l01_ies_lm_summary['comply'] = True
+            l01_well_summary['comply'] = True
+        else:
+            l01_ies_lm_summary['comply'] = False
+            l01_well_summary['comply'] = False
+
+        l06_well_summary['sda'] = l06_ies_lm_summary['sda']
+        l01_well_summary['sda'] = l01_ies_lm_summary['sda']
     else:
-        ies_lm_summary['credits'] = 0
+        l06_ies_lm_summary['credits'] = 0
         fail_to_comply_rooms = ', '.join(list(fail_to_comply.keys()))
         note = (
             '0 credits have been awarded. The following sensor grids have at '
             'least one hour where 2% of the floor area receives direct '
             f'illuminance of 1000 lux or more: {fail_to_comply_rooms}.'
         )
-        ies_lm_summary['note'] = note
+        l06_ies_lm_summary['note'] = note
+        l06_well_summary['credits'] = 0
 
-    well_summary['total_floor_area'] = sum(np.sum(arr) for arr in grid_areas)
+        l01_ies_lm_summary['comply'] = False
+        l01_ies_lm_summary['note'] = note
+        l01_well_summary['comply'] = False
+
+    l06_well_summary['total_floor_area'] = sum(np.sum(arr) for arr in grid_areas)
+    l01_well_summary['total_floor_area'] = sum(np.sum(arr) for arr in grid_areas)
 
     # convert to datacollection
     def to_datacollection(aperture_group: str, values: np.ndarray):
@@ -347,34 +373,63 @@ def well_annual_daylight(
         folder = Path(sub_folder)
         folder.mkdir(parents=True, exist_ok=True)
 
-        ies_lm_folder = folder.joinpath('ies_lm_summary')
-        ies_lm_folder.mkdir(parents=True, exist_ok=True)
-        ies_lm_summary_file = ies_lm_folder.joinpath('ies_lm_summary.json')
-        ies_lm_summary_file.write_text(json.dumps(ies_lm_summary, indent=2))
-        ies_lm_summary_grid_file = ies_lm_folder.joinpath('ies_lm_summary_grid.json')
-        ies_lm_summary_grid_file.write_text(json.dumps(ies_lm_summary_grid, indent=2))
-        states_schedule_file = ies_lm_folder.joinpath('states_schedule.json')
+        l06_ies_lm_folder = folder.joinpath('l06_ies_lm_summary')
+        l01_ies_lm_folder = folder.joinpath('l01_ies_lm_summary')
+
+        l06_ies_lm_folder.mkdir(parents=True, exist_ok=True)
+        l01_ies_lm_folder.mkdir(parents=True, exist_ok=True)
+
+        ies_lm_summary_file = l06_ies_lm_folder.joinpath('ies_lm_summary.json')
+        ies_lm_summary_file.write_text(json.dumps(l06_ies_lm_summary, indent=2))
+        ies_lm_summary_file = l01_ies_lm_folder.joinpath('ies_lm_summary.json')
+        ies_lm_summary_file.write_text(json.dumps(l01_ies_lm_summary, indent=2))
+
+        ies_lm_summary_grid_file = l06_ies_lm_folder.joinpath('ies_lm_summary_grid.json')
+        ies_lm_summary_grid_file.write_text(json.dumps(l06_ies_lm_summary_grid, indent=2))
+        ies_lm_summary_grid_file = l01_ies_lm_folder.joinpath('ies_lm_summary_grid.json')
+        ies_lm_summary_grid_file.write_text(json.dumps(l01_ies_lm_summary_grid, indent=2))
+
+        states_schedule_file = l06_ies_lm_folder.joinpath('states_schedule.json')
         states_schedule_file.write_text(json.dumps(states_schedule))
-        grids_info_file = ies_lm_folder.joinpath('grids_info.json')
+        states_schedule_file = l01_ies_lm_folder.joinpath('states_schedule.json')
+        states_schedule_file.write_text(json.dumps(states_schedule))
+
+        grids_info_file = l06_ies_lm_folder.joinpath('grids_info.json')
+        grids_info_file.write_text(json.dumps(grids_info, indent=2))
+        grids_info_file = l01_ies_lm_folder.joinpath('grids_info.json')
         grids_info_file.write_text(json.dumps(grids_info, indent=2))
 
         for (da, grid_info) in \
-            zip(da_grids, grids_info):
+            zip(l06_da_grids, grids_info):
             grid_id = grid_info['full_id']
-            da_file = ies_lm_folder.joinpath('results', 'da', f'{grid_id}.da')
+            da_file = l06_ies_lm_folder.joinpath('results', 'da', f'{grid_id}.da')
+            da_file.parent.mkdir(parents=True, exist_ok=True)
+            np.savetxt(da_file, da, fmt='%.2f')
+        for (da, grid_info) in \
+            zip(l01_da_grids, grids_info):
+            grid_id = grid_info['full_id']
+            da_file = l01_ies_lm_folder.joinpath('results', 'da', f'{grid_id}.da')
             da_file.parent.mkdir(parents=True, exist_ok=True)
             np.savetxt(da_file, da, fmt='%.2f')
 
-        da_grids_info_file = ies_lm_folder.joinpath(
+        da_grids_info_file = l06_ies_lm_folder.joinpath(
+            'results', 'da', 'grids_info.json')
+        da_grids_info_file.write_text(json.dumps(grids_info, indent=2))
+        da_grids_info_file = l01_ies_lm_folder.joinpath(
             'results', 'da', 'grids_info.json')
         da_grids_info_file.write_text(json.dumps(grids_info, indent=2))
 
         states_schedule_err_file = \
-            ies_lm_folder.joinpath('states_schedule_err.json')
+            l06_ies_lm_folder.joinpath('states_schedule_err.json')
+        states_schedule_err_file.write_text(json.dumps(fail_to_comply))
+        states_schedule_err_file = \
+            l01_ies_lm_folder.joinpath('states_schedule_err.json')
         states_schedule_err_file.write_text(json.dumps(fail_to_comply))
 
-        well_summary_file = folder.joinpath('well_summary.json')
-        well_summary_file.write_text(json.dumps(well_summary, indent=2))
+        well_summary_file = folder.joinpath('l06_well_summary.json')
+        well_summary_file.write_text(json.dumps(l06_well_summary, indent=2))
+        well_summary_file = folder.joinpath('l01_well_summary.json')
+        well_summary_file.write_text(json.dumps(l01_well_summary, indent=2))
 
-    return (well_summary, ies_lm_summary, ies_lm_summary_grid, da_grids, states_schedule,
+    return (l06_well_summary, l06_ies_lm_summary, l06_ies_lm_summary_grid, l06_da_grids, states_schedule,
             fail_to_comply, grids_info)
