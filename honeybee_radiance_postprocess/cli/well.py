@@ -26,28 +26,6 @@ def well():
     show_default=True
 )
 @click.option(
-    '--shade-transmittance', '-st', help='A value to use as a multiplier in place of '
-    'solar shading. Value for shade transmittance must be 1 > value > 0.',
-    default=0.02, show_default=True, type=click.FLOAT
-)
-@click.option(
-    '--shade-transmittance-file', '-stf', help='A JSON file with a dictionary '
-    'where aperture groups are keys, and the value for each key is the shade '
-    'transmittance. Values for shade transmittance must be 1 > value > 0. '
-    'If any aperture groups are missing in the JSON file, its shade transmittance '
-    'value will be set to the value of the --shade-transmittance option (0.02 by '
-    'default).', default=None, show_default=True,
-    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
-)
-@click.option(
-    '--use-shade-transmittance/--use-states', help='A flag to select if the '
-    'post-processing should use a shade transmittance or the simulated states '
-    'of aperture groups. Using states should only be selected if the annual '
-    'daylight simulation included ray tracing of a second (blind) state for '
-    'each aperture group.',
-    is_flag=True, default=True, show_default=True
-)
-@click.option(
     '--sub-folder', '-sf', help='Relative path for subfolder to write output '
     'files.', default='well_summary', show_default=True
 )
@@ -85,9 +63,7 @@ def well_daylight(
         shade_transmittance = shd_trans
     try:
         well_annual_daylight(
-            folder, grids_filter=grids_filter,
-            shade_transmittance=shade_transmittance, use_states=use_states,
-            sub_folder=sub_folder
+            folder, grids_filter=grids_filter, sub_folder=sub_folder
         )
     except Exception:
         _logger.exception('Failed to generate LEED summary.')

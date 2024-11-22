@@ -131,14 +131,14 @@ def en17037_to_folder(
 
     grids_info = results._filter_grids(grids_filter=grids_filter)
 
+    sub_folder = Path(sub_folder)
+
     if total_occ != 4380:
         raise ValueError(
             f'There are {total_occ} occupied hours in the schedule. According '
             'to EN 17037 the schedule must consist of the daylight hours '
             'which is defined as the half of the year with the largest '
             'quantity of daylight')
-
-    metrics_folder = Path(results.folder).parent.joinpath(sub_folder)
 
     for grid_info in grids_info:
         array = results._array_from_states(
@@ -147,7 +147,7 @@ def en17037_to_folder(
             array = np.apply_along_axis(
                 filter_array, 1, array, occ_mask)
         da_folders, sda_folders, compliance_folders = en17037_to_files(
-            array, metrics_folder, grid_info)
+            array, sub_folder, grid_info)
 
     # copy grids_info.json to all results folders
     for folder in da_folders + sda_folders + compliance_folders:
@@ -156,13 +156,13 @@ def en17037_to_folder(
             json.dump(grids_info, outf, indent=2)
 
     metric_info_dict = _annual_daylight_en17037_vis_metadata()
-    da_folder = metrics_folder.joinpath('da')
+    da_folder = sub_folder.joinpath('da')
     for metric, data in metric_info_dict.items():
         file_path = da_folder.joinpath(metric, 'vis_metadata.json')
         with open(file_path, 'w') as fp:
             json.dump(data, fp, indent=4)
 
-    return metrics_folder
+    return sub_folder
 
 
 def _annual_daylight_en17037_vis_metadata():
