@@ -1,12 +1,9 @@
 """honeybee-radiance-postprocess WELL commands."""
-import json
 import sys
 import logging
-import os
 import click
 
 from ..well.well import well_annual_daylight
-from ..results.annual_daylight import AnnualDaylight
 
 _logger = logging.getLogger(__name__)
 
@@ -21,6 +18,10 @@ def well():
     'folder',
     type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
 )
+@click.argument(
+    'daylight-hours',
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+)
 @click.option(
     '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
     show_default=True
@@ -30,8 +31,7 @@ def well():
     'files.', default='well_summary', show_default=True
 )
 def well_daylight(
-    folder, shade_transmittance, shade_transmittance_file, grids_filter,
-    use_shade_transmittance, sub_folder
+    folder, daylight_hours, grids_filter, sub_folder
 ):
     """Calculate credits for WELL L06.
 
@@ -46,27 +46,15 @@ def well_daylight(
         folder: Results folder. This folder is an output folder of annual daylight
             recipe. The daylight simulation must include aperture groups.
     """
-    use_states = not use_shade_transmittance
-    if (
-        shade_transmittance_file
-        and os.path.isfile(shade_transmittance_file)
-        and use_shade_transmittance
-    ):
-        with open(shade_transmittance_file) as json_file:
-            shd_trans = json.load(json_file)
-        results = AnnualDaylight(folder)
-        # check if aperture groups are missing in json file
-        for light_path in results.light_paths:
-            if (not light_path in shd_trans and
-                light_path != '__static_apertures__'):
-                shd_trans[light_path] = shade_transmittance
-        shade_transmittance = shd_trans
+    with open(daylight_hours) as hourly_schedule:
+        daylight_hours = [int(float(v)) for v in hourly_schedule]
+
     try:
         well_annual_daylight(
-            folder, grids_filter=grids_filter, sub_folder=sub_folder
+            folder, daylight_hours, grids_filter=grids_filter, sub_folder=sub_folder
         )
     except Exception:
-        _logger.exception('Failed to generate LEED summary.')
+        _logger.exception('Failed to generate WELL summary.')
         sys.exit(1)
     else:
         sys.exit(0)
