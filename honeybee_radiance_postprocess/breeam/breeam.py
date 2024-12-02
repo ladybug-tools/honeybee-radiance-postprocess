@@ -348,21 +348,22 @@ def breeam_daylight_assessment_4b(
         except AttributeError as e:
             raise ImportError('honeybee_energy library must be installed to use '
                               'breeam_daylight_assessment method. {}'.format(e))
-        if program_type_id not in program_type_metrics:
-            program_type_id = 'BREEAM::Office_buildings::Occupied_spaces'
-        grid_program_types[s_grid.identifier] = program_type_id
+        if program_type_id in program_type_metrics:
+            grid_program_types[s_grid.identifier] = program_type_id
 
     if not grid_areas:
         grid_areas = {grid_info['full_id']: None for grid_info in grids_info}
 
     type_summary = {}
     for grid_info in grids_info:
-        program_type = grid_program_types[grid_info['full_id']]
+        program_type = grid_program_types.get(grid_info['full_id'], None)
+        if program_type is None:
+            continue
         if program_type not in type_summary:
             type_summary[program_type] = {}
         type_summary[program_type][grid_info['full_id']] = []
 
-        array = results._array_from_states(grid_info)
+        array = results._array_from_states(grid_info, zero_array=True)
         # calculate average along axis 0 (average for each hour)
         avg_ill = array.mean(axis=0)
 
