@@ -1,2 +1,2 @@
 honeybee-radiance==1.66.138
-numpy>=1.21.6
+numpy<2.0.0
