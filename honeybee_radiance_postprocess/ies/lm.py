@@ -109,6 +109,8 @@ def dynamic_schedule_direct_illuminance(
     shd_trans_dict = {}
 
     for grid_info in grids_info:
+        grid_states_schedule = defaultdict(list)
+
         grid_count = grid_info['count']
         light_paths = []
         for lp in grid_info['light_path']:
@@ -178,11 +180,16 @@ def dynamic_schedule_direct_illuminance(
             max_indices = array_combinations_filter.argmax(axis=0)
             # select the combination for each hour
             combinations = [combinations[idx] for idx in max_indices]
+
             # merge the combinations of dicts
             for combination in combinations:
                 for light_path, value in combination.items():
                     if light_path != '__static_apertures__':
-                        states_schedule[light_path].append(value)
+                        grid_states_schedule[light_path].append(value)
+
+        for key, value in grid_states_schedule.items():
+            if key not in states_schedule:
+                states_schedule[key] = value
 
     occupancy_hoys = schedule_to_hoys(schedule, results.sun_up_hours)
 
