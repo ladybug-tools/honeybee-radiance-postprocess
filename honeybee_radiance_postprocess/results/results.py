@@ -1357,7 +1357,13 @@ class Results(_ResultsFolder):
                     break
             else:
                 raise Exception(f'Grid info with full_id "{grid_info}" not found.')
-        light_paths = [elem for lp in grid_info['light_path'] for elem in lp]
+        light_paths = []
+        for lp in grid_info['light_path']:
+            for _lp in lp:
+                if _lp == '__static_apertures__' and len(lp) > 1:
+                    pass
+                else:
+                    light_paths.append(_lp)
 
         return light_paths
 
