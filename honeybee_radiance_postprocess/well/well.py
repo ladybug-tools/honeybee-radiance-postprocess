@@ -1,9 +1,7 @@
 """Functions for WELL post-processing."""
 from typing import Tuple, Union
 from pathlib import Path
-from collections import defaultdict
 import json
-import itertools
 import numpy as np
 
 from ladybug.analysisperiod import AnalysisPeriod
@@ -239,7 +237,13 @@ def well_annual_daylight(
     l01_pass_sda_blinds_up_grids = []
     l01_pass_sda_blinds_down_grids = []
     for grid_info in grids_info:
-        light_paths = [lp[0] for lp in grid_info['light_path']]
+        light_paths = []
+        for lp in grid_info['light_path']:
+            for _lp in lp:
+                if _lp == '__static_apertures__' and len(lp) > 1:
+                    pass
+                else:
+                    light_paths.append(_lp)
         base_zero_array = np.apply_along_axis(filter_array, 1, np.zeros(
             (grid_info['count'], len(results.sun_up_hours))), occ_mask)
         arrays_blinds_up = [base_zero_array.copy()]

@@ -1188,7 +1188,13 @@ class Results(_ResultsFolder):
         Returns:
             dict: A filtered states dictionary.
         """
-        light_paths = [elem for lp in grid_info['light_path'] for elem in lp]
+        light_paths = []
+        for lp in grid_info['light_path']:
+            for _lp in lp:
+                if _lp == '__static_apertures__' and len(lp) > 1:
+                    pass
+                else:
+                    light_paths.append(_lp)
         if states:
             states = states.filter_by_identifiers(light_paths)
         else:
