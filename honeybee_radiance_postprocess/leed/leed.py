@@ -340,7 +340,13 @@ def leed_states_schedule(
 
     for grid_info in grids_info:
         grid_count = grid_info['count']
-        light_paths = [lp[0] for lp in grid_info['light_path']]
+        light_paths = []
+        for lp in grid_info['light_path']:
+            for _lp in lp:
+                if _lp == '__static_apertures__' and len(lp) > 1:
+                    pass
+                else:
+                    light_paths.append(_lp)
 
         shade_transmittances, shd_trans_dict = (
             shade_transmittance_per_light_path(
@@ -525,7 +531,13 @@ def leed_option_one(
     pass_ase_grids = []
     ase_hr_pct = []
     for (grid_info, grid_area) in zip(grids_info, grid_areas):
-        light_paths = [lp[0] for lp in grid_info['light_path']]
+        light_paths = []
+        for lp in grid_info['light_path']:
+            for _lp in lp:
+                if _lp == '__static_apertures__' and len(lp) > 1:
+                    pass
+                else:
+                    light_paths.append(_lp)
         arrays = []
         # combine direct array for all light paths
         for light_path in light_paths:
@@ -558,7 +570,13 @@ def leed_option_one(
     pass_sda_blinds_up_grids = []
     pass_sda_blinds_down_grids = []
     for grid_info in grids_info:
-        light_paths = [lp[0] for lp in grid_info['light_path']]
+        light_paths = []
+        for lp in grid_info['light_path']:
+            for _lp in lp:
+                if _lp == '__static_apertures__' and len(lp) > 1:
+                    pass
+                else:
+                    light_paths.append(_lp)
         base_zero_array = np.apply_along_axis(filter_array, 1, np.zeros(
             (grid_info['count'], len(results.sun_up_hours))), occ_mask)
         arrays = [base_zero_array.copy()]
