@@ -339,6 +339,7 @@ def leed_states_schedule(
     shd_trans_dict = {}
 
     for grid_info in grids_info:
+        grid_states_schedule = defaultdict(list)
         grid_count = grid_info['count']
         light_paths = []
         for lp in grid_info['light_path']:
@@ -356,13 +357,13 @@ def leed_states_schedule(
 
         if len(light_paths) > 6:
             if use_states:
-                states_schedule, fail_to_comply = states_schedule_descending(
+                grid_states_schedule, fail_to_comply = states_schedule_descending(
                     results, grid_info, light_paths, occ_mask,
-                    states_schedule, fail_to_comply)
+                    grid_states_schedule, fail_to_comply)
             else:
-                states_schedule, fail_to_comply = shd_trans_schedule_descending(
+                grid_states_schedule, fail_to_comply = shd_trans_schedule_descending(
                     results, grid_info, light_paths, shade_transmittances, occ_mask,
-                    states_schedule, fail_to_comply)
+                    grid_states_schedule, fail_to_comply)
         else:
             if use_states:
                 combinations = results._get_state_combinations(grid_info)
@@ -412,7 +413,11 @@ def leed_states_schedule(
             for combination in combinations:
                 for light_path, value in combination.items():
                     if light_path != '__static_apertures__':
-                        states_schedule[light_path].append(value)
+                        grid_states_schedule[light_path].append(value)
+
+        for key, value in grid_states_schedule.items():
+            if key not in states_schedule:
+                states_schedule[key] = value
 
     occupancy_hoys = schedule_to_hoys(schedule, results.sun_up_hours)
 

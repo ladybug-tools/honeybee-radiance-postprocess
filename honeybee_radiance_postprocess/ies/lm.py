@@ -128,13 +128,13 @@ def dynamic_schedule_direct_illuminance(
 
         if len(light_paths) > 6:
             if use_states:
-                states_schedule, fail_to_comply = states_schedule_descending(
+                grid_states_schedule, fail_to_comply = states_schedule_descending(
                     results, grid_info, light_paths, occ_mask,
-                    states_schedule, fail_to_comply)
+                    grid_states_schedule, fail_to_comply)
             else:
-                states_schedule, fail_to_comply = shd_trans_schedule_descending(
+                grid_states_schedule, fail_to_comply = shd_trans_schedule_descending(
                     results, grid_info, light_paths, shade_transmittances, occ_mask,
-                    states_schedule, fail_to_comply)
+                    grid_states_schedule, fail_to_comply)
         else:
             if use_states:
                 combinations = results._get_state_combinations(grid_info)
