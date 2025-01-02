@@ -5,8 +5,8 @@ import json
 import numpy as np
 
 from ladybug.analysisperiod import AnalysisPeriod
-from ladybug.datatype.generic import GenericType
 from ladybug.datacollection import HourlyContinuousCollection
+from ladybug.datatype.generic import GenericType
 from ladybug.header import Header
 from honeybee.model import Model
 from honeybee.units import conversion_factor_to_meters
@@ -457,6 +457,27 @@ def well_annual_daylight(
         da_file = l01_ies_lm_folder.joinpath('results', 'da', f'{grid_id}.da')
         da_file.parent.mkdir(parents=True, exist_ok=True)
         np.savetxt(da_file, da, fmt='%.2f')
+
+    sda_pf_folder = ies_lm_folder.joinpath('pass_fail')
+    sda_pf_folder.mkdir(parents=True, exist_ok=True)
+    for l01_pf, grid_info in zip(l01_pass_sda_grids, grids_info):
+        grid_id = grid_info['full_id']
+        l01_sda_pf_folder = sda_pf_folder.joinpath('L01')
+        l01_sda_pf_folder.mkdir(parents=True, exist_ok=True)
+        l01_pf_file = l01_sda_pf_folder.joinpath(f'{grid_id}.pf')
+        l01_pf = l01_pf.astype(int)
+        np.savetxt(l01_pf_file, l01_pf, fmt='%d')
+        grids_info_file = l01_sda_pf_folder.joinpath('grids_info.json')
+        grids_info_file.write_text(json.dumps(grids_info, indent=2))
+    for l06_pf, grid_info in zip(l06_pass_sda_grids, grids_info):
+        grid_id = grid_info['full_id']
+        l06_sda_pf_folder = sda_pf_folder.joinpath('L06')
+        l06_sda_pf_folder.mkdir(parents=True, exist_ok=True)
+        l06_pf_file = l06_sda_pf_folder.joinpath(f'{grid_id}.pf')
+        l06_pf = l06_pf.astype(int)
+        np.savetxt(l06_pf_file, l06_pf, fmt='%d')
+        grids_info_file = l06_sda_pf_folder.joinpath('grids_info.json')
+        grids_info_file.write_text(json.dumps(grids_info, indent=2))
 
     da_grids_info_file = l06_ies_lm_folder.joinpath(
         'results', 'da', 'grids_info.json')
