@@ -2,7 +2,13 @@
 import sys
 import logging
 from pathlib import Path
+import os
+import json
 import click
+
+from ladybug.color import Color
+from ladybug.datatype.generic import GenericType
+from ladybug.legend import LegendParameters
 
 from honeybee_radiance_postprocess.breeam.breeam import breeam_daylight_assessment_4b
 
@@ -42,6 +48,44 @@ def breeam_4b(
         breeam_daylight_assessment_4b(folder, model=model_file, sub_folder=sub_folder)
     except Exception:
         _logger.exception('Failed to calculate BREEAM metrics.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@breeam.command('breeam-4b-vis-metadata')
+@click.option(
+    '--output-folder', '-o', help='Output folder for vis metadata files.',
+    type=click.Path(exists=False, file_okay=False, dir_okay=True, resolve_path=True),
+    default='visualization', show_default=True
+)
+def breeam_4b_vis(output_folder):
+    """Write visualization metadata files for BREEAM 4b."""
+    colors = [Color(220, 0, 0), Color(240, 170, 130), Color(250, 200, 170), Color(0, 220, 0)]
+    pass_fail_lpar = \
+        LegendParameters(min=0, max=3, colors=colors, segment_count=4, title='Pass/Fail')
+    pass_fail_lpar.ordinal_dictionary = {
+        0: 'Fail', 1: 'Min. illuminance only', 2: 'Avg. illuminance only', 3: 'Pass'}
+
+    metric_info_dict = {
+        'pass_fail': {
+            'type': 'VisualizationMetaData',
+            'data_type': GenericType('Pass/Fail', '').to_dict(),
+            'unit': '',
+            'legend_parameters': pass_fail_lpar.to_dict()
+        }
+    }
+    try:
+        if not os.path.exists(output_folder):
+            os.mkdir(output_folder)
+        for metric, data in metric_info_dict.items():
+            if not os.path.exists(os.path.join(output_folder, metric)):
+                os.mkdir(os.path.join(output_folder, metric))
+            file_path = os.path.join(output_folder, metric, 'vis_metadata.json')
+            with open(file_path, 'w') as fp:
+                json.dump(data, fp, indent=4)
+    except Exception:
+        _logger.exception('Failed to write the visualization metadata files.')
         sys.exit(1)
     else:
         sys.exit(0)
