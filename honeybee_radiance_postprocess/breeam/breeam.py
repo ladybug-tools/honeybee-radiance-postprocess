@@ -396,6 +396,10 @@ def breeam_daylight_assessment_4b(
                 metrics_summary['comply'] = True
             else:
                 metrics_summary['comply'] = False
+            metrics_summary['average-comply'] = True if avg_comply else False
+            metrics_summary['minimum-comply'] = True if minimum_comply else False
+            
+            metrics_summary['count'] = grid_info['count']
 
             type_summary[program_type][grid_info['full_id']].append(metrics_summary)
 
@@ -467,12 +471,31 @@ def breeam_daylight_assessment_4b(
         credit_summary.append(_building_type_summary)
 
     if sub_folder:
-        folder = Path(sub_folder)
-        folder.mkdir(parents=True, exist_ok=True)
+        sub_folder = Path(sub_folder)
+        sub_folder.mkdir(parents=True, exist_ok=True)
 
-        credit_summary_file = folder.joinpath('summary.json')
+        credit_summary_file = sub_folder.joinpath('summary.json')
         credit_summary_file.write_text(json.dumps(credit_summary, indent=2))
-        program_summary_file = folder.joinpath('program_summary.json')
+        program_summary_file = sub_folder.joinpath('program_summary.json')
         program_summary_file.write_text(json.dumps(program_summary, indent=2))
+
+        pf_folder = sub_folder.joinpath('pass_fail')
+        pf_folder.mkdir(parents=True, exist_ok=True)
+        grids_info_file = pf_folder.joinpath('grids_info.json')
+        grids_info_file.write_text(json.dumps(grids_info, indent=2))
+        for program_type, grid_summary in type_summary.items():
+            for grid_id, metrics_list in grid_summary.items():
+                fill_value = 0
+                for metric in metrics_list:
+                    if metric['comply']:
+                        fill_value = 3
+                        break
+                    elif metric['average-comply']:
+                        fill_value = 2
+                    elif metric['minimum-comply']:
+                        fill_value = 1
+                pf_file = pf_folder.joinpath(f'{grid_id}.pf')
+                pf_array = np.full(metric['count'], fill_value)
+                np.savetxt(pf_file, pf_array, fmt='%d')
 
     return credit_summary, program_summary

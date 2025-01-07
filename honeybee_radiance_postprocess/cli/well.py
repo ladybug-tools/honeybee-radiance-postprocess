@@ -1,9 +1,9 @@
 """honeybee-radiance-postprocess WELL commands."""
 import sys
 import logging
-import click
 import json
 import os
+import click
 
 from ladybug.color import Color
 from ladybug.datatype.generic import GenericType
