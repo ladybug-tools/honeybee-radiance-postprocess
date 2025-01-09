@@ -740,6 +740,27 @@ def leed_option_one(
             folder.joinpath('states_schedule_err.json')
         states_schedule_err_file.write_text(json.dumps(fail_to_comply))
 
+        pf_folder = folder.joinpath('pass_fail')
+        pf_folder.mkdir(parents=True, exist_ok=True)
+        for pass_sda_grid, pass_ase_grid, grid_info in zip(
+                pass_sda_grids, pass_ase_grids, grids_info):
+            grid_id = grid_info['full_id']
+            da_pf_folder = pf_folder.joinpath('DA')
+            da_pf_folder.mkdir(parents=True, exist_ok=True)
+            da_pf_file = da_pf_folder.joinpath(f'{grid_id}.pf')
+            pass_sda_grid = pass_sda_grid.astype(int)
+            np.savetxt(da_pf_file, pass_sda_grid, fmt='%d')
+            grids_info_file = da_pf_folder.joinpath('grids_info.json')
+            grids_info_file.write_text(json.dumps(grids_info, indent=2))
+
+            ase_pf_folder = pf_folder.joinpath('ASE')
+            ase_pf_folder.mkdir(parents=True, exist_ok=True)
+            ase_pf_file = ase_pf_folder.joinpath(f'{grid_id}.pf')
+            pass_ase_grid = pass_ase_grid.astype(int)
+            np.savetxt(ase_pf_file, pass_ase_grid, fmt='%d')
+            grids_info_file = ase_pf_folder.joinpath('grids_info.json')
+            grids_info_file.write_text(json.dumps(grids_info, indent=2))
+
     return (summary, summary_grid, da_grids, hours_above, states_schedule,
             fail_to_comply, grids_info)
 
