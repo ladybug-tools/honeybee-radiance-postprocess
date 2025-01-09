@@ -61,7 +61,7 @@ def breeam_4b(
 )
 def breeam_4b_vis(output_folder):
     """Write visualization metadata files for BREEAM 4b."""
-    colors = [Color(220, 0, 0), Color(240, 170, 130), Color(250, 200, 170), Color(0, 220, 0)]
+    colors = [Color(220, 0, 0), Color(220, 110, 25), Color(255, 190, 0), Color(0, 220, 0)]
     pass_fail_lpar = \
         LegendParameters(min=0, max=3, colors=colors, segment_count=4, title='Pass/Fail')
     pass_fail_lpar.ordinal_dictionary = {
