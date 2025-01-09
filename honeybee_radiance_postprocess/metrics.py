@@ -295,11 +295,16 @@ def ase_array2d(
             Defaults to 1000.
 
     Returns:
-        A NumPy float of the ASE as a percentage (decimal).
+        A Tuple with two values.
+
+        -   ase: NumPy float of the ASE as a percentage (decimal).
+
+        -   h_above: 1D NumPy array of the number of hours above the direct
+            threshold.
     """
     check_array_dim(array, 2)
     h_above = (array > direct_threshold).sum(axis=1)
-    ase = (h_above > occ_hours).sum() / array.shape[0] * 100
+    ase = (h_above >= occ_hours).sum() / array.shape[0] * 100
 
     return ase, h_above
 
