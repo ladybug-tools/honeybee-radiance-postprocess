@@ -360,7 +360,7 @@ def breeam_daylight_assessment_4b(
         if program_type is None:
             continue
         if program_type not in type_summary:
-            type_summary[program_type] = {}
+            type_summary[program_type] = {}  # add dict for program type
         type_summary[program_type][grid_info['full_id']] = []
 
         array = results._array_from_states(grid_info, zero_array=True)
@@ -374,32 +374,35 @@ def breeam_daylight_assessment_4b(
             metrics_summary['area'] = grid_areas[grid_info['full_id']]
             # calculate number of hours where avg. illuminance > target illuminance
             target_ill = metrics['average_daylight_illuminance']['illuminance']
-            hrs_abv = (avg_ill >= target_ill).sum()
+            hrs_abv_avg = (avg_ill >= target_ill).sum()
             # check if value is >= target hours
             target_hrs = metrics['average_daylight_illuminance']['hours']
-            avg_comply = hrs_abv >= target_hrs
+            avg_comply = hrs_abv_avg >= target_hrs
 
             # calculate number of hours where illuminance > target illuminance
             if program_type == 'BREEAM::Prison_buildings::Cells_and_custody_cells':
-                minimum_comply = True
+                min_comply = True  # no minimum daylight illuminance for this space
             else:
                 target_ill = metrics['minimum_daylight_illuminance']['illuminance']
                 hrs_abv_target = (array >= target_ill).sum(axis=1)
                 # get the minimum, i.e., worst lit point
-                worst_lit_point = np.min(hrs_abv_target)
+                hrs_abv_min = np.min(hrs_abv_target)
                 # check if values is >= target hours
                 target_hrs = metrics['minimum_daylight_illuminance']['hours']
-                minimum_comply = worst_lit_point >= target_hrs
+                min_comply = hrs_abv_min >= target_hrs
 
             metrics_summary['credits'] = metrics['credits']
-            if avg_comply and minimum_comply:
+            if avg_comply and min_comply:
                 metrics_summary['comply'] = True
             else:
                 metrics_summary['comply'] = False
             metrics_summary['average-comply'] = True if avg_comply else False
-            metrics_summary['minimum-comply'] = True if minimum_comply else False
-            
+            metrics_summary['minimum-comply'] = True if min_comply else False
+
             metrics_summary['count'] = grid_info['count']
+
+            metrics_summary['average-illuminance-hours'] = hrs_abv_avg
+            metrics_summary['minimum-illuminance-hours'] = hrs_abv_min
 
             type_summary[program_type][grid_info['full_id']].append(metrics_summary)
 
@@ -447,6 +450,24 @@ def breeam_daylight_assessment_4b(
                 program_type_summary['area_comply'] = metric_summary['area_comply']
                 program_type_summary['area_comply_%'] = metric_summary['area_comply_%']
                 program_type_summary['type'] = metric_summary['type']
+
+        avg_hrs, min_hrs, areas = [], [], []
+        for grid_id, metrics_list in grid_summary.items():
+            for metric in metrics_list:
+                areas.append(metric['area'])
+                avg_hrs.append(metric['average-illuminance-hours'])
+                min_hrs.append(metric['minimum-illuminance-hours'])
+                break  # only need to get the first one
+
+        area_proportions = np.array(areas) / program_type_summary['total_area']
+
+        weighted_hours_avg = area_proportions * np.array(avg_hrs)
+        total_weighted_hours_avg = np.sum(weighted_hours_avg)
+        program_type_summary['average-illuminance-hours'] = total_weighted_hours_avg
+
+        weighted_hours_min = area_proportions * np.array(min_hrs)
+        total_weighted_hours_min = np.sum(weighted_hours_min)
+        program_type_summary['minimum-illuminance-hours'] = total_weighted_hours_min
 
         program_summary.append(program_type_summary)
 
