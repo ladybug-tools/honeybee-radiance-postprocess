@@ -399,9 +399,13 @@ def well_annual_daylight(
         )
         l06_ies_lm_summary['note'] = note
         l06_well_summary_ies_lm['points'] = 0
+        l06_well_summary_ies_lm['note'] = note
+        l06_well_summary_ies_lm['sda'] = l06_ies_lm_summary['sda']
 
         l01_ies_lm_summary['note'] = note
         l01_well_summary_ies_lm['comply'] = False
+        l01_well_summary_ies_lm['note'] = note
+        l01_well_summary_ies_lm['sda'] = l01_ies_lm_summary['sda']
 
     l06_well_summary_ies_lm['total_floor_area'] = sum(np.sum(arr) for arr in grid_areas)
     l01_well_summary_ies_lm['total_floor_area'] = sum(np.sum(arr) for arr in grid_areas)
