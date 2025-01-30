@@ -354,6 +354,7 @@ def breeam_daylight_assessment_4b(
     if not grid_areas:
         grid_areas = {grid_info['full_id']: None for grid_info in grids_info}
 
+    grid_summary = {}
     type_summary = {}
     for grid_info in grids_info:
         program_type = grid_program_types.get(grid_info['full_id'], None)
@@ -406,15 +407,23 @@ def breeam_daylight_assessment_4b(
 
             type_summary[program_type][grid_info['full_id']].append(metrics_summary)
 
+        grid_summary[grid_info['full_id']] = {
+            'type': metrics['type'],
+            'program-type': program_type,
+            'display-name': grid_info['name'],
+            'average-illuminance-hours': hrs_abv_avg.item(),
+            'minimum-illuminance-hours': hrs_abv_min.item()
+        }
+
     program_summary = []
-    for program_type, grid_summary in type_summary.items():
+    for program_type, _grid_summary in type_summary.items():
         program_type_summary = {}
         program_type_summary['program_type'] = program_type
         program_type_summary['credits'] = 0  # set 0 by default
         program_type_summary['comply'] = False  # set False by default
 
         metrics_summary = {}
-        for grid_id, metrics_list in grid_summary.items():
+        for grid_id, metrics_list in _grid_summary.items():
             for metric in metrics_list:
                 if metric['credits'] not in metrics_summary:
                     metrics_summary[metric['credits']] = {}
@@ -452,7 +461,7 @@ def breeam_daylight_assessment_4b(
                 program_type_summary['type'] = metric_summary['type']
 
         avg_hrs, min_hrs, areas = [], [], []
-        for grid_id, metrics_list in grid_summary.items():
+        for grid_id, metrics_list in _grid_summary.items():
             for metric in metrics_list:
                 areas.append(metric['area'])
                 avg_hrs.append(metric['average-illuminance-hours'])
@@ -499,6 +508,8 @@ def breeam_daylight_assessment_4b(
         credit_summary_file.write_text(json.dumps(credit_summary, indent=2))
         program_summary_file = sub_folder.joinpath('program_summary.json')
         program_summary_file.write_text(json.dumps(program_summary, indent=2))
+        grid_summary_file = sub_folder.joinpath('grid_summary.json')
+        grid_summary_file.write_text(json.dumps(grid_summary, indent=2))
 
         pf_folder = sub_folder.joinpath('pass_fail')
         pf_folder.mkdir(parents=True, exist_ok=True)
