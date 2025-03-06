@@ -29,12 +29,16 @@ def breeam():
     'in the simulation.', type=click.Path(
     exists=False, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option(
+    '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
+    show_default=True
+)
+@click.option(
     '--sub-folder', '-sf', help='Relative path for subfolder to write output '
     'files.', default='breeam_summary', type=click.Path(
     exists=False, file_okay=False, dir_okay=True, resolve_path=True, path_type=Path)
 )
 def breeam_4b(
-    folder, model_file, sub_folder
+    folder, model_file, grids_filter, sub_folder
 ):
     """Calculate metrics for BREEAM.
 
@@ -45,7 +49,9 @@ def breeam_4b(
         model-file: A Honeybee Model file that was used in the simulation.
     """
     try:
-        breeam_daylight_assessment_4b(folder, model=model_file, sub_folder=sub_folder)
+        breeam_daylight_assessment_4b(
+            folder, model=model_file, grids_filter=grids_filter,
+            sub_folder=sub_folder)
     except Exception:
         _logger.exception('Failed to calculate BREEAM metrics.')
         sys.exit(1)
