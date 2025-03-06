@@ -190,6 +190,12 @@ def dynamic_schedule_direct_illuminance(
         for key, value in grid_states_schedule.items():
             if key not in states_schedule:
                 states_schedule[key] = value
+            else:
+                if use_states:
+                    merged_array = np.logical_or(states_schedule[key], value).astype(int)
+                else:
+                    merged_array = np.minimum(states_schedule[key], value)
+                states_schedule[key] = merged_array
 
     occupancy_hoys = schedule_to_hoys(schedule, results.sun_up_hours)
 
