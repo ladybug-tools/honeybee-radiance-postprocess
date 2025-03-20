@@ -35,10 +35,12 @@ class AnnualIrradiance(Results):
         * valid_states
         * datatype
     """
-    def __init__(self, folder, schedule: list = None, load_arrays: bool = False):
+    def __init__(self, folder, schedule: list = None, load_arrays: bool = False,
+                 cache_arrays: bool = False):
         """Initialize Results."""
         Results.__init__(self, folder, datatype=EnergyFlux('Irradiance'),
-                         schedule=schedule, unit='W/m2', load_arrays=load_arrays)
+                         schedule=schedule, unit='W/m2', load_arrays=load_arrays,
+                         cache_arrays=cache_arrays)
 
     def cumulative_values(
             self, hoys: list = [], states: DynamicSchedule = None,
