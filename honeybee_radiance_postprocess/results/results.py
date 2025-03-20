@@ -276,13 +276,15 @@ class Results(_ResultsFolder):
         * valid_states
         * datatype
         * unit
+        * cache_arrays
     """
     __slots__ = ('_schedule', '_occ_pattern', '_total_occ', '_sun_down_occ_hours',
-                 '_occ_mask', '_arrays', '_valid_states', '_datatype', '_unit')
+                 '_occ_mask', '_arrays', '_valid_states', '_datatype', '_unit',
+                 '_cache_arrays')
 
     def __init__(self, folder, datatype: DataTypeBase = None,
                  schedule: list = None, unit: str = None,
-                 load_arrays: bool = False):
+                 load_arrays: bool = False, cache_arrays: bool = True):
         """Initialize Results."""
         _ResultsFolder.__init__(self, folder)
         self.schedule = schedule
@@ -290,6 +292,7 @@ class Results(_ResultsFolder):
         self._valid_states = self._get_valid_states()
         self.datatype = datatype
         self.unit = unit
+        self.cache_arrays = cache_arrays
 
     @property
     def schedule(self):
@@ -363,6 +366,15 @@ class Results(_ResultsFolder):
     @unit.setter
     def unit(self, value):
         self._unit = value
+
+    @property
+    def cache_arrays(self):
+        """Return a boolean to indicate whether arrays are cached."""
+        return self._cache_arrays
+
+    @cache_arrays.setter
+    def cache_arrays(self, value):
+        self._cache_arrays = value
 
     def total(
             self, hoys: list = [], states: DynamicSchedule = None,
@@ -1054,9 +1066,10 @@ class Results(_ResultsFolder):
                               extension=extension)
         array = np.load(file)
 
-        array_dict = {grid_id: {light_path: {state_identifier: {res_type: array}}}}
-        arrays = merge_dicts(array_dict, self.arrays)
-        self.arrays = arrays
+        if self.cache_arrays:
+            array_dict = {grid_id: {light_path: {state_identifier: {res_type: array}}}}
+            arrays = merge_dicts(array_dict, self.arrays)
+            self.arrays = arrays
 
         return array
 

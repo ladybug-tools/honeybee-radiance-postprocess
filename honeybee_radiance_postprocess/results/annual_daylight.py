@@ -44,10 +44,12 @@ class AnnualDaylight(Results):
         * valid_states
         * datatype
     """
-    def __init__(self, folder, schedule: list = None, load_arrays: bool = False):
+    def __init__(self, folder, schedule: list = None, load_arrays: bool = False,
+                 cache_arrays: bool = False):
         """Initialize Results."""
         Results.__init__(self, folder, datatype=Illuminance('Illuminance'),
-                         schedule=schedule, unit='lux', load_arrays=load_arrays)
+                         schedule=schedule, unit='lux', load_arrays=load_arrays,
+                         cache_arrays=cache_arrays)
 
     def daylight_autonomy(
             self, threshold: float = 300, states: DynamicSchedule = None,
