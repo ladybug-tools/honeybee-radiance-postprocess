@@ -1073,6 +1073,12 @@ class Results(_ResultsFolder):
 
         return array
 
+    def _clear_cached_arrays(self):
+        """Clear the cached arrays.
+        
+        This method will simply set the arrays property to an empty dictionary."""
+        self.arrays = {}
+
     def _state_identifier(
             self, grid_id: str, light_path: str, state: int = 0) -> Union[str, None]:
         """Get the state identifier from a light path and state integer.
