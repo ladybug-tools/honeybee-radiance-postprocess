@@ -193,7 +193,7 @@ def well_annual_daylight(
     schedule = occupancy_schedule_8_to_6(as_list=True)
 
     if not isinstance(results, AnnualDaylight):
-        results = AnnualDaylight(results, schedule=schedule)
+        results = AnnualDaylight(results, schedule=schedule, cache_arrays=False)
     else:
         # set schedule to default leed schedule
         results.schedule = schedule
