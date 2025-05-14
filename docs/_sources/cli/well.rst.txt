@@ -1,0 +1,6 @@
+well
+====
+
+.. click:: honeybee_radiance_postprocess.cli.well:well
+   :prog: honeybee-radiance-postprocess well
+   :show-nested:
