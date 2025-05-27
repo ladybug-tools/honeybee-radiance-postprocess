@@ -354,8 +354,13 @@ def breeam_daylight_assessment_4b(
     if not grid_areas:
         grid_areas = {grid_info['full_id']: None for grid_info in grids_info}
 
+    sensor_grid_mapper = {}
+    for sg in hb_model.properties.radiance.sensor_grids:
+        sensor_grid_mapper[sg.identifier] = sg
+
     grid_summary = {}
     type_summary = {}
+    minimum_illuminance_sensors = {}
     for grid_info in grids_info:
         program_type = grid_program_types.get(grid_info['full_id'], None)
         if program_type is None:
@@ -391,6 +396,12 @@ def breeam_daylight_assessment_4b(
                 # check if values is >= target hours
                 target_hrs = metrics['minimum_daylight_illuminance']['hours']
                 min_comply = hrs_abv_min >= target_hrs
+
+                minimum_illuminance_index = np.argsort(hrs_abv_target)[0]
+                minimum_illuminance_sensor = \
+                    sensor_grid_mapper[grid_info['full_id']].sensors[minimum_illuminance_index]
+                minimum_illuminance_sensors[grid_info['full_id']] = \
+                    minimum_illuminance_sensor.to_dict()
 
             metrics_summary['credits'] = metrics['credits']
             if avg_comply and min_comply:
@@ -504,6 +515,9 @@ def breeam_daylight_assessment_4b(
         sub_folder = Path(sub_folder)
         sub_folder.mkdir(parents=True, exist_ok=True)
 
+        minimum_illuminance_points_file = sub_folder.joinpath('minimum_illuminance_sensors.json')
+        minimum_illuminance_points_file.write_text(
+            json.dumps(minimum_illuminance_sensors, indent=2))
         credit_summary_file = sub_folder.joinpath('summary.json')
         credit_summary_file.write_text(json.dumps(credit_summary, indent=2))
         program_summary_file = sub_folder.joinpath('program_summary.json')
