@@ -46,7 +46,6 @@ def breeam_4b(
     Args:
         folder: Results folder. This folder is an output folder of annual daylight
             recipe.
-        model-file: A Honeybee Model file that was used in the simulation.
     """
     try:
         breeam_daylight_assessment_4b(
