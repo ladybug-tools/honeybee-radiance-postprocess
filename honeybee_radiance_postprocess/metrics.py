@@ -27,8 +27,7 @@ def da_array2d(
         # set total_occ to number of columns in array
         total_occ = array.shape[1]
 
-    da = np.apply_along_axis(
-            da_array1d, 1, array, total_occ=total_occ, threshold=threshold)
+    da = np.sum(array >= threshold, axis=1) / total_occ * 100
 
     return da
 
@@ -276,7 +275,7 @@ def sda_array2d(
     Returns:
         A NumPy float of the sDA as a percentage (decimal)
     """
-    da = da_array2d(array, total_occ=total_occ, threshold=threshold)
+    da = np.sum(array >= threshold, axis=1) / total_occ * 100
     sda = (da >= target_time).mean()
 
     return sda
