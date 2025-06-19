@@ -1,6 +1,10 @@
 """Post-processing utility functions."""
 from typing import Tuple
 import numpy as np
+try:
+    import cupy as cp
+except ImportError:
+    cp = None
 
 from honeybee_radiance.writer import _filter_by_pattern
 
@@ -66,6 +70,27 @@ def check_array_dim(array: np.ndarray, dim: int):
     """
     assert array.ndim == dim, \
         f'Expected {dim}-dimensional array. Dimension of array is {array.ndim}'
+
+
+def filter_array2d(array: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    """Filter a NumPy array by a masking array. The array will be passed as is
+    if the mask is None.
+
+    Args:
+        array: A NumPy array to filter.
+        mask: A NumPy array of ones/zeros or True/False.
+
+    Returns:
+        A filtered NumPy array.
+    """
+    if isinstance(array, np.ndarray):
+        array_filter = np.apply_along_axis(
+            filter_array, 1, array, mask=mask)
+    else:
+        mask = cp.asarray(mask).astype(bool)
+        array_filter = array[:, mask]
+
+    return array_filter
 
 
 def filter_array(array: np.ndarray, mask: np.ndarray) -> np.ndarray:
@@ -181,3 +206,14 @@ def get_delimiter(delimiter_input):
         return ';'
     else:
         raise ValueError(f'Unsupported delimiter: {delimiter_input}')
+
+
+def get_array_module(use_gpu: bool = True):
+    if use_gpu:
+        if cp is None:
+            raise ImportError(
+                "Cupy is not installed. Please install it to use GPU functionality.")
+        xp = cp
+    else:
+        xp = np
+    return xp
