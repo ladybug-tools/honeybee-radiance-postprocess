@@ -3,8 +3,12 @@ import json
 from pathlib import Path
 from itertools import islice, cycle
 from typing import Tuple, Union, List
-import numpy as np
 import itertools
+import numpy as np
+try:
+    import cupy as cp
+except ImportError:
+    cp = None
 
 from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.datacollection import HourlyContinuousCollection
@@ -239,14 +243,14 @@ class _ResultsFolder(object):
     def _get_sun_up_hours_mask(self) -> List[int]:
         """Get a sun up hours masking array of the study hours."""
         sun_up_hours_mask = \
-            np.where(np.isin(self.study_hours, self.sun_up_hours))[0]
+            np.where(np.isin(np.array(self.study_hours), np.array(self.sun_up_hours)))[0]
 
         return sun_up_hours_mask
 
     def _get_sun_down_hours_mask(self) -> List[int]:
         """Get a sun down hours masking array of the study hours."""
         sun_down_hours_mask = \
-            np.where(~np.isin(self.study_hours, self.sun_up_hours))[0]
+            np.where(~np.isin(np.array(self.study_hours), np.array(self.sun_up_hours)))[0]
 
         return sun_down_hours_mask
 
@@ -277,14 +281,15 @@ class Results(_ResultsFolder):
         * datatype
         * unit
         * cache_arrays
+        * use_gpu
     """
     __slots__ = ('_schedule', '_occ_pattern', '_total_occ', '_sun_down_occ_hours',
                  '_occ_mask', '_arrays', '_valid_states', '_datatype', '_unit',
-                 '_cache_arrays')
+                 '_cache_arrays', '_use_gpu')
 
     def __init__(self, folder, datatype: DataTypeBase = None,
                  schedule: list = None, unit: str = None,
-                 load_arrays: bool = False, cache_arrays: bool = True):
+                 load_arrays: bool = False, cache_arrays: bool = True, use_gpu: bool = False):
         """Initialize Results."""
         _ResultsFolder.__init__(self, folder)
         self.schedule = schedule
@@ -293,6 +298,7 @@ class Results(_ResultsFolder):
         self.datatype = datatype
         self.unit = unit
         self.cache_arrays = cache_arrays
+        self.use_gpu = use_gpu
 
     @property
     def schedule(self):
@@ -375,6 +381,19 @@ class Results(_ResultsFolder):
     @cache_arrays.setter
     def cache_arrays(self, value):
         self._cache_arrays = value
+
+    @property
+    def use_gpu(self):
+        """Return a boolean to indicate whether to use GPU."""
+        return self._use_gpu
+
+    @use_gpu.setter
+    def use_gpu(self, value):
+        if value and cp is None:
+            raise ImportError(
+                'CuPy is required for GPU support but is not installed.'
+            )
+        self._use_gpu = value
 
     def total(
             self, hoys: list = [], states: DynamicSchedule = None,
@@ -1032,7 +1051,7 @@ class Results(_ResultsFolder):
 
     def _load_array(
             self, grid_info: dict, light_path: str, state: int = 0,
-            res_type: str = 'total', extension: str = '.npy') -> np.ndarray:
+            res_type: str = 'total', extension: str = '.npy') -> type_hints.ArrayLike:
         """Load a NumPy file to an array.
 
         This method will also update the arrays property value.
@@ -1064,7 +1083,8 @@ class Results(_ResultsFolder):
         state_identifier = self._state_identifier(grid_id, light_path, state=state)
         file = self._get_file(grid_id, light_path, state_identifier, res_type,
                               extension=extension)
-        array = np.load(file)
+
+        array = np.load(file) if not self.use_gpu else cp.load(file)
 
         if self.cache_arrays:
             array_dict = {grid_id: {light_path: {state_identifier: {res_type: array}}}}
