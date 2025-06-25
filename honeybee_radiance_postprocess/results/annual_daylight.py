@@ -69,22 +69,18 @@ class AnnualDaylight(Results):
         Returns:
             Tuple: A tuple with the daylight autonomy and grid information.
         """
+        xp = np if not self.use_gpu else cp
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         da = []
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
-            if np.any(array):
-                if not self.use_gpu:
-                    array_filter = np.apply_along_axis(
-                        filter_array, 1, array, mask=self.occ_mask)
-                else:
-                    mask = cp.asarray(self.occ_mask).astype(bool)
-                    array_filter = array[:, mask]
+            if xp.any(array):
+                array_filter = filter_array2d(array, mask=self.occ_mask)
                 results = da_array2d(
                     array_filter, total_occ=self.total_occ, threshold=threshold)
             else:
-                results = np.zeros(grid_info['count'])
+                results = xp.zeros(grid_info['count'])
             da.append(results)
 
         return da, grids_info
@@ -104,18 +100,18 @@ class AnnualDaylight(Results):
             Tuple: A tuple with the continuous daylight autonomy and grid
                 information.
         """
+        xp = np if not self.use_gpu else cp
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         cda = []
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
-            if np.any(array):
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=self.occ_mask)
+            if xp.any(array):
+                array_filter = filter_array2d(array, mask=self.occ_mask)
                 results = cda_array2d(
                     array_filter, total_occ=self.total_occ, threshold=threshold)
             else:
-                results = np.zeros(grid_info['count'])
+                results = xp.zeros(grid_info['count'])
             cda.append(results)
 
         return cda, grids_info
@@ -135,18 +131,18 @@ class AnnualDaylight(Results):
         Returns:
             Tuple: A tuple with the useful daylight illuminance and grid information.
         """
+        xp = np if not self.use_gpu else cp
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         udi = []
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
-            if np.any(array):
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=self.occ_mask)
+            if xp.any(array):
+                array_filter = filter_array2d(array, mask=self.occ_mask)
                 results = udi_array2d(
                     array_filter, total_occ=self.total_occ, min_t=min_t, max_t=max_t)
             else:
-                results = np.zeros(grid_info['count'])
+                results = xp.zeros(grid_info['count'])
             udi.append(results)
 
         return udi, grids_info
@@ -166,20 +162,20 @@ class AnnualDaylight(Results):
             Tuple: A tuple with the lower than useful daylight illuminance and
                 grid information.
         """
+        xp = np if not self.use_gpu else cp
         grids_info = self._filter_grids(grids_filter=grids_filter)
         sun_down_occ_hours = self.sun_down_occ_hours
 
         udi_lower = []
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
-            if np.any(array):
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=self.occ_mask)
+            if xp.any(array):
+                array_filter = filter_array2d(array, mask=self.occ_mask)
                 results = udi_lower_array2d(
                     array_filter, total_occ=self.total_occ,
                     min_t=min_t, sun_down_occ_hours=sun_down_occ_hours)
             else:
-                results = np.zeros(grid_info['count'])
+                results = xp.zeros(grid_info['count'])
             udi_lower.append(results)
 
         return udi_lower, grids_info
@@ -199,18 +195,18 @@ class AnnualDaylight(Results):
             Tuple: A tuple with the higher than useful daylight illuminance and
                 grid information.
         """
+        xp = np if not self.use_gpu else cp
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         udi_upper = []
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
-            if np.any(array):
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=self.occ_mask)
+            if xp.any(array):
+                array_filter = filter_array2d(array, mask=self.occ_mask)
                 results = udi_upper_array2d(
                     array_filter, total_occ=self.total_occ, max_t=max_t)
             else:
-                results = np.zeros(grid_info['count'])
+                results = xp.zeros(grid_info['count'])
             udi_upper.append(results)
 
         return udi_upper, grids_info
