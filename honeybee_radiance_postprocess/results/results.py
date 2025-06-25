@@ -289,7 +289,8 @@ class Results(_ResultsFolder):
 
     def __init__(self, folder, datatype: DataTypeBase = None,
                  schedule: list = None, unit: str = None,
-                 load_arrays: bool = False, cache_arrays: bool = True, use_gpu: bool = False):
+                 load_arrays: bool = False, cache_arrays: bool = True,
+                 use_gpu: bool = False):
         """Initialize Results."""
         _ResultsFolder.__init__(self, folder)
         self.schedule = schedule
