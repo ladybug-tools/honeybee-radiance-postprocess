@@ -1282,6 +1282,7 @@ class Results(_ResultsFolder):
         Returns:
             A NumPy array based on the states settings.
         """
+        xp = np if not self.use_gpu else cp
         # get states that are relevant for the grid
         states = self._filter_grid_states(grid_info, states=states)
 
@@ -1298,11 +1299,12 @@ class Results(_ResultsFolder):
                 arrays.append(array)
             else:
                 # create default 0 array, we will add to this later
-                array = np.zeros((grid_info['count'], len(self.sun_up_hours)))
+                array = xp.zeros((grid_info['count'], len(self.sun_up_hours)))
                 # slice states to match sun up hours
-                states_array = np.array(gr_schedule.schedule)[
+                states_array = xp.array(gr_schedule.schedule)[
                     list(map(int, self.sun_up_hours))]
-                for state in np.unique(states_array):
+                for state in xp.unique(states_array):
+                    state = int(state)
                     if state == -1:
                         # if state is -1 we continue since it is "turned off"
                         continue
@@ -1313,13 +1315,13 @@ class Results(_ResultsFolder):
                     states_indicies = states_array == state
                     array[:, states_indicies] += _array[:, states_indicies]
                 arrays.append(array)
-        array = sum(arrays)
+        array = xp.sum(xp.stack(arrays), axis=0)
 
-        if not np.any(array):
+        if not xp.any(array):
             if zero_array:
-                array = np.zeros((grid_info['count'], len(self.sun_up_hours)))
+                array = xp.zeros((grid_info['count'], len(self.sun_up_hours)))
             else:
-                array = np.array([])
+                array = xp.array([])
 
         return array
 
