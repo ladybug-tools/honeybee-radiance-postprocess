@@ -239,6 +239,7 @@ class AnnualDaylight(Results):
         Returns:
             Tuple: A tuple with the five annual daylight metrics and grid information.
         """
+        xp = np if not self.use_gpu else cp
         grids_info = self._filter_grids(grids_filter=grids_filter)
         sun_down_occ_hours = self.sun_down_occ_hours
 
@@ -249,7 +250,7 @@ class AnnualDaylight(Results):
         udi_upper = []
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
-            if np.any(array):
+            if xp.any(array):
                 array_filter = filter_array2d(array, mask=self.occ_mask)
                 da_results = da_array2d(
                     array_filter, total_occ=self.total_occ, threshold=threshold)
@@ -264,7 +265,7 @@ class AnnualDaylight(Results):
                     array_filter, total_occ=self.total_occ, max_t=max_t)
             else:
                 da_results = cda_results = udi_results = udi_lower_results = \
-                    udi_upper_results = np.zeros(grid_info['count'])
+                    udi_upper_results = xp.zeros(grid_info['count'])
             da.append(da_results)
             cda.append(cda_results)
             udi.append(udi_results)
