@@ -1315,7 +1315,9 @@ class Results(_ResultsFolder):
                     states_indicies = states_array == state
                     array[:, states_indicies] += _array[:, states_indicies]
                 arrays.append(array)
-        array = xp.sum(xp.stack(arrays), axis=0)
+        if arrays:
+            arrays = xp.stack(arrays)
+        array = xp.sum(arrays, axis=0)
 
         if not xp.any(array):
             if zero_array:
