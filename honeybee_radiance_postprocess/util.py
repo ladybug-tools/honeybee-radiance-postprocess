@@ -8,6 +8,8 @@ except ImportError:
 
 from honeybee_radiance.writer import _filter_by_pattern
 
+from .type_hints import ArrayLike
+
 
 def binary_mtx_dimension(filepath: str) -> Tuple[int, int, int, int, str]:
     """Return binary Radiance matrix dimensions if exist.
@@ -61,7 +63,7 @@ def binary_mtx_dimension(filepath: str) -> Tuple[int, int, int, int, str]:
         inf.close()
 
 
-def check_array_dim(array: np.ndarray, dim: int):
+def check_array_dim(array: ArrayLike, dim: int):
     """Check NumPy array dimension.
 
     Args:
@@ -72,7 +74,7 @@ def check_array_dim(array: np.ndarray, dim: int):
         f'Expected {dim}-dimensional array. Dimension of array is {array.ndim}'
 
 
-def filter_array2d(array: np.ndarray, mask: np.ndarray) -> np.ndarray:
+def filter_array2d(array: ArrayLike, mask: np.ndarray) -> ArrayLike:
     """Filter a NumPy array by a masking array. The array will be passed as is
     if the mask is None.
 
