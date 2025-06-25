@@ -378,6 +378,7 @@ class AnnualDaylight(Results):
                 hours that exceeds the direct threshold for each sensor, and
                 grid information.
         """
+        xp = np if not self.use_gpu else cp
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         ase = []
@@ -385,15 +386,14 @@ class AnnualDaylight(Results):
         for grid_info in grids_info:
             array = self._array_from_states(
                 grid_info, states=states, res_type='direct')
-            if np.any(array):
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=self.occ_mask)
+            if xp.any(array):
+                array_filter = filter_array2d(array, mask=self.occ_mask)
                 results, h_above = ase_array2d(
                     array_filter, occ_hours=occ_hours,
                     direct_threshold=direct_threshold)
             else:
-                results = np.float64(0)
-                h_above = np.zeros(grid_info['count'])
+                results = xp.float64(0)
+                h_above = xp.zeros(grid_info['count'])
             ase.append(results)
             hours_above.append(h_above)
 
