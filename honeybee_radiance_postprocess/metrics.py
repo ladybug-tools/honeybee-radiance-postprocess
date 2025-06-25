@@ -11,8 +11,7 @@ from .type_hints import ArrayLike
 
 
 def da_array2d(
-        array: ArrayLike, total_occ: int = None,
-        threshold: float = 300, use_gpu: bool = False) -> ArrayLike:
+        array: ArrayLike, total_occ: int = None, threshold: float = 300) -> ArrayLike:
     """Calculate daylight autonomy for a 2D NumPy array.
 
     Args:
@@ -53,12 +52,13 @@ def da_array1d(
     Returns:
         A NumPy float of the daylight autonomy.
     """
+    xp = np if isinstance(array, np.ndarray) else cp
     check_array_dim(array, 1)
     if total_occ is None:
         # set total_occ to number of columns in array
         total_occ = array.size
 
-    return np.float64((array >= threshold).sum() / total_occ * 100)
+    return xp.float64((array >= threshold).sum() / total_occ * 100)
 
 
 def cda_array2d(
@@ -104,13 +104,14 @@ def cda_array1d(
     Returns:
         A NumPy float of the continuos daylight autonomy.
     """
+    xp = np if isinstance(array, np.ndarray) else cp
     check_array_dim(array, 1)
     if total_occ is None:
         # set total_occ to number of columns in array
         total_occ = array.size
 
-    return np.float64(
-        np.where(array >= threshold, 1, array / threshold).sum() / total_occ * 100)
+    return xp.float64(
+        xp.where(array >= threshold, 1, array / threshold).sum() / total_occ * 100)
 
 
 def udi_array2d(
@@ -158,12 +159,13 @@ def udi_array1d(
     Returns:
         A NumPy float of the useful daylight illuminance.
     """
+    xp = np if isinstance(array, np.ndarray) else cp
     check_array_dim(array, 1)
     if total_occ is None:
         # set total_occ to number of columns in array
         total_occ = array.size
 
-    return np.float64(((array >= min_t) & (array <= max_t)).sum() / total_occ * 100)
+    return xp.float64(((array >= min_t) & (array <= max_t)).sum() / total_occ * 100)
 
 
 def udi_lower_array2d(
@@ -215,15 +217,16 @@ def udi_lower_array1d(
     Returns:
         A NumPy float of the lower than useful daylight illuminance.
     """
+    xp = np if isinstance(array, np.ndarray) else cp
     check_array_dim(array, 1)
     if total_occ is None:
         # set total_occ to number of columns in array
         total_occ = array.size
 
     if min_t == 0:
-        return np.float64(0)
+        return xp.float64(0)
 
-    return np.float64(((array < min_t).sum() + sun_down_occ_hours) / total_occ * 100)
+    return xp.float64(((array < min_t).sum() + sun_down_occ_hours) / total_occ * 100)
 
 
 def udi_upper_array2d(
@@ -270,12 +273,13 @@ def udi_upper_array1d(
     Returns:
         A NumPy float of the higher than useful daylight illuminance.
     """
+    xp = np if isinstance(array, np.ndarray) else cp
     check_array_dim(array, 1)
     if total_occ is None:
         # set total_occ to number of columns in array
         total_occ = array.size
 
-    return np.float64((array > max_t).sum() / total_occ * 100)
+    return xp.float64((array > max_t).sum() / total_occ * 100)
 
 
 def sda_array2d(
@@ -297,7 +301,8 @@ def sda_array2d(
     Returns:
         A NumPy float of the sDA as a percentage (decimal)
     """
-    da = np.sum(array >= threshold, axis=1) / total_occ * 100
+    xp = np if isinstance(array, np.ndarray) else cp
+    da = xp.sum(array >= threshold, axis=1) / total_occ * 100
     sda = (da >= target_time).mean()
 
     return sda
