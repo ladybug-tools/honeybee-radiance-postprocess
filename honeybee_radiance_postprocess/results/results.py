@@ -4,11 +4,12 @@ from pathlib import Path
 from itertools import islice, cycle
 from typing import Tuple, Union, List
 import itertools
-import numpy as np
 try:
-    import cupy as cp
+    import cupy as np
+    is_gpu = True
 except ImportError:
-    cp = None
+    is_gpu = False
+    import numpy as np
 
 from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.datacollection import HourlyContinuousCollection
@@ -24,6 +25,8 @@ from ..util import filter_array, hoys_mask, check_array_dim, \
     _filter_grids_by_pattern
 from .. import type_hints
 from ..dynamic import DynamicSchedule, ApertureGroupSchedule
+
+is_cpu = not is_gpu
 
 
 class _ResultsFolder(object):
@@ -289,8 +292,7 @@ class Results(_ResultsFolder):
 
     def __init__(self, folder, datatype: DataTypeBase = None,
                  schedule: list = None, unit: str = None,
-                 load_arrays: bool = False, cache_arrays: bool = True,
-                 use_gpu: bool = False):
+                 load_arrays: bool = False, cache_arrays: bool = True):
         """Initialize Results."""
         _ResultsFolder.__init__(self, folder)
         self.schedule = schedule
@@ -299,7 +301,6 @@ class Results(_ResultsFolder):
         self.datatype = datatype
         self.unit = unit
         self.cache_arrays = cache_arrays
-        self.use_gpu = use_gpu
 
     @property
     def schedule(self):
@@ -382,19 +383,6 @@ class Results(_ResultsFolder):
     @cache_arrays.setter
     def cache_arrays(self, value):
         self._cache_arrays = value
-
-    @property
-    def use_gpu(self):
-        """Return a boolean to indicate whether to use GPU."""
-        return self._use_gpu
-
-    @use_gpu.setter
-    def use_gpu(self, value):
-        if value and cp is None:
-            raise ImportError(
-                'CuPy is required for GPU support but is not installed.'
-            )
-        self._use_gpu = value
 
     def total(
             self, hoys: list = [], states: DynamicSchedule = None,
@@ -984,13 +972,23 @@ class Results(_ResultsFolder):
         Returns:
             A 1D NumPy array.
         """
-        values = np.array(values)
+        if isinstance(values, (np.ndarray, list)):
+            values = np.array(values)
+            hours = np.array(hours)
+        else:
+            values = np.array(values)
+            hours = np.array(hours)
         check_array_dim(values, 1)
-        hours = np.array(hours)
         assert hours.shape == values.shape
         full_ap = AnalysisPeriod(timestep=timestep)
-        indices = np.where(np.isin(full_ap.hoys, hours))[0]
-        annual_array = np.repeat(base_value, 8760 * timestep).astype(dtype)
+        if isinstance(values, np.ndarray):
+            indices = np.where(np.isin(full_ap.hoys, hours))[0]
+            annual_array = np.repeat(base_value, 8760 * timestep).astype(dtype)
+        else:
+            dtype = np.float32
+            full_ap_hoys = np.array(full_ap.hoys)
+            indices = np.where(np.isin(full_ap_hoys, hours))[0]
+            annual_array = np.repeat(np.array(base_value), 8760 * timestep).astype(dtype)
         annual_array[indices] = values
 
         return annual_array
@@ -1052,7 +1050,7 @@ class Results(_ResultsFolder):
 
     def _load_array(
             self, grid_info: dict, light_path: str, state: int = 0,
-            res_type: str = 'total', extension: str = '.npy') -> type_hints.ArrayLike:
+            res_type: str = 'total', extension: str = '.npy') -> np.ndarray:
         """Load a NumPy file to an array.
 
         This method will also update the arrays property value.
@@ -1085,7 +1083,7 @@ class Results(_ResultsFolder):
         file = self._get_file(grid_id, light_path, state_identifier, res_type,
                               extension=extension)
 
-        array = np.load(file) if not self.use_gpu else cp.load(file)
+        array = np.load(file)
 
         if self.cache_arrays:
             array_dict = {grid_id: {light_path: {state_identifier: {res_type: array}}}}
@@ -1282,7 +1280,6 @@ class Results(_ResultsFolder):
         Returns:
             A NumPy array based on the states settings.
         """
-        xp = np if not self.use_gpu else cp
         # get states that are relevant for the grid
         states = self._filter_grid_states(grid_info, states=states)
 
@@ -1299,11 +1296,11 @@ class Results(_ResultsFolder):
                 arrays.append(array)
             else:
                 # create default 0 array, we will add to this later
-                array = xp.zeros((grid_info['count'], len(self.sun_up_hours)))
+                array = np.zeros((grid_info['count'], len(self.sun_up_hours)))
                 # slice states to match sun up hours
-                states_array = xp.array(gr_schedule.schedule)[
+                states_array = np.array(gr_schedule.schedule)[
                     list(map(int, self.sun_up_hours))]
-                for state in xp.unique(states_array):
+                for state in np.unique(states_array):
                     state = int(state)
                     if state == -1:
                         # if state is -1 we continue since it is "turned off"
@@ -1316,14 +1313,14 @@ class Results(_ResultsFolder):
                     array[:, states_indicies] += _array[:, states_indicies]
                 arrays.append(array)
         if arrays:
-            arrays = xp.stack(arrays)
-        array = xp.sum(arrays, axis=0)
+            arrays = np.stack(arrays)
+        array = np.sum(arrays, axis=0)
 
-        if not xp.any(array):
+        if not np.any(array):
             if zero_array:
-                array = xp.zeros((grid_info['count'], len(self.sun_up_hours)))
+                array = np.zeros((grid_info['count'], len(self.sun_up_hours)))
             else:
-                array = xp.array([])
+                array = np.array([])
 
         return array
 
