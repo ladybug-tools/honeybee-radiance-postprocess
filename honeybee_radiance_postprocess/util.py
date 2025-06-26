@@ -1,14 +1,15 @@
 """Post-processing utility functions."""
 from typing import Tuple
-import numpy as np
 try:
-    import cupy as cp
+    import cupy as np
+    is_gpu = True
 except ImportError:
-    cp = None
+    is_gpu = False
+    import numpy as np
 
 from honeybee_radiance.writer import _filter_by_pattern
 
-from .type_hints import ArrayLike
+is_cpu = not is_gpu
 
 
 def binary_mtx_dimension(filepath: str) -> Tuple[int, int, int, int, str]:
@@ -63,7 +64,7 @@ def binary_mtx_dimension(filepath: str) -> Tuple[int, int, int, int, str]:
         inf.close()
 
 
-def check_array_dim(array: ArrayLike, dim: int):
+def check_array_dim(array: np.ndarray, dim: int):
     """Check NumPy array dimension.
 
     Args:
@@ -74,7 +75,7 @@ def check_array_dim(array: ArrayLike, dim: int):
         f'Expected {dim}-dimensional array. Dimension of array is {array.ndim}'
 
 
-def filter_array2d(array: ArrayLike, mask: np.ndarray) -> ArrayLike:
+def filter_array2d(array: np.ndarray, mask: np.ndarray) -> np.ndarray:
     """Filter a NumPy array by a masking array. The array will be passed as is
     if the mask is None.
 
@@ -85,11 +86,11 @@ def filter_array2d(array: ArrayLike, mask: np.ndarray) -> ArrayLike:
     Returns:
         A filtered NumPy array.
     """
-    if isinstance(array, np.ndarray):
+    if is_cpu:
         array_filter = np.apply_along_axis(
             filter_array, 1, array, mask=mask)
     else:
-        mask = cp.asarray(mask).astype(bool)
+        mask = np.asarray(mask).astype(bool)
         array_filter = array[:, mask]
 
     return array_filter
@@ -208,14 +209,3 @@ def get_delimiter(delimiter_input):
         return ';'
     else:
         raise ValueError(f'Unsupported delimiter: {delimiter_input}')
-
-
-def get_array_module(use_gpu: bool = True):
-    if use_gpu:
-        if cp is None:
-            raise ImportError(
-                "Cupy is not installed. Please install it to use GPU functionality.")
-        xp = cp
-    else:
-        xp = np
-    return xp

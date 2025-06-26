@@ -1,11 +1,12 @@
 import json
 from pathlib import Path
 from typing import Tuple, List
-import numpy as np
 try:
-    import cupy as cp
+    import cupy as np
+    is_gpu = True
 except ImportError:
-    cp = None
+    is_gpu = False
+    import numpy as np
 
 from collections import defaultdict
 
@@ -24,6 +25,8 @@ from ..electriclight import array_to_dimming_fraction
 from .. import type_hints
 from ..dynamic import DynamicSchedule, ApertureGroupSchedule
 from .results import Results
+
+is_cpu = not is_gpu
 
 
 class AnnualDaylight(Results):
@@ -49,11 +52,11 @@ class AnnualDaylight(Results):
         * datatype
     """
     def __init__(self, folder, schedule: list = None, load_arrays: bool = False,
-                 cache_arrays: bool = False, use_gpu: bool = False):
+                 cache_arrays: bool = False):
         """Initialize Results."""
         Results.__init__(self, folder, datatype=Illuminance('Illuminance'),
                          schedule=schedule, unit='lux', load_arrays=load_arrays,
-                         cache_arrays=cache_arrays, use_gpu=use_gpu)
+                         cache_arrays=cache_arrays)
 
     def daylight_autonomy(
             self, threshold: float = 300, states: DynamicSchedule = None,
@@ -69,18 +72,17 @@ class AnnualDaylight(Results):
         Returns:
             Tuple: A tuple with the daylight autonomy and grid information.
         """
-        xp = np if not self.use_gpu else cp
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         da = []
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
-            if xp.any(array):
+            if np.any(array):
                 array_filter = filter_array2d(array, mask=self.occ_mask)
                 results = da_array2d(
                     array_filter, total_occ=self.total_occ, threshold=threshold)
             else:
-                results = xp.zeros(grid_info['count'])
+                results = np.zeros(grid_info['count'])
             da.append(results)
 
         return da, grids_info
@@ -100,18 +102,17 @@ class AnnualDaylight(Results):
             Tuple: A tuple with the continuous daylight autonomy and grid
                 information.
         """
-        xp = np if not self.use_gpu else cp
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         cda = []
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
-            if xp.any(array):
+            if np.any(array):
                 array_filter = filter_array2d(array, mask=self.occ_mask)
                 results = cda_array2d(
                     array_filter, total_occ=self.total_occ, threshold=threshold)
             else:
-                results = xp.zeros(grid_info['count'])
+                results = np.zeros(grid_info['count'])
             cda.append(results)
 
         return cda, grids_info
@@ -131,18 +132,17 @@ class AnnualDaylight(Results):
         Returns:
             Tuple: A tuple with the useful daylight illuminance and grid information.
         """
-        xp = np if not self.use_gpu else cp
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         udi = []
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
-            if xp.any(array):
+            if np.any(array):
                 array_filter = filter_array2d(array, mask=self.occ_mask)
                 results = udi_array2d(
                     array_filter, total_occ=self.total_occ, min_t=min_t, max_t=max_t)
             else:
-                results = xp.zeros(grid_info['count'])
+                results = np.zeros(grid_info['count'])
             udi.append(results)
 
         return udi, grids_info
@@ -162,20 +162,19 @@ class AnnualDaylight(Results):
             Tuple: A tuple with the lower than useful daylight illuminance and
                 grid information.
         """
-        xp = np if not self.use_gpu else cp
         grids_info = self._filter_grids(grids_filter=grids_filter)
         sun_down_occ_hours = self.sun_down_occ_hours
 
         udi_lower = []
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
-            if xp.any(array):
+            if np.any(array):
                 array_filter = filter_array2d(array, mask=self.occ_mask)
                 results = udi_lower_array2d(
                     array_filter, total_occ=self.total_occ,
                     min_t=min_t, sun_down_occ_hours=sun_down_occ_hours)
             else:
-                results = xp.zeros(grid_info['count'])
+                results = np.zeros(grid_info['count'])
             udi_lower.append(results)
 
         return udi_lower, grids_info
@@ -195,18 +194,17 @@ class AnnualDaylight(Results):
             Tuple: A tuple with the higher than useful daylight illuminance and
                 grid information.
         """
-        xp = np if not self.use_gpu else cp
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         udi_upper = []
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
-            if xp.any(array):
+            if np.any(array):
                 array_filter = filter_array2d(array, mask=self.occ_mask)
                 results = udi_upper_array2d(
                     array_filter, total_occ=self.total_occ, max_t=max_t)
             else:
-                results = xp.zeros(grid_info['count'])
+                results = np.zeros(grid_info['count'])
             udi_upper.append(results)
 
         return udi_upper, grids_info
@@ -235,7 +233,6 @@ class AnnualDaylight(Results):
         Returns:
             Tuple: A tuple with the five annual daylight metrics and grid information.
         """
-        xp = np if not self.use_gpu else cp
         grids_info = self._filter_grids(grids_filter=grids_filter)
         sun_down_occ_hours = self.sun_down_occ_hours
 
@@ -246,7 +243,7 @@ class AnnualDaylight(Results):
         udi_upper = []
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
-            if xp.any(array):
+            if np.any(array):
                 array_filter = filter_array2d(array, mask=self.occ_mask)
                 da_results = da_array2d(
                     array_filter, total_occ=self.total_occ, threshold=threshold)
@@ -261,7 +258,7 @@ class AnnualDaylight(Results):
                     array_filter, total_occ=self.total_occ, max_t=max_t)
             else:
                 da_results = cda_results = udi_results = udi_lower_results = \
-                    udi_upper_results = xp.zeros(grid_info['count'])
+                    udi_upper_results = np.zeros(grid_info['count'])
             da.append(da_results)
             cda.append(cda_results)
             udi.append(udi_results)
@@ -375,7 +372,6 @@ class AnnualDaylight(Results):
                 hours that exceeds the direct threshold for each sensor, and
                 grid information.
         """
-        xp = np if not self.use_gpu else cp
         grids_info = self._filter_grids(grids_filter=grids_filter)
 
         ase = []
@@ -383,14 +379,14 @@ class AnnualDaylight(Results):
         for grid_info in grids_info:
             array = self._array_from_states(
                 grid_info, states=states, res_type='direct')
-            if xp.any(array):
+            if np.any(array):
                 array_filter = filter_array2d(array, mask=self.occ_mask)
                 results, h_above = ase_array2d(
                     array_filter, occ_hours=occ_hours,
                     direct_threshold=direct_threshold)
             else:
-                results = xp.float64(0)
-                h_above = xp.zeros(grid_info['count'])
+                results = np.float64(0)
+                h_above = np.zeros(grid_info['count'])
             ase.append(results)
             hours_above.append(h_above)
 
