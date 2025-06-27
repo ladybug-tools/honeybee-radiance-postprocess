@@ -966,29 +966,22 @@ class Results(_ResultsFolder):
             values: A list of values to map to an annual array. This can be a
                 regular list or a 1D NumPy array.
             timestep: Time step of the simulation.
-            base_value: A value that will be applied for all the base array.
+            base_value: A value that will be applied for the base array.
             dtype: A NumPy dtype for the annual array.
 
         Returns:
             A 1D NumPy array.
         """
-        if isinstance(values, (np.ndarray, list)):
-            values = np.array(values)
-            hours = np.array(hours)
-        else:
+        if not isinstance(values, np.ndarray):
             values = np.array(values)
             hours = np.array(hours)
         check_array_dim(values, 1)
         assert hours.shape == values.shape
-        full_ap = AnalysisPeriod(timestep=timestep)
-        if isinstance(values, np.ndarray):
-            indices = np.where(np.isin(full_ap.hoys, hours))[0]
-            annual_array = np.repeat(base_value, 8760 * timestep).astype(dtype)
-        else:
-            dtype = np.float32
-            full_ap_hoys = np.array(full_ap.hoys)
-            indices = np.where(np.isin(full_ap_hoys, hours))[0]
-            annual_array = np.repeat(np.array(base_value), 8760 * timestep).astype(dtype)
+
+        full_ap = np.array(AnalysisPeriod(timestep=timestep).hoys)
+        indices = np.where(np.isin(full_ap, hours))[0]
+        annual_array = np.repeat(np.array(base_value), 8760 * timestep).astype(dtype)
+
         annual_array[indices] = values
 
         return annual_array
