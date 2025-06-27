@@ -1073,11 +1073,26 @@ class Results(_ResultsFolder):
 
         return array
 
-    def _clear_cached_arrays(self):
+    def _clear_cached_arrays(self, res_type: str = None):
         """Clear the cached arrays.
         
-        This method will simply set the arrays property to an empty dictionary."""
-        self.arrays = {}
+        This method will simply set the arrays property to an empty dictionary,
+        unless the res_type is selected in which case only 'total' or 'direct'
+        arrays will be deleted.
+        
+        Args:
+            res_type: Which type of results to clear. This can be either
+                'total' or 'direct'.
+        """
+        if res_type is not None:
+            assert res_type in ('total', 'direct')
+            arrays = self.arrays
+            for grid_id in arrays:
+                for light_path in arrays[grid_id]:
+                    for state in arrays[grid_id][light_path]:
+                        del arrays[grid_id][light_path][state][res_type]
+        else:
+            self.arrays.clear()
 
     def _state_identifier(
             self, grid_id: str, light_path: str, state: int = 0) -> Union[str, None]:
