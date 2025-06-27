@@ -1,9 +1,16 @@
 """Shared functions for post-processing annual results."""
 from typing import Union
-import numpy as np
+try:
+    import cupy as np
+    is_gpu = True
+except ImportError:
+    is_gpu = False
+    import numpy as np
 
 from ladybug.analysisperiod import AnalysisPeriod
 from .util import filter_array
+
+is_cpu = not is_gpu
 
 
 def occupancy_schedule_8_to_6(
@@ -19,10 +26,10 @@ def occupancy_schedule_8_to_6(
     Returns:
         A schedule as an array or list.
     """
-    full_analysis_period = AnalysisPeriod(timestep=timestep)
-    analysis_period = AnalysisPeriod(st_hour=8, end_hour=17, timestep=timestep)
+    full_analysis_period = np.array(AnalysisPeriod(timestep=timestep).hoys)
+    analysis_period = np.array(AnalysisPeriod(st_hour=8, end_hour=17, timestep=timestep).hoys)
     schedule = np.zeros(8760 * timestep).astype(int)
-    hours = np.where(np.isin(full_analysis_period.hoys, analysis_period.hoys))[0]
+    hours = np.where(np.isin(full_analysis_period, analysis_period))[0]
     schedule[hours] = 1
     if as_list:
         schedule = schedule.tolist()
