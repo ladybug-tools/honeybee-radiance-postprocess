@@ -974,6 +974,7 @@ class Results(_ResultsFolder):
         """
         if not isinstance(values, np.ndarray):
             values = np.array(values)
+        if not isinstance(hours, np.ndarray):
             hours = np.array(hours)
         check_array_dim(values, 1)
         assert hours.shape == values.shape
