@@ -3,8 +3,13 @@ import json
 from pathlib import Path
 from itertools import islice, cycle
 from typing import Tuple, Union, List
-import numpy as np
 import itertools
+try:
+    import cupy as np
+    is_gpu = True
+except ImportError:
+    is_gpu = False
+    import numpy as np
 
 from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.datacollection import HourlyContinuousCollection
@@ -20,6 +25,8 @@ from ..util import filter_array, hoys_mask, check_array_dim, \
     _filter_grids_by_pattern
 from .. import type_hints
 from ..dynamic import DynamicSchedule, ApertureGroupSchedule
+
+is_cpu = not is_gpu
 
 
 class _ResultsFolder(object):
@@ -239,14 +246,14 @@ class _ResultsFolder(object):
     def _get_sun_up_hours_mask(self) -> List[int]:
         """Get a sun up hours masking array of the study hours."""
         sun_up_hours_mask = \
-            np.where(np.isin(self.study_hours, self.sun_up_hours))[0]
+            np.where(np.isin(np.array(self.study_hours), np.array(self.sun_up_hours)))[0]
 
         return sun_up_hours_mask
 
     def _get_sun_down_hours_mask(self) -> List[int]:
         """Get a sun down hours masking array of the study hours."""
         sun_down_hours_mask = \
-            np.where(~np.isin(self.study_hours, self.sun_up_hours))[0]
+            np.where(~np.isin(np.array(self.study_hours), np.array(self.sun_up_hours)))[0]
 
         return sun_down_hours_mask
 
@@ -277,10 +284,11 @@ class Results(_ResultsFolder):
         * datatype
         * unit
         * cache_arrays
+        * use_gpu
     """
     __slots__ = ('_schedule', '_occ_pattern', '_total_occ', '_sun_down_occ_hours',
                  '_occ_mask', '_arrays', '_valid_states', '_datatype', '_unit',
-                 '_cache_arrays')
+                 '_cache_arrays', '_use_gpu')
 
     def __init__(self, folder, datatype: DataTypeBase = None,
                  schedule: list = None, unit: str = None,
@@ -958,19 +966,23 @@ class Results(_ResultsFolder):
             values: A list of values to map to an annual array. This can be a
                 regular list or a 1D NumPy array.
             timestep: Time step of the simulation.
-            base_value: A value that will be applied for all the base array.
+            base_value: A value that will be applied for the base array.
             dtype: A NumPy dtype for the annual array.
 
         Returns:
             A 1D NumPy array.
         """
-        values = np.array(values)
+        if not isinstance(values, np.ndarray):
+            values = np.array(values)
+        if not isinstance(hours, np.ndarray):
+            hours = np.array(hours)
         check_array_dim(values, 1)
-        hours = np.array(hours)
         assert hours.shape == values.shape
-        full_ap = AnalysisPeriod(timestep=timestep)
-        indices = np.where(np.isin(full_ap.hoys, hours))[0]
-        annual_array = np.repeat(base_value, 8760 * timestep).astype(dtype)
+
+        full_ap = np.array(AnalysisPeriod(timestep=timestep).hoys)
+        indices = np.where(np.isin(full_ap, hours))[0]
+        annual_array = np.repeat(np.array(base_value), 8760 * timestep).astype(dtype)
+
         annual_array[indices] = values
 
         return annual_array
@@ -1064,6 +1076,7 @@ class Results(_ResultsFolder):
         state_identifier = self._state_identifier(grid_id, light_path, state=state)
         file = self._get_file(grid_id, light_path, state_identifier, res_type,
                               extension=extension)
+
         array = np.load(file)
 
         if self.cache_arrays:
@@ -1282,6 +1295,7 @@ class Results(_ResultsFolder):
                 states_array = np.array(gr_schedule.schedule)[
                     list(map(int, self.sun_up_hours))]
                 for state in np.unique(states_array):
+                    state = int(state)
                     if state == -1:
                         # if state is -1 we continue since it is "turned off"
                         continue
@@ -1292,7 +1306,9 @@ class Results(_ResultsFolder):
                     states_indicies = states_array == state
                     array[:, states_indicies] += _array[:, states_indicies]
                 arrays.append(array)
-        array = sum(arrays)
+        if arrays:
+            arrays = np.stack(arrays)
+        array = np.sum(arrays, axis=0)
 
         if not np.any(array):
             if zero_array:

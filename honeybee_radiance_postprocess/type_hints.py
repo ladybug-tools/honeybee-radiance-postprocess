@@ -1,7 +1,13 @@
 """Type hints for honeybee-radiance-postprocess."""
 from typing import Tuple, List
 import numpy as np
+try:
+    import cupy as np
+except ImportError:
+    import numpy as np
+
 from ladybug.datacollection import HourlyContinuousCollection
+
 
 annual_metric = Tuple[List[np.ndarray], List[dict]]
 annual_daylight_metrics = Tuple[

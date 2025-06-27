@@ -1,8 +1,13 @@
 import json
 from pathlib import Path
 from typing import Tuple, List
-import numpy as np
-import itertools
+try:
+    import cupy as np
+    is_gpu = True
+except ImportError:
+    is_gpu = False
+    import numpy as np
+
 from collections import defaultdict
 
 from ladybug.analysisperiod import AnalysisPeriod
@@ -14,12 +19,14 @@ from ladybug.header import Header
 from ..annual import occupancy_schedule_8_to_6
 from ..metrics import da_array2d, cda_array2d, udi_array2d, udi_lower_array2d, \
     udi_upper_array2d, ase_array2d
-from ..util import filter_array
+from ..util import filter_array, filter_array2d
 from ..annualdaylight import _annual_daylight_vis_metadata
 from ..electriclight import array_to_dimming_fraction
 from .. import type_hints
 from ..dynamic import DynamicSchedule, ApertureGroupSchedule
 from .results import Results
+
+is_cpu = not is_gpu
 
 
 class AnnualDaylight(Results):
@@ -71,8 +78,7 @@ class AnnualDaylight(Results):
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=self.occ_mask)
+                array_filter = filter_array2d(array, mask=self.occ_mask)
                 results = da_array2d(
                     array_filter, total_occ=self.total_occ, threshold=threshold)
             else:
@@ -102,8 +108,7 @@ class AnnualDaylight(Results):
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=self.occ_mask)
+                array_filter = filter_array2d(array, mask=self.occ_mask)
                 results = cda_array2d(
                     array_filter, total_occ=self.total_occ, threshold=threshold)
             else:
@@ -133,8 +138,7 @@ class AnnualDaylight(Results):
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=self.occ_mask)
+                array_filter = filter_array2d(array, mask=self.occ_mask)
                 results = udi_array2d(
                     array_filter, total_occ=self.total_occ, min_t=min_t, max_t=max_t)
             else:
@@ -165,8 +169,7 @@ class AnnualDaylight(Results):
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=self.occ_mask)
+                array_filter = filter_array2d(array, mask=self.occ_mask)
                 results = udi_lower_array2d(
                     array_filter, total_occ=self.total_occ,
                     min_t=min_t, sun_down_occ_hours=sun_down_occ_hours)
@@ -197,8 +200,7 @@ class AnnualDaylight(Results):
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=self.occ_mask)
+                array_filter = filter_array2d(array, mask=self.occ_mask)
                 results = udi_upper_array2d(
                     array_filter, total_occ=self.total_occ, max_t=max_t)
             else:
@@ -242,8 +244,7 @@ class AnnualDaylight(Results):
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type='total')
             if np.any(array):
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=self.occ_mask)
+                array_filter = filter_array2d(array, mask=self.occ_mask)
                 da_results = da_array2d(
                     array_filter, total_occ=self.total_occ, threshold=threshold)
                 cda_results = cda_array2d(
@@ -379,8 +380,7 @@ class AnnualDaylight(Results):
             array = self._array_from_states(
                 grid_info, states=states, res_type='direct')
             if np.any(array):
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=self.occ_mask)
+                array_filter = filter_array2d(array, mask=self.occ_mask)
                 results, h_above = ase_array2d(
                     array_filter, occ_hours=occ_hours,
                     direct_threshold=direct_threshold)

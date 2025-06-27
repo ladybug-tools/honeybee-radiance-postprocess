@@ -1,8 +1,15 @@
 """Post-processing utility functions."""
 from typing import Tuple
-import numpy as np
+try:
+    import cupy as np
+    is_gpu = True
+except ImportError:
+    is_gpu = False
+    import numpy as np
 
 from honeybee_radiance.writer import _filter_by_pattern
+
+is_cpu = not is_gpu
 
 
 def binary_mtx_dimension(filepath: str) -> Tuple[int, int, int, int, str]:
@@ -66,6 +73,27 @@ def check_array_dim(array: np.ndarray, dim: int):
     """
     assert array.ndim == dim, \
         f'Expected {dim}-dimensional array. Dimension of array is {array.ndim}'
+
+
+def filter_array2d(array: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    """Filter a NumPy array by a masking array. The array will be passed as is
+    if the mask is None.
+
+    Args:
+        array: A NumPy array to filter.
+        mask: A NumPy array of ones/zeros or True/False.
+
+    Returns:
+        A filtered NumPy array.
+    """
+    if is_cpu:
+        array_filter = np.apply_along_axis(
+            filter_array, 1, array, mask=mask)
+    else:
+        mask = np.asarray(mask).astype(bool)
+        array_filter = array[:, mask]
+
+    return array_filter
 
 
 def filter_array(array: np.ndarray, mask: np.ndarray) -> np.ndarray:
