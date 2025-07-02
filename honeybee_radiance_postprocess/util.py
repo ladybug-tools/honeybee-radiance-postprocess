@@ -123,7 +123,7 @@ def hoys_mask(sun_up_hours: list, hoys: list) -> np.ndarray:
         A NumPy array of booleans.
     """
     if len(hoys) != 0:
-        hoys_mask = np.where(np.isin(sun_up_hours, hoys), True, False)
+        hoys_mask = np.where(np.isin(np.array(sun_up_hours), np.array(hoys)), True, False)
         return hoys_mask
 
 

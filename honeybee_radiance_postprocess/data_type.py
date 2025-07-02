@@ -1,6 +1,11 @@
 """Functions for NumPy data type (dtype)."""
 from typing import Tuple
-import numpy as np
+try:
+    import cupy as np
+    is_gpu = True
+except ImportError:
+    is_gpu = False
+    import numpy as np
 
 
 def smallest_integer_dtype(array: np.ndarray) -> np.signedinteger:

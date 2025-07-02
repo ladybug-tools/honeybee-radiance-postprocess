@@ -3,8 +3,13 @@ import click
 import sys
 import logging
 import json
-import numpy as np
 from pathlib import Path
+try:
+    import cupy as np
+    is_gpu = True
+except ImportError:
+    is_gpu = False
+    import numpy as np
 
 from honeybee_radiance_postprocess.reader import binary_to_array
 

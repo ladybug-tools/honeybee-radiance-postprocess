@@ -1,9 +1,14 @@
 """Module for dynamic LEED schedules."""
 from typing import Tuple
-import numpy as np
+try:
+    import cupy as np
+    is_gpu = True
+except ImportError:
+    is_gpu = False
+    import numpy as np
 
 from ..results.annual_daylight import AnnualDaylight
-from ..util import filter_array
+from ..util import filter_array2d
 
 
 def shd_trans_schedule_descending(
@@ -16,7 +21,7 @@ def shd_trans_schedule_descending(
     full_shd_trans_array = []
     for light_path in light_paths:
         array = results._get_array(grid_info, light_path, res_type="direct")
-        array = np.apply_along_axis(filter_array, 1, array, occ_mask)
+        array = filter_array2d(array, occ_mask)
         full_direct.append(array)
         full_thresh.append((array >= 1000).sum(axis=0))
         full_shd_trans_array.append(shade_transmittances[light_path][1])
@@ -50,6 +55,7 @@ def shd_trans_schedule_descending(
     # Use the indices to get the relevant hours.
     thresh = np.take(full_thresh, above_2_indices, axis=1)
 
+    del full_direct, full_thresh
     # Sort and get indices. Negate the array to get descending order.
     # Descending order puts the "highest offender" light path first.
     sort_thresh = np.argsort(-thresh, axis=0).transpose()
@@ -58,6 +64,8 @@ def shd_trans_schedule_descending(
     _combinations.insert(
         0, (np.arange(full_direct_sum.shape[1]), combinations)
     )
+
+    del full_direct_sum
 
     if np.any(above_2_indices):
         # There are hours where the percentage of floor area is > 2%.
@@ -142,6 +150,8 @@ def shd_trans_schedule_descending(
 
         combinations = _combination
 
+    del full_shd_trans_array, direct_sum, direct, thresh, sort_thresh
+
     # Merge the combinations of dicts.
     for combination in combinations:
         for light_path, shd_trans in combination.items():
@@ -162,20 +172,18 @@ def states_schedule_descending(
     for light_path in light_paths:
         array = results._get_array(
             grid_info, light_path, state=0, res_type="direct")
-        array = np.apply_along_axis(filter_array, 1, array, occ_mask)
+        array = filter_array2d(array, occ_mask)
         full_direct.append(array)
         full_thresh.append((array >= 1000).sum(axis=0))
 
         array = results._get_array(
             grid_info, light_path, state=1, res_type="direct")
-        array = np.apply_along_axis(filter_array, 1, array, occ_mask)
+        array = filter_array2d(array, occ_mask)
         full_direct_blinds.append(array)
 
     full_direct = np.array(full_direct)
     full_direct_blinds = np.array(full_direct_blinds)
     full_direct_sum = full_direct.sum(axis=0)
-
-    new_array = full_direct.copy()
 
     percentage_sensors = (full_direct_sum >= 1000).sum(axis=0) / grid_count
     if not np.any(percentage_sensors > 0.02):
@@ -183,6 +191,7 @@ def states_schedule_descending(
             {light_path: 0 for light_path in light_paths}
             for i in range(full_direct_sum.shape[1])]
     else:
+        new_array = full_direct.copy()
         tracking_array = np.zeros(
             (new_array.shape[0], new_array.shape[2]), dtype=int)
 
@@ -234,6 +243,10 @@ def states_schedule_descending(
             grid_comply = np.array(results.sun_up_hours)[sun_up_hours_indices]
             fail_to_comply[grid_info['name']] = [
                 int(hoy) for hoy in grid_comply]
+
+        del new_array, tracking_array, percentage_sensors, ranking_indices, final_summed_array
+
+    del full_direct, full_thresh, full_direct_blinds, full_direct_sum
 
     for combination in combinations:
         for light_path, value in combination.items():

@@ -2,7 +2,12 @@
 from typing import Union
 from pathlib import Path
 import json
-import numpy as np
+try:
+    import cupy as np
+    is_gpu = True
+except ImportError:
+    is_gpu = False
+    import numpy as np
 
 from ladybug.color import Colorset
 from ladybug.datatype.fraction import Fraction

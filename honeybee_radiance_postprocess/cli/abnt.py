@@ -4,7 +4,12 @@ import sys
 import logging
 from pathlib import Path
 import click
-import numpy as np
+try:
+    import cupy as np
+    is_gpu = True
+except ImportError:
+    is_gpu = False
+    import numpy as np
 
 from honeybee.model import Model
 from honeybee.room import Room

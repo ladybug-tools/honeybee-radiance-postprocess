@@ -1,9 +1,10 @@
 """Type hints for honeybee-radiance-postprocess."""
 from typing import Tuple, List
-import numpy as np
 try:
     import cupy as np
+    is_gpu = True
 except ImportError:
+    is_gpu = False
     import numpy as np
 
 from ladybug.datacollection import HourlyContinuousCollection

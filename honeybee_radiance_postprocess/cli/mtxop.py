@@ -2,8 +2,13 @@
 import sys
 import logging
 from pathlib import Path
-import numpy as np
 import click
+try:
+    import cupy as np
+    is_gpu = True
+except ImportError:
+    is_gpu = False
+    import numpy as np
 
 from ..reader import binary_to_array, ascii_to_array
 

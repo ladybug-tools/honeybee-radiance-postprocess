@@ -4,7 +4,12 @@ Note: These functions will most likely be moved to a separate package in the nea
 """
 import json
 import os
-import numpy as np
+try:
+    import cupy as np
+    is_gpu = True
+except ImportError:
+    is_gpu = False
+    import numpy as np
 
 from ladybug.color import Colorset
 from ladybug.datatype.fraction import Fraction

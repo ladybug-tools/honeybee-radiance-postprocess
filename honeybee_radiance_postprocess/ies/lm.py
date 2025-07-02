@@ -2,7 +2,12 @@
 from typing import Tuple, Union
 from collections import defaultdict
 import itertools
-import numpy as np
+try:
+    import cupy as np
+    is_gpu = True
+except ImportError:
+    is_gpu = False
+    import numpy as np
 
 from honeybee_radiance.postprocess.annual import filter_schedule_by_hours
 
