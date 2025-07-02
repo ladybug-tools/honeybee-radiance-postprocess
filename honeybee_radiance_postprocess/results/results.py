@@ -1031,7 +1031,6 @@ class Results(_ResultsFolder):
         grid_id = grid_info['full_id']
 
         state_identifier = self._state_identifier(grid_id, light_path, state=state)
-
         try:
             array = self.arrays[grid_id][light_path][state_identifier][res_type]
         except Exception:
@@ -1086,12 +1085,12 @@ class Results(_ResultsFolder):
 
         return array
 
-    def _clear_cached_arrays(self, res_type: str = None):
+    def clear_cached_arrays(self, res_type: str = None):
         """Clear the cached arrays.
         
-        This method will simply set the arrays property to an empty dictionary,
-        unless the res_type is selected in which case only 'total' or 'direct'
-        arrays will be deleted.
+        This method will simply clear the arrays property to remove arrays from
+        memory, unless the res_type is selected in which case only 'total' or
+        'direct' arrays will be deleted.
         
         Args:
             res_type: Which type of results to clear. This can be either
@@ -1289,32 +1288,37 @@ class Results(_ResultsFolder):
                     grid_info, light_path, state=state, res_type=res_type)
                 arrays.append(array)
             else:
-                # create default 0 array, we will add to this later
-                array = np.zeros((grid_info['count'], len(self.sun_up_hours)))
                 # slice states to match sun up hours
                 states_array = np.array(gr_schedule.schedule)[
-                    list(map(int, self.sun_up_hours))]
-                for state in np.unique(states_array):
+                    np.array(self.sun_up_hours, int)]
+
+                unique_states = np.unique(states_array)
+                unique_states = unique_states[unique_states != -1]  # skip -1
+                temp_arrays = []
+                for state in unique_states:
                     state = int(state)
-                    if state == -1:
-                        # if state is -1 we continue since it is "turned off"
-                        continue
                     # load static array (state is static)
                     _array = self._get_array(
                         grid_info, light_path, state=state, res_type=res_type)
                     # get indices and add values to base array
-                    states_indicies = states_array == state
-                    array[:, states_indicies] += _array[:, states_indicies]
+                    state_indices = (states_array == state)
+                    masked_array = np.zeros_like(_array)
+                    masked_array[:, state_indices] = _array[:, state_indices]
+                    temp_arrays.append(masked_array)
+                if temp_arrays:
+                    array = np.sum(np.stack(temp_arrays), axis=0)
+                else:
+                    array = np.zeros((grid_info['count'], len(self.sun_up_hours)))
                 arrays.append(array)
-        if arrays:
-            arrays = np.stack(arrays)
-        array = np.sum(arrays, axis=0)
+
+        if len(arrays) == 0:
+            array = np.zeros((grid_info['count'], len(self.sun_up_hours)))
+        else:
+            array = np.sum(np.stack(arrays, axis=0), axis=0)
 
         if not np.any(array):
-            if zero_array:
-                array = np.zeros((grid_info['count'], len(self.sun_up_hours)))
-            else:
-                array = np.array([])
+            if not zero_array:
+                array = np.asarray([])
 
         return array
 

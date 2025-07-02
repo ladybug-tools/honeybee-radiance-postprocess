@@ -4,7 +4,12 @@ from pathlib import Path
 from collections import defaultdict
 import json
 import itertools
-import numpy as np
+try:
+    import cupy as np
+    is_gpu = True
+except ImportError:
+    is_gpu = False
+    import numpy as np
 
 from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.datatype.generic import GenericType
@@ -22,9 +27,11 @@ from honeybee_radiance.postprocess.annual import filter_schedule_by_hours
 from ..metrics import da_array2d, ase_array2d
 from ..annual import schedule_to_hoys, occupancy_schedule_8_to_6
 from ..results.annual_daylight import AnnualDaylight
-from ..util import filter_array, recursive_dict_merge
+from ..util import recursive_dict_merge, filter_array2d
 from ..dynamic import DynamicSchedule, ApertureGroupSchedule
 from .leed_schedule import shd_trans_schedule_descending, states_schedule_descending
+
+is_cpu = not is_gpu
 
 
 def _create_grid_summary(
@@ -117,7 +124,6 @@ def _leed_summary(
     """
     summary = {}
     summary_grid = {}
-
     if all(grid_area is not None for grid_area in grid_areas):
         # weighted by mesh face area
         total_area = 0
@@ -127,17 +133,17 @@ def _leed_summary(
              pass_sda_blinds_down) in \
             zip(pass_ase_grids, pass_sda_grids, grid_areas, grids_info,
                 pass_sda_blinds_up_grids, pass_sda_blinds_down_grids):
-            total_grid_area = grid_area.sum()
+            total_grid_area = float(grid_area.sum())
 
-            area_pass_ase = grid_area[pass_ase].sum()
-            ase_grid = (total_grid_area - area_pass_ase) / total_grid_area * 100
+            area_pass_ase = float(grid_area[pass_ase].sum())
+            ase_grid = float((total_grid_area - area_pass_ase) / total_grid_area * 100)
 
-            area_pass_sda = grid_area[pass_sda].sum()
+            area_pass_sda = float(grid_area[pass_sda].sum())
             area_pass_sda_blind_up = grid_area[pass_sda_blinds_up].sum()
             area_pass_sda_blinds_down = grid_area[pass_sda_blinds_down].sum()
-            sda_grid = area_pass_sda / total_grid_area * 100
-            sda_blinds_up_grid = area_pass_sda_blind_up / total_grid_area * 100
-            sda_blinds_down_grid = area_pass_sda_blinds_down / total_grid_area * 100
+            sda_grid = float(area_pass_sda / total_grid_area * 100)
+            sda_blinds_up_grid = float(area_pass_sda_blind_up / total_grid_area * 100)
+            sda_blinds_down_grid = float(area_pass_sda_blinds_down / total_grid_area * 100)
 
             # grid summary
             grid_summary = \
@@ -298,8 +304,7 @@ def shade_transmittance_per_light_path(
 def leed_states_schedule(
         results: Union[str, AnnualDaylight], grids_filter: str = '*',
         shade_transmittance: Union[float, dict] = 0.05,
-        use_states: bool = False
-        ) -> Tuple[dict, dict]:
+        use_states: bool = False) -> Tuple[dict, dict, dict]:
     """Calculate a schedule of each aperture group for LEED compliant sDA.
 
     This function calculates an annual shading schedule of each aperture
@@ -404,17 +409,17 @@ def leed_states_schedule(
                 fail_to_comply[grid_info['name']] = \
                     [int(hoy) for hoy in grid_comply]
 
-            array_combinations_filter = np.apply_along_axis(
-                filter_array, 1, array_combinations, occ_mask
-            )
-            max_indices = array_combinations_filter.argmax(axis=0)
-            # select the combination for each hour
+            array_combinations_filter = filter_array2d(array_combinations, occ_mask)
+
+            max_indices = [int(i) for i in array_combinations_filter.argmax(axis=0)]
             combinations = [combinations[idx] for idx in max_indices]
             # merge the combinations of dicts
             for combination in combinations:
                 for light_path, value in combination.items():
                     if light_path != '__static_apertures__':
                         grid_states_schedule[light_path].append(value)
+
+            del array_list_combinations, array_combinations, array_combinations_filter, combination_arrays
 
         for key, value in grid_states_schedule.items():
             if key not in states_schedule:
@@ -502,7 +507,7 @@ def leed_option_one(
     schedule = occupancy_schedule_8_to_6(as_list=True)
 
     if not isinstance(results, AnnualDaylight):
-        results = AnnualDaylight(results, schedule=schedule, cache_arrays=False)
+        results = AnnualDaylight(results, schedule=schedule, cache_arrays=True)
     else:
         # set schedule to default leed schedule
         results.schedule = schedule
@@ -555,8 +560,7 @@ def leed_option_one(
         for light_path in light_paths:
             array = results._get_array(
                 grid_info, light_path, res_type='direct')
-            array_filter = np.apply_along_axis(
-                filter_array, 1, array, occ_mask)
+            array_filter = filter_array2d(array, occ_mask)
             arrays.append(array_filter)
         array = sum(arrays)
         # calculate ase per grid
@@ -575,6 +579,7 @@ def leed_option_one(
         hours_above.append(h_above)
         pass_ase = h_above < occ_hours
         pass_ase_grids.append(pass_ase)
+    results.clear_cached_arrays(res_type='direct')  # don't need direct arrays
 
     # spatial daylight autonomy
     da_grids = []
@@ -589,42 +594,40 @@ def leed_option_one(
                     pass
                 else:
                     light_paths.append(_lp)
-        base_zero_array = np.apply_along_axis(filter_array, 1, np.zeros(
-            (grid_info['count'], len(results.sun_up_hours))), occ_mask)
+        base_zero_array = filter_array2d(
+            np.zeros((grid_info['count'], len(results.sun_up_hours))), occ_mask)
         arrays = [base_zero_array.copy()]
         arrays_blinds_up = [base_zero_array.copy()]
         arrays_blinds_down = [base_zero_array.copy()]
         # combine total array for all light paths
         if use_states:
             array = results._array_from_states(grid_info, states=states_schedule, zero_array=True)
-            array = np.apply_along_axis(filter_array, 1, array, occ_mask)
+            array = filter_array2d(array, occ_mask)
 
             for light_path in light_paths:
                 # do an extra pass to calculate with blinds always up or down
                 if light_path != '__static_apertures__':
                     array_blinds_up = results._get_array(
                         grid_info, light_path, state=0, res_type='total')
-                    array_filter = np.apply_along_axis(
-                        filter_array, 1, array_blinds_up, occ_mask)
+                    array_filter = filter_array2d(array_blinds_up, occ_mask)
                     arrays_blinds_up.append(array_filter)
                     array_blinds_down = results._get_array(
                         grid_info, light_path, state=1, res_type='total')
-                    array_filter = np.apply_along_axis(
-                        filter_array, 1, array_blinds_down, occ_mask)
+                    array_filter = filter_array2d(array_blinds_down, occ_mask)
+                    arrays_blinds_down.append(array_filter)
                     arrays_blinds_down.append(array_filter)
                 else:
                     static_array = results._get_array(
                         grid_info, light_path, state=0, res_type='total')
-                    array_filter = np.apply_along_axis(
-                        filter_array, 1, static_array, occ_mask)
+                    array_filter = filter_array2d(static_array, occ_mask)
+                    arrays.append(array_filter)
                     arrays_blinds_up.append(array_filter)
                     arrays_blinds_down.append(array_filter)
         else:
             for light_path in light_paths:
                 array = results._get_array(
                     grid_info, light_path, res_type='total')
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, occ_mask)
+                array_filter = filter_array2d(array, occ_mask)
                 if light_path != '__static_apertures__':
                     sun_up_hours = np.array(results.sun_up_hours).astype(int)
                     shd_trans_array = states_schedule[light_path][sun_up_hours]
@@ -652,6 +655,7 @@ def leed_option_one(
         pass_sda_grids.append(da_grid >= target_time)
         pass_sda_blinds_up_grids.append(da_blinds_up_grid >= target_time)
         pass_sda_blinds_down_grids.append(da_blinds_down_grid >= target_time)
+    results.clear_cached_arrays(res_type='total')
 
     # create summaries for all grids and each grid individually
     summary, summary_grid = _leed_summary(
@@ -701,7 +705,9 @@ def leed_option_one(
         return hourly_data.to_dict()
 
     if use_states:
-        states_schedule = {k:to_datacollection(k, v['schedule']) for k, v in states_schedule.to_dict().items()}
+        states_schedule = {
+            k: to_datacollection(k, v['schedule']) for k,
+            v in states_schedule.to_dict().items()}
     else:
         states_schedule = {k:to_datacollection(k, v) for k, v in states_schedule.items()}
 

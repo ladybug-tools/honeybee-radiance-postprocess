@@ -1,7 +1,12 @@
 """Helper functions."""
 import json
-import numpy as np
 from pathlib import Path
+try:
+    import cupy as np
+    is_gpu = True
+except ImportError:
+    is_gpu = False
+    import numpy as np
 
 from honeybee.model import Model
 
@@ -144,7 +149,10 @@ def grid_summary(
         arrays.append(tuple(data))
 
     # create structured array
-    struct_array = np.array(arrays, dtype=dtype)
+    if is_gpu:
+        struct_array = None
+    else:
+        struct_array = np.array(arrays, dtype=dtype)
 
     header = [dt[0] for dt in dtype]
     # write header to file
@@ -153,7 +161,13 @@ def grid_summary(
     # write structured array to grid_summary_file
     with open(folder.joinpath(f'{name}.csv'), 'a') as grid_summary_file:
         grid_summary_file.write('\n')
-        np.savetxt(grid_summary_file, struct_array, delimiter=',', fmt=fmt)
+        if is_gpu:
+            # CuPy doesn't support structured arrays; manually format rows
+            for row in arrays:
+                row_str = ','.join(fmt_val % val for fmt_val, val in zip(fmt, row))
+                grid_summary_file.write(row_str + '\n')
+        else:
+            np.savetxt(grid_summary_file, struct_array, delimiter=',', fmt=fmt)
 
     return grid_summary_file
 

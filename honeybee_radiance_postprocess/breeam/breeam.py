@@ -2,7 +2,12 @@
 from typing import Union
 from pathlib import Path
 import json
-import numpy as np
+try:
+    import cupy as np
+    is_gpu = True
+except ImportError:
+    is_gpu = False
+    import numpy as np
 
 from honeybee.model import Model
 from honeybee_radiance.writer import _filter_by_pattern
@@ -339,7 +344,7 @@ def breeam_daylight_assessment_4b(
         hb_model.properties.radiance.sensor_grids, filter=grids_filter)
     for s_grid in filt_grids:
         if s_grid.mesh is not None:
-            grid_areas[s_grid.identifier] = np.array(s_grid.mesh.face_areas).sum()
+            grid_areas[s_grid.identifier] = int(np.array(s_grid.mesh.face_areas).sum())
         else:
             grid_areas[s_grid.identifier] = None
         hb_room = hb_model.rooms_by_identifier([s_grid.room_identifier])[0]
@@ -397,7 +402,7 @@ def breeam_daylight_assessment_4b(
                 target_hrs = metrics['minimum_daylight_illuminance']['hours']
                 min_comply = hrs_abv_min >= target_hrs
 
-                minimum_illuminance_index = np.argsort(hrs_abv_target)[0]
+                minimum_illuminance_index = int(np.argsort(hrs_abv_target)[0])
                 minimum_illuminance_sensor = \
                     sensor_grid_mapper[grid_info['full_id']].sensors[minimum_illuminance_index]
                 minimum_illuminance_sensors[grid_info['full_id']] = \
@@ -482,11 +487,11 @@ def breeam_daylight_assessment_4b(
         area_proportions = np.array(areas) / program_type_summary['total_area']
 
         weighted_hours_avg = area_proportions * np.array(avg_hrs)
-        total_weighted_hours_avg = np.sum(weighted_hours_avg)
+        total_weighted_hours_avg = int(np.sum(weighted_hours_avg))
         program_type_summary['average-illuminance-hours'] = total_weighted_hours_avg
 
         weighted_hours_min = area_proportions * np.array(min_hrs)
-        total_weighted_hours_min = np.sum(weighted_hours_min)
+        total_weighted_hours_min = int(np.sum(weighted_hours_min))
         program_type_summary['minimum-illuminance-hours'] = total_weighted_hours_min
 
         program_summary.append(program_type_summary)

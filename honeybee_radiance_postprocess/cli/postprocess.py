@@ -5,7 +5,12 @@ import os
 import logging
 import json
 import click
-import numpy as np
+try:
+    import cupy as np
+    is_gpu = True
+except ImportError:
+    is_gpu = False
+    import numpy as np
 
 from ladybug.location import Location
 from ladybug.wea import Wea
@@ -721,8 +726,8 @@ def annual_metrics_file(
     if grid_name is None:
         grid_name = file.stem
 
-    sun_up_hours_mask =  np.where(np.isin(study_hours, sun_up_hours))[0]
-    sun_down_hours_mask =  np.where(~np.isin(study_hours, sun_up_hours))[0]
+    sun_up_hours_mask =  np.where(np.isin(np.array(study_hours), np.array(sun_up_hours)))[0]
+    sun_down_hours_mask =  np.where(~np.isin(np.array(study_hours), np.array(sun_up_hours)))[0]
     occ_mask = np.array(schedule, dtype=int)[sun_up_hours_mask]
     sun_down_occ_hours =  np.array(schedule, dtype=int)[sun_down_hours_mask].sum()
     total_hours = sum(schedule)
