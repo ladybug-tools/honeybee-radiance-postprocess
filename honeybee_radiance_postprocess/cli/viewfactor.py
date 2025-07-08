@@ -122,6 +122,8 @@ def rcontrib_command_with_view_postprocess(
             s_facs = np.sum(sens_chunk, axis=0) / (math.pi * ray_count)
             view_fac_mtx.append(s_facs)
 
+        view_fac_mtx = np.stack(view_fac_mtx)
+
         np.save(os.path.join(folder, '{}'.format(name)), view_fac_mtx)
 
     except Exception:
