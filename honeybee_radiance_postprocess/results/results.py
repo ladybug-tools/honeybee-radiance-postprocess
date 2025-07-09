@@ -85,16 +85,7 @@ class _ResultsFolder(object):
             assert isinstance(grid_info, dict), \
                 'Object in grids information must be a dictionary. ' \
                 f'Got object of type {type(grid_info)}.'
-            if 'light_path' in grid_info.keys():
-                _grid_info = []
-                for light_path in grid_info['light_path']:
-                    if Path(self.folder, light_path[0]).exists():
-                        _grid_info.append((light_path))
-                grid_info['light_path'] = _grid_info
-                if not grid_info['light_path']:
-                    # if light path is empty
-                    grid_info['light_path'] = [['__static_apertures__']]
-            else:
+            if not grid_info.get('light_path', None):
                 # if light path key is nonexistent
                 grid_info['light_path'] = [['__static_apertures__']]
         self._grids_info = grids_info
