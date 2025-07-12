@@ -21,7 +21,7 @@ from ladybug.header import Header
 from ..annual import occupancy_schedule_8_to_6
 from ..metrics import (average_values_array2d, cumulative_values_array2d,
     peak_values_array2d)
-from ..util import filter_array, hoys_mask, check_array_dim, \
+from ..util import filter_array2d, hoys_mask, check_array_dim, \
     _filter_grids_by_pattern
 from .. import type_hints
 from ..dynamic import DynamicSchedule, ApertureGroupSchedule
@@ -399,9 +399,7 @@ class Results(_ResultsFolder):
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type=res_type)
             if np.any(array):
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=mask
-                )
+                array_filter = filter_array2d(array, mask=mask)
                 array_total = array_filter.sum(axis=1)
             else:
                 array_total = np.zeros(grid_info['count'])
@@ -519,8 +517,7 @@ class Results(_ResultsFolder):
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type=res_type)
             if np.any(array):
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=mask)
+                array_filter = filter_array2d(array, mask=mask)
                 results = average_values_array2d(
                     array_filter, full_length)
             else:
@@ -591,8 +588,7 @@ class Results(_ResultsFolder):
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type=res_type)
             if np.any(array):
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=mask)
+                array_filter = filter_array2d(array, mask=mask)
                 if not hoys:
                     # concatenate zero array
                     zero_array = \
@@ -678,8 +674,7 @@ class Results(_ResultsFolder):
         for grid_info in grids_info:
             array = self._array_from_states(grid_info, states=states, res_type=res_type)
             if np.any(array):
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=mask)
+                array_filter = filter_array2d(array, mask=mask)
                 results = cumulative_values_array2d(
                     array_filter, self.timestep, t_step_multiplier)
             else:
@@ -760,8 +755,7 @@ class Results(_ResultsFolder):
             max_i = None
             array = self._array_from_states(grid_info, states=states, res_type=res_type)
             if np.any(array):
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=mask)
+                array_filter = filter_array2d(array, mask=mask)
                 results, max_i = peak_values_array2d(
                     array_filter, coincident=coincident)
             else:

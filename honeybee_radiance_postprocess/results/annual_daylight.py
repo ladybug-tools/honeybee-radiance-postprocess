@@ -622,8 +622,7 @@ class AnnualDaylight(Results):
                 su_mean_array = array.mean(axis=0)
                 su_uniformity_ratio = su_min_array / su_mean_array
 
-                array_filter = np.apply_along_axis(
-                    filter_array, 1, array, mask=self.occ_mask)
+                array_filter = filter_array2d(array, mask=self.occ_mask)
                 min_array = array_filter.min(axis=0)
                 mean_array = array_filter.mean(axis=0)
                 uniformity_ratio = min_array / mean_array
