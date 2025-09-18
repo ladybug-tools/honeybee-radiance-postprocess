@@ -1,2 +1,2 @@
-honeybee-radiance==1.66.195
+honeybee-radiance==1.66.196
 numpy<2.0.0
