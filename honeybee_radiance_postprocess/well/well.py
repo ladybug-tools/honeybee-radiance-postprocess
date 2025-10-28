@@ -227,6 +227,56 @@ def well_annual_daylight(
     if not grid_areas:
         grid_areas = [None] * len(grids_info)
 
+    well_version = {
+        'Version': 'WELL v2, Q2 2025',
+        'L01': {
+            'IES LM-83': {
+                'Method': 'IES LM-83',
+                'sda_target_illuminance': 150,
+                'sda_occupancy': 50,
+                'sda_threshold': 30
+            },
+            'EN 17037': {
+                'Method': 'EN 17037',
+                'target_illuminance': 200,
+                'daylit_hours': 50,
+                'sda_threshold': 30
+            }
+        },
+        'L06': {
+            'Tier 1': {
+                'IES LM-83': {
+                    'Method': 'IES LM-83',
+                    'sda_target_illuminance': 300,
+                    'sda_occupancy': 50,
+                    'sda_threshold': 55
+                },
+                'EN 17037': {
+                    'Method': 'EN 17037',
+                    'target_illuminance': 300,
+                    'daylit_hours': 50,
+                    'sda_threshold': 50
+                }
+            },
+            'Tier 2': {
+                'IES LM-83': {
+                    'Method': 'IES LM-83',
+                    'sda_target_illuminance': 300,
+                    'sda_occupancy': 50,
+                    'sda_threshold': 75
+                },
+                'EN 17037': {
+                    'Method': 'EN 17037',
+                    'target_illuminance': 300,
+                    'minimum_illuminance': 100,
+                    'daylit_hours': 50,
+                    'sda_target_threshold': 50,
+                    'sda_minimum_threshold': 95
+                }
+            }
+        }
+    }
+
     # spatial daylight autonomy
     l06_da_grids = []
     l06_pass_sda_grids = []
@@ -291,17 +341,17 @@ def well_annual_daylight(
         array_blinds_up = sum(arrays_blinds_up)
         array_blinds_down = sum(arrays_blinds_down)
         # calculate da per grid
-        da_grid = da_array2d(array, total_occ=total_occ, threshold=200)
+        da_grid = da_array2d(array, total_occ=total_occ, threshold=well_version['L01']['IES LM-83']['sda_target_illuminance'])
 
         l01_da_grids.append(da_grid)
         da_blinds_up_grid = da_array2d(
-            array_blinds_up, total_occ=total_occ, threshold=200)
+            array_blinds_up, total_occ=total_occ, threshold=well_version['L01']['IES LM-83']['sda_target_illuminance'])
         da_blinds_down_grid = da_array2d(
-            array_blinds_down, total_occ=total_occ, threshold=200)
+            array_blinds_down, total_occ=total_occ, threshold=well_version['L01']['IES LM-83']['sda_target_illuminance'])
         # calculate sda per grid
-        l01_pass_sda_grids.append(da_grid >= 40)
-        l01_pass_sda_blinds_up_grids.append(da_blinds_up_grid >= 40)
-        l01_pass_sda_blinds_down_grids.append(da_blinds_down_grid >= 40)
+        l01_pass_sda_grids.append(da_grid >= well_version['L01']['IES LM-83']['sda_occupancy'])
+        l01_pass_sda_blinds_up_grids.append(da_blinds_up_grid >= well_version['L01']['IES LM-83']['sda_occupancy'])
+        l01_pass_sda_blinds_down_grids.append(da_blinds_down_grid >= well_version['L01']['IES LM-83']['sda_occupancy'])
 
     # create summaries for all grids and each grid individually
     l06_ies_lm_summary, l06_ies_lm_summary_grid = _well_summary(
@@ -341,8 +391,8 @@ def well_annual_daylight(
         if np.any(array):
             array = np.apply_along_axis(
                 filter_array, 1, array, occ_mask)
-        l01_grid_da_target = da_array2d(array, total_occ=4380, threshold=200)
-        l01_combined_da_target.append(l01_grid_da_target >= 50)
+        l01_grid_da_target = da_array2d(array, total_occ=4380, threshold=well_version['L01']['EN 17037']['target_illuminance'])
+        l01_combined_da_target.append(l01_grid_da_target >= well_version['L01']['EN 17037']['daylit_hours'])
 
     l06_combined_sda_target_illuminance = np.concatenate(l06_combined_da_target).mean() * 100
     l06_combined_sda_minimum_illuminance = np.concatenate(l06_combined_da_minimum).mean() * 100
@@ -382,7 +432,7 @@ def well_annual_daylight(
             else:
                 l06_ies_lm_summary['credits'] = 'Exemplary performance'
 
-        if l01_ies_lm_summary['sda'] >= 30:
+        if l01_ies_lm_summary['sda'] >= well_version['L01']['IES LM-83']['sda_threshold']:
             l01_well_summary_ies_lm['comply'] = True
         else:
             l01_well_summary_ies_lm['comply'] = False
@@ -505,5 +555,8 @@ def well_annual_daylight(
     l01_well_summary.append(l01_well_summary_en17037)
     well_summary_file = sub_folder.joinpath('l01_well_summary.json')
     well_summary_file.write_text(json.dumps(l01_well_summary, indent=2))
+
+    well_version_file = sub_folder.joinpath('well_version.json')
+    well_version_file.write_text(json.dumps(well_version, indent=2))
 
     return (l06_well_summary, l01_well_summary, states_schedule, fail_to_comply, grids_info)
