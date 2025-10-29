@@ -83,7 +83,7 @@ def well_daylight_vis(output_folder):
     metric_info_dict = {
         'L01': {
             'type': 'VisualizationMetaData',
-            'data_type': GenericType('sDA200,40%', '').to_dict(),
+            'data_type': GenericType('sDA150,50%', '').to_dict(),
             'unit': '',
             'legend_parameters': pass_fail_lpar.to_dict()
         },
