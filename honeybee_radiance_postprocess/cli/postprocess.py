@@ -505,6 +505,76 @@ def annual_to_data(
         sys.exit(0)
 
 
+@post_process.command('annual-summary')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.option(
+    '--hoys-file', '-h', help='Path to an HOYs file. Values must be separated by '
+    'new line. If not provided the data will not be filtered by HOYs.',
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--states', '-st', help='A JSON file with a dictionary of states. If states '
+    'are not provided the default states will be used for any aperture groups.',
+    default=None, show_default=True,
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
+    show_default=True
+)
+@click.option(
+    '--total/--direct', is_flag=True, default=True, help='Switch between total '
+    'and direct results. Default is total.'
+)
+@click.option(
+    '--sensor/--timestep', is_flag=True, default=True, help='Switch between results '
+    'for each sensor or timestep. Default is sensor.'
+)
+
+@click.option(
+    '--sub-folder', '-sf', help='Optional relative path for subfolder to write output '
+    'metric files.', default='metrics'
+)
+def annual_summary(
+    folder, hoys_file, states, grids_filter, total, sensor, sub_folder
+):
+    """Get annual summary statistics (average, median, minimum, maximum, cumulative).
+
+    \b
+    Args:
+        folder: Results folder. This folder is an output folder of annual daylight
+            recipe. Folder should include grids_info.json and sun-up-hours.txt. The
+            command uses the list in grids_info.json to find the result files for each
+            sensor grid.
+    """
+    try:
+        if hoys_file:
+            with open(hoys_file) as hoys:
+                hoys = [float(h) for h in hoys.readlines()]
+        else:
+            hoys = []
+
+        if states:
+            states = DynamicSchedule.from_json(states)
+
+        res_type = 'total' if total is True else 'direct'
+
+        axis = 1 if sensor is True else 0
+
+        results = AnnualDaylight(folder)
+        results.annual_summary_to_folder(
+            sub_folder, hoys=hoys, states=states, grids_filter=grids_filter,
+            res_type=res_type, axis=axis)
+    except Exception:
+        _logger.exception('Failed to calculate annual summary.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
 @post_process.command('point-in-time')
 @click.argument(
     'folder',
@@ -1030,7 +1100,7 @@ def convert_matrix_to_binary(
         if not comply:
             # this will invert the boolean array
             boolean_array = ~boolean_array
-        
+
         binary_array = boolean_array.astype(int)
         output_file = Path(output_folder, name)
         output_file.parent.mkdir(parents=True, exist_ok=True)
