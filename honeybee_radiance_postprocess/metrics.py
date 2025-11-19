@@ -25,7 +25,7 @@ def da_array2d(
         threshold: Threshold value for daylight autonomy. Default: 300.
 
     Returns:
-        A 1-dimensional NumPy array with the daylight autonomy for each row in
+        A 1D NumPy array with the daylight autonomy for each row in
         the input array.
     """
     check_array_dim(array, 2)
@@ -72,7 +72,7 @@ def cda_array2d(
         threshold: Threshold value for continuos daylight autonomy. Default: 300.
 
     Returns:
-        A 1-dimensional NumPy array with the continuos daylight autonomy for
+        A 1D NumPy array with the continuos daylight autonomy for
         each row in the input array.
     """
     check_array_dim(array, 2)
@@ -125,7 +125,7 @@ def udi_array2d(
         max_t: Maximum threshold for useful daylight illuminance. Default: 3000.
 
     Returns:
-        A 1-dimensional NumPy array with the useful daylight illuminance for
+        A 1D NumPy array with the useful daylight illuminance for
         each row in the input array.
     """
     check_array_dim(array, 2)
@@ -178,7 +178,7 @@ def udi_lower_array2d(
         sun_down_occ_hours: Number of occupied hours where the sun is down.
 
     Returns:
-        A 1-dimensional NumPy array with the lower than useful daylight
+        A 1D NumPy array with the lower than useful daylight
         illuminance for each row in the input array.
     """
     check_array_dim(array, 2)
@@ -237,7 +237,7 @@ def udi_upper_array2d(
         max_t: Maximum threshold for useful daylight illuminance. Default: 3000.
 
     Returns:
-        A 1-dimensional NumPy array with the higher than useful daylight
+        A 1D NumPy array with the higher than useful daylight
         illuminance for each row in the input array.
     """
     check_array_dim(array, 2)
@@ -330,20 +330,28 @@ def ase_array2d(
 
 
 def average_values_array2d(
-        array: np.ndarray, full_length: int = 8760) -> np.ndarray:
+        array: np.ndarray, full_length: int = 8760, axis: int = 1) -> np.ndarray:
     """Calculate average values for a 2D NumPy array.
+
+    If axis is 1, the average value for each row is calculated (each sensor). In
+    this case the full length should correspond to the number of timesteps in the
+    analysis.
+
+    If axis is 0, the average value for each column is calculated (each timestep).
+    In this case the full length should correspond to the number of sensors.
 
     Args:
         array: A 2D NumPy array.
         full_length: Integer to use as divisor.
+        axis: Axis along which to compute the average. Default is 1.
 
     Returns:
-        A 1-dimensional NumPy array with the average value for each row in the
-        input array.
+        A 1D NumPy array with the average value for each row or column
+        in the input array.
     """
     check_array_dim(array, 2)
 
-    avg_values = array.sum(axis=1) / full_length
+    avg_values = array.sum(axis=axis) / full_length
 
     return avg_values
 
@@ -365,22 +373,26 @@ def average_values_array1d(
 
 
 def cumulative_values_array2d(
-        array: np.ndarray, timestep: int = 1, t_step_multiplier: float = 1
-        ) -> np.ndarray:
+        array: np.ndarray, timestep: int = 1, t_step_multiplier: float = 1,
+        axis: int = 1) -> np.ndarray:
     """Calculate cumulative values for a 2D NumPy array.
 
     Args:
         array: A 2D NumPy array.
         timestep: Integer for the timestep of the analysis.
         t_step_multiplier: A value that will be multiplied with the timestep.
+        axis: Axis along which to compute the cumulative value. Default is 1.
 
     Returns:
-        A 1-dimensional NumPy array with the cumulative value for each row in
+        A 1D NumPy array with the cumulative value for each row or column
         the input array.
     """
     check_array_dim(array, 2)
 
-    cumulative_values = array.sum(axis=1) / (timestep * t_step_multiplier)
+    if axis == 1:
+        cumulative_values = array.sum(axis=axis) / (timestep * t_step_multiplier)
+    else:
+        cumulative_values = array.sum(axis=axis)
 
     return cumulative_values
 
@@ -416,7 +428,7 @@ def peak_values_array2d(
             at a particular timestep (True).
 
     Returns:
-        A 1-dimensional NumPy array with the peak value for each row in the
+        A 1D NumPy array with the peak value for each row in the
         input array, and the index of the maximum value representing the
         timestep in the array with the largest value.
     """
