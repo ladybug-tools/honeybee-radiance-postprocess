@@ -589,20 +589,8 @@ class Results(_ResultsFolder):
             array = self._array_from_states(grid_info, states=states, res_type=res_type)
             if np.any(array):
                 array_filter = filter_array2d(array, mask=mask)
-                if not hoys:
-                    # concatenate zero array
-                    zero_array = \
-                        np.zeros((grid_info['count'], len(self.sun_down_hours)))
-                    array_filter = np.concatenate((array_filter, zero_array), axis=1)
-                else:
-                    # find number of hoys that are sun down hours
-                    sdh_hoys = \
-                        len(set(self.sun_down_hours).intersection(hoys))
-                    if sdh_hoys != 0:
-                        # concatenate zero array
-                        zero_array = np.zeros((grid_info['count'], sdh_hoys))
-                        array_filter = \
-                            np.concatenate((array_filter, zero_array), axis=1)
+                array_filter = self.pad_array_for_median(
+                    array_filter, hoys, self.sun_down_hours, grid_info['count'])
                 results = np.median(array_filter, axis=1)
             else:
                 results = np.zeros(grid_info['count'])
@@ -809,6 +797,208 @@ class Results(_ResultsFolder):
         info_file = metric_folder.joinpath('grids_info.json')
         info_file.write_text(json.dumps(grids_info))
 
+    def annual_summary(
+            self, hoys: list = None, states: DynamicSchedule = None, grids_filter: str = '*',
+            res_type: str = 'total', axis: int = 1):
+        """Compute annual summary statistics (average, median, minimum, maximum,
+        cumulative) for each sensor or timestep.
+
+        If hoys is left as None, the average will be computed for all study hours,
+        i.e., including sun down hours. This will likely lead to low average
+        and median values for a usual annual study.
+
+        Args:
+            hoys: An optional list of numbers to select the hours of the year
+                (HOYs) for which results will be computed.
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+            res_type: Type of results to load. Defaults to 'total'.
+            axis: Axis along which statistics are computed:
+                - 1: compute per-sensor statistics over time (default)
+                - 0: compute per-timestep statistics across sensors; results are
+                     converted into HourlyContinuousCollection objects.
+
+        Returns:
+            A tuple of the form:
+                (
+                    average_values,
+                    median_values,
+                    minimum_values,
+                    maximum_values,
+                    cumulative_values,
+                    grids_info
+                )
+
+            Where each element except grids_info is a list with one entry per
+            sensor grid:
+                - If axis == 1: each entry is a 1D NumPy array of per-sensor values.
+                - If axis == 0: each entry is an HourlyContinuousCollection.
+
+            grids_info contains metadata for each processed grid.
+        """
+        hoys = [] if hoys is None else hoys
+        grids_info = self._filter_grids(grids_filter=grids_filter)
+        mask = hoys_mask(self.sun_up_hours, hoys)
+
+        analysis_period = AnalysisPeriod(timestep=self.timestep)
+
+        average_values = []
+        median_values = []
+        minimum_values = []
+        maximum_values = []
+        cumulative_values = []
+        for grid_info in grids_info:
+            array = self._array_from_states(grid_info, states=states, res_type=res_type)
+            if np.any(array):
+                array_filter = filter_array2d(array, mask=mask)
+                if axis == 1:
+                    full_length = len(self.study_hours) if not hoys else len(hoys)
+                else:
+                    full_length = grid_info['count']
+                _average_values = average_values_array2d(array_filter, full_length, axis=axis)
+                if axis == 1:
+                    median_array_filter = self.pad_array_for_median(
+                        array_filter, hoys, self.sun_down_hours, grid_info['count'])
+                else:
+                    median_array_filter = array_filter
+                _median_values = np.median(median_array_filter, axis=axis)
+                _minimum_values = np.amin(array_filter, axis=axis)
+                _maximum_values = np.amax(array_filter, axis=axis)
+                _cumulative_values = cumulative_values_array2d(
+                    array_filter, self.timestep, axis=axis)
+            else:
+                if axis == 1:
+                    _average_values = np.zeros(grid_info['count'])
+                    _median_values = np.zeros(grid_info['count'])
+                    _minimum_values = np.zeros(grid_info['count'])
+                    _maximum_values = np.zeros(grid_info['count'])
+                    _cumulative_values = np.zeros(grid_info['count'])
+                else:
+                    _average_values = np.zeros(len(self.sun_up_hours))[mask]
+                    _median_values = np.zeros(len(self.sun_up_hours))[mask]
+                    _minimum_values = np.zeros(len(self.sun_up_hours))[mask]
+                    _maximum_values = np.zeros(len(self.sun_up_hours))[mask]
+                    _cumulative_values = np.zeros(len(self.sun_up_hours))[mask]
+
+            if axis == 0:  # convert values to data collections
+                header = Header(self.datatype, self.unit, analysis_period)
+                header.metadata['Sensor Grid'] = grid_info['full_id']
+                sun_up_hours = np.array(self.sun_up_hours)[mask].ravel()
+
+                annual_array = self.values_to_annual(
+                    sun_up_hours, _average_values, self.timestep)
+                average_header = header.duplicate()
+                average_header.metadata['Metric'] = 'Average'
+                _average_values = HourlyContinuousCollection(average_header, annual_array.tolist())
+
+                annual_array = self.values_to_annual(
+                    sun_up_hours, _median_values, self.timestep)
+                median_header = header.duplicate()
+                median_header.metadata['Metric'] = 'Median'
+                _median_values = HourlyContinuousCollection(median_header, annual_array.tolist())
+
+                annual_array = self.values_to_annual(
+                    sun_up_hours, _minimum_values, self.timestep)
+                minimum_header = header.duplicate()
+                minimum_header.metadata['Metric'] = 'Minimum'
+                _minimum_values = HourlyContinuousCollection(minimum_header, annual_array.tolist())
+
+                annual_array = self.values_to_annual(
+                    sun_up_hours, _maximum_values, self.timestep)
+                maximum_header = header.duplicate()
+                maximum_header.metadata['Metric'] = 'Maximum'
+                _maximum_values = HourlyContinuousCollection(maximum_header, annual_array.tolist())
+
+                annual_array = self.values_to_annual(
+                    sun_up_hours, _cumulative_values, self.timestep)
+                cumulative_header = header.duplicate()
+                cumulative_header.metadata['Metric'] = 'Cumulative'
+                _cumulative_values = HourlyContinuousCollection(
+                    cumulative_header, annual_array.tolist())
+
+            average_values.append(_average_values)
+            median_values.append(_median_values)
+            minimum_values.append(_minimum_values)
+            maximum_values.append(_maximum_values)
+            cumulative_values.append(_cumulative_values)
+
+        return (average_values, median_values, minimum_values, maximum_values,
+                cumulative_values, grids_info)
+
+    def annual_summary_to_folder(
+            self, target_folder: str, hoys: list = None, states: DynamicSchedule = None,
+            grids_filter: str = '*', res_type: str = 'total', axis: int = 1):
+        """Compute annual summary statistics (average, median, minimum, maximum,
+        cumulative) for each sensor or timestep and write the values to a folder.
+
+        If hoys is left as None, the average will be computed for all study hours,
+        i.e., including sun down hours. This will likely lead to low average
+        and median values for a usual annual study.
+
+        Args:
+            target_folder: Folder path to write annual metrics in. Usually this
+                folder is called 'metrics'.
+            hoys: An optional list of numbers to select the hours of the year
+                (HOYs) for which results will be computed.
+            states: A dictionary of states. Defaults to None.
+            grids_filter: The name of a grid or a pattern to filter the grids.
+                Defaults to '*'.
+            res_type: Type of results to load. Defaults to 'total'.
+            axis: Axis along which statistics are computed:
+                - 1: compute per-sensor statistics over time (default)
+                - 0: compute per-timestep statistics across sensors; results are
+                     converted into HourlyContinuousCollection objects.
+        """
+        folder = Path(target_folder)
+        folder.mkdir(parents=True, exist_ok=True)
+
+        hoys = [] if hoys is None else hoys
+
+        (
+            average_values,
+            median_values,
+            minimum_values,
+            maximum_values,
+            cumulative_values,
+            grids_info
+        ) = self.annual_summary(
+            hoys=hoys, states=states, grids_filter=grids_filter,
+            res_type=res_type, axis=axis
+        )
+
+        metrics = {
+            'average': average_values,
+            'median': median_values,
+            'minimum': minimum_values,
+            'maximum': maximum_values,
+            'cumulative': cumulative_values,
+        }
+
+        for metric_name in metrics:
+            metric_folder = folder.joinpath(f'{metric_name}_values')
+            metric_folder.mkdir(parents=True, exist_ok=True)
+            metric_folder.joinpath('grids_info.json').write_text(json.dumps(grids_info))
+
+        for idx, grid_info in enumerate(grids_info):
+            full_id = grid_info['full_id']
+            if axis == 1:
+                for metric_name, metric_values in metrics.items():
+                    data = metric_values[idx]
+                    metric_folder = folder.joinpath(f'{metric_name}_values')
+                    out_file = metric_folder.joinpath(f'{full_id}.{metric_name}')
+                    out_file.parent.mkdir(parents=True, exist_ok=True)
+                    np.savetxt(out_file, data, fmt="%.2f")
+            else:
+                for metric_name, metric_values in metrics.items():
+                    collection = metric_values[idx]
+                    data_dict = collection.to_dict()
+
+                    metric_folder = folder.joinpath(f'{metric_name}_values')
+                    out_file = metric_folder.joinpath(f'{full_id}_{metric_name}.json')
+                    out_file.parent.mkdir(parents=True, exist_ok=True)
+                    out_file.write_text(json.dumps(data_dict))
+
     def _array_to_annual_data(
             self, grid_info, states: DynamicSchedule = None,
             sensor_index: list = None, res_type: str = 'total'
@@ -937,7 +1127,8 @@ class Results(_ResultsFolder):
     def values_to_annual(
             hours: Union[List[float], np.ndarray],
             values: Union[List[float], np.ndarray],
-            timestep: int, base_value: int = 0,
+            timestep: int,
+            base_value: int = 0,
             dtype: np.dtype = np.float32) -> np.ndarray:
         """Map a 1D NumPy array based on a set of hours to an annual array.
 
@@ -962,7 +1153,8 @@ class Results(_ResultsFolder):
         if not isinstance(hours, np.ndarray):
             hours = np.array(hours)
         check_array_dim(values, 1)
-        assert hours.shape == values.shape
+        assert hours.shape == values.shape, \
+            (f'Shape of hours {hours.shape} must be the same as shape of values {values.shape}.')
 
         full_ap = np.array(AnalysisPeriod(timestep=timestep).hoys)
         indices = np.where(np.isin(full_ap, hours))[0]
@@ -971,6 +1163,37 @@ class Results(_ResultsFolder):
         annual_array[indices] = values
 
         return annual_array
+
+    @staticmethod
+    def pad_array_for_median(
+            array: np.ndarray, hoys: list, sun_down_hours: list, sensor_count: int
+        ) -> np.ndarray:
+        """Pad a filtered 2D result array with zeros so that median values correctly
+        account for sun-down hours.
+
+        - If no HOYs are given, pad with all sun-down hours.
+        - If HOYs are given, pad only with those HOYs that fall in sun-down hours.
+
+        Args:
+            array: 2D NumPy array of shape (sensor_count, N_filtered_hours).
+            hoys: List of selected hours-of-year (empty means all sun-up hours).
+            sun_down_hours: List of HOYs when the sun is down.
+            sensor_count: Number of sensors in the grid (array rows).
+
+        Returns:
+            A new 2D NumPy array padded with zero columns for sun-down hours.
+        """
+        if not hoys:
+            sdh_count = len(sun_down_hours)
+        else:
+            sdh_count = len(set(sun_down_hours).intersection(hoys))
+
+        if sdh_count == 0:
+            return array
+
+        zero_pad = np.zeros((sensor_count, sdh_count))
+
+        return np.concatenate((array, zero_pad), axis=1)
 
     def _index_from_datetime(self, datetime: DateTime) -> Union[int, None]:
         """Returns the index of the input datetime in the list of datetimes
