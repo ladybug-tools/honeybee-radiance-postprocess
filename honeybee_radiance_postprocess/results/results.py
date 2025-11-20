@@ -797,10 +797,10 @@ class Results(_ResultsFolder):
         info_file = metric_folder.joinpath('grids_info.json')
         info_file.write_text(json.dumps(grids_info))
 
-    def annual_summary(
+    def annual_statistics(
             self, hoys: list = None, states: DynamicSchedule = None, grids_filter: str = '*',
             res_type: str = 'total', axis: int = 1):
-        """Compute annual summary statistics (average, median, minimum, maximum,
+        """Compute annual statistics (average, median, minimum, maximum,
         cumulative) for each sensor or timestep.
 
         If hoys is left as None, the average will be computed for all study hours,
@@ -926,10 +926,10 @@ class Results(_ResultsFolder):
         return (average_values, median_values, minimum_values, maximum_values,
                 cumulative_values, grids_info)
 
-    def annual_summary_to_folder(
+    def annual_statistics_to_folder(
             self, target_folder: str, hoys: list = None, states: DynamicSchedule = None,
             grids_filter: str = '*', res_type: str = 'total', axis: int = 1):
-        """Compute annual summary statistics (average, median, minimum, maximum,
+        """Compute summary statistics (average, median, minimum, maximum,
         cumulative) for each sensor or timestep and write the values to a folder.
 
         If hoys is left as None, the average will be computed for all study hours,
@@ -962,7 +962,7 @@ class Results(_ResultsFolder):
             maximum_values,
             cumulative_values,
             grids_info
-        ) = self.annual_summary(
+        ) = self.annual_statistics(
             hoys=hoys, states=states, grids_filter=grids_filter,
             res_type=res_type, axis=axis
         )

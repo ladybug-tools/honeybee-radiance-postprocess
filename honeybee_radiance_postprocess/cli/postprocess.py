@@ -505,7 +505,7 @@ def annual_to_data(
         sys.exit(0)
 
 
-@post_process.command('annual-summary')
+@post_process.command('annual-statistics')
 @click.argument(
     'folder',
     type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
@@ -536,12 +536,12 @@ def annual_to_data(
 
 @click.option(
     '--sub-folder', '-sf', help='Optional relative path for subfolder to write output '
-    'metric files.', default='metrics'
+    'statistics files.', default='statistics'
 )
-def annual_summary(
+def annual_statistics(
     folder, hoys_file, states, grids_filter, total, sensor, sub_folder
 ):
-    """Get annual summary statistics (average, median, minimum, maximum, cumulative).
+    """Get annual statistics (average, median, minimum, maximum, cumulative).
 
     \b
     Args:
@@ -565,11 +565,11 @@ def annual_summary(
         axis = 1 if sensor is True else 0
 
         results = AnnualDaylight(folder)
-        results.annual_summary_to_folder(
+        results.annual_statistics_to_folder(
             sub_folder, hoys=hoys, states=states, grids_filter=grids_filter,
             res_type=res_type, axis=axis)
     except Exception:
-        _logger.exception('Failed to calculate annual summary.')
+        _logger.exception('Failed to calculate annual statistics.')
         sys.exit(1)
     else:
         sys.exit(0)
