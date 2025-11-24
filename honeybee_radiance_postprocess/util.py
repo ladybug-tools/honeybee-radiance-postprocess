@@ -86,12 +86,8 @@ def filter_array2d(array: np.ndarray, mask: np.ndarray) -> np.ndarray:
     Returns:
         A filtered NumPy array.
     """
-    if is_cpu:
-        array_filter = np.apply_along_axis(
-            filter_array, 1, array, mask=mask)
-    else:
-        mask = np.asarray(mask).astype(bool)
-        array_filter = array[:, mask]
+    mask = np.asarray(mask).astype(bool)
+    array_filter = array[:, mask]
 
     return array_filter
 
