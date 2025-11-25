@@ -4,12 +4,6 @@ from pathlib import Path
 from itertools import islice, cycle
 from typing import Tuple, Union, List
 import itertools
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
 
 from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.datacollection import HourlyContinuousCollection
@@ -18,6 +12,7 @@ from ladybug.datatype.base import DataTypeBase
 from ladybug.dt import DateTime
 from ladybug.header import Header
 
+from .. import np
 from ..annual import occupancy_schedule_8_to_6
 from ..metrics import (average_values_array2d, cumulative_values_array2d,
     peak_values_array2d)
@@ -25,8 +20,6 @@ from ..util import filter_array2d, hoys_mask, check_array_dim, \
     _filter_grids_by_pattern
 from .. import type_hints
 from ..dynamic import DynamicSchedule, ApertureGroupSchedule
-
-is_cpu = not is_gpu
 
 
 class _ResultsFolder(object):

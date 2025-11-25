@@ -5,12 +5,6 @@ import os
 import logging
 import json
 import click
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
 
 from ladybug.location import Location
 from ladybug.wea import Wea
@@ -19,6 +13,7 @@ from honeybee_radiance_postprocess.metrics import da_array2d, cda_array2d, \
     udi_array2d, udi_lower_array2d, udi_upper_array2d
 from honeybee_radiance_postprocess.reader import binary_to_array
 
+from .. import np
 from ..annual import occupancy_schedule_8_to_6
 from ..dynamic import DynamicSchedule
 from ..en17037 import en17037_to_folder

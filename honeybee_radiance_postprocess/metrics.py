@@ -1,15 +1,8 @@
 """Functions to calculate various metrics for 1D and 2D NumPy arrays."""
 from typing import Tuple, Union
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
 
+from . import np, IS_CPU
 from .util import check_array_dim
-
-is_cpu = not is_gpu
 
 
 def da_array2d(
@@ -80,13 +73,20 @@ def cda_array2d(
         # set total_occ to number of columns in array
         total_occ = array.shape[1]
 
-    if is_cpu:
-        cda = np.apply_along_axis(
-                cda_array1d, 1, array, total_occ=total_occ, threshold=threshold)
-    else:
-        cda = np.where(array >= threshold, 1, array / threshold).sum(axis=1) / total_occ * 100
+    cda = cda_array2d_wrapper(array, total_occ, threshold)
 
     return cda
+
+
+def cda_array2d_wrapper(array, total_occ, threshold):
+    """Compute cDA for a 2D array using NumPy (CPU) or CuPy (GPU)."""
+    if IS_CPU:
+        return np.apply_along_axis(
+            cda_array1d, 1, array, total_occ=total_occ, threshold=threshold
+        )
+
+    return (np.where(array >= threshold, 1, array / threshold)
+            .sum(axis=1) / total_occ * 100)
 
 
 def cda_array1d(
@@ -133,13 +133,21 @@ def udi_array2d(
         # set total_occ to number of columns in array
         total_occ = array.shape[1]
 
-    if is_cpu:
-        udi = np.apply_along_axis(
-                udi_array1d, 1, array, total_occ=total_occ, min_t=min_t, max_t=max_t)
-    else:
-        udi = ((array >= min_t) & (array <= max_t)).sum(axis=1) / total_occ * 100
+    udi = udi_array2d_wrapper(array, total_occ, min_t, max_t)
 
     return udi
+
+
+def udi_array2d_wrapper(array, total_occ, min_t, max_t):
+    """Compute UDI for a 2D array using NumPy (CPU) or CuPy (GPU)."""
+    if IS_CPU:
+        return np.apply_along_axis(
+            udi_array1d, 1, array,
+            total_occ=total_occ, min_t=min_t, max_t=max_t
+        )
+
+    return (((array >= min_t) & (array <= max_t))
+            .sum(axis=1) / total_occ * 100)
 
 
 def udi_array1d(
@@ -186,17 +194,24 @@ def udi_lower_array2d(
         # set total_occ to number of columns in array
         total_occ = array.shape[1]
 
-    if is_cpu:
-        udi = np.apply_along_axis(
-                udi_lower_array1d, 1, array, total_occ=total_occ, min_t=min_t,
-                sun_down_occ_hours=sun_down_occ_hours)
-    else:
-        if min_t == 0:
-            return np.zeros(array.shape[0], dtype=np.float32)
-
-        udi = ((array < min_t).sum(axis=1) + sun_down_occ_hours) / total_occ * 100
+    udi = udi_lower_array2d_wrapper(array, total_occ, min_t, sun_down_occ_hours)
 
     return udi
+
+
+def udi_lower_array2d_wrapper(array, total_occ, min_t, sun_down_occ_hours):
+    """Compute UDI lower for a 2D array using NumPy (CPU) or CuPy (GPU)."""
+    if IS_CPU:
+        return np.apply_along_axis(
+            udi_lower_array1d, 1, array, total_occ=total_occ, min_t=min_t,
+            sun_down_occ_hours=sun_down_occ_hours
+        )
+
+    if min_t == 0:
+        return np.zeros(array.shape[0], dtype=np.float32)
+
+    return (((array < min_t).sum(axis=1) + sun_down_occ_hours)
+            / total_occ * 100)
 
 
 def udi_lower_array1d(
@@ -245,13 +260,20 @@ def udi_upper_array2d(
         # set total_occ to number of columns in array
         total_occ = array.shape[1]
 
-    if is_cpu:
-        udi = np.apply_along_axis(
-                udi_upper_array1d, 1, array, total_occ=total_occ, max_t=max_t)
-    else:
-        udi = (array > max_t).sum(axis=1) / total_occ * 100
+    udi = udi_upper_array2d_wrapper(array, total_occ, max_t)
 
     return udi
+
+
+def udi_upper_array2d_wrapper(array, total_occ, max_t):
+    """Compute UDI upper for a 2D array using NumPy (CPU) or CuPy (GPU)."""
+    if IS_CPU:
+        return np.apply_along_axis(
+            udi_upper_array1d, 1, array,
+            total_occ=total_occ, max_t=max_t
+        )
+
+    return ((array > max_t).sum(axis=1) / total_occ * 100)
 
 
 def udi_upper_array1d(

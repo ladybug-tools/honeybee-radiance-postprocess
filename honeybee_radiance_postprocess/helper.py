@@ -1,14 +1,11 @@
 """Helper functions."""
 import json
 from pathlib import Path
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
+from typing import List
 
 from honeybee.model import Model
+
+from . import np, IS_CPU
 
 
 def model_grid_areas(model, grids_info):
@@ -148,28 +145,51 @@ def grid_summary(
 
         arrays.append(tuple(data))
 
-    # create structured array
-    if is_gpu:
-        struct_array = None
-    else:
+    grid_summary_file = write_structured_array_to_file(
+        folder, name, arrays, dtype, fmt)
+
+    return grid_summary_file
+
+
+def write_structured_array_to_file(
+        folder: Path, name: str, arrays: List[tuple], dtype: List[tuple],
+        fmt: List[str]) -> Path:
+    """Write structured array data to a CSV file. Uses NumPy for CPU mode and
+    manual formatting for CuPy mode.
+
+    Args:
+        folder: Path object to the output folder.
+        name: File name without extension.
+        arrays: 2D array-like data.
+        dtype: Structured dtype definition (list of (field_name, dtype)).
+        fmt: List/tuple of printf-style formats for each column.
+
+    Returns:
+        Path to the written CSV file.
+    """
+    if IS_CPU:
         struct_array = np.array(arrays, dtype=dtype)
+    else:
+        struct_array = None
+
+    filepath = folder.joinpath(f'{name}.csv')
 
     header = [dt[0] for dt in dtype]
-    # write header to file
-    with open(folder.joinpath(f'{name}.csv'), 'w') as grid_summary_file:
-        grid_summary_file.write(','.join(header))
-    # write structured array to grid_summary_file
-    with open(folder.joinpath(f'{name}.csv'), 'a') as grid_summary_file:
-        grid_summary_file.write('\n')
-        if is_gpu:
+
+    with open(filepath, 'w') as f:
+        f.write(','.join(header))
+
+    with open(filepath, 'a') as f:
+        f.write('\n')
+        if IS_CPU:
+            np.savetxt(f, struct_array, delimiter=',', fmt=fmt)
+        else:
             # CuPy doesn't support structured arrays; manually format rows
             for row in arrays:
                 row_str = ','.join(fmt_val % val for fmt_val, val in zip(fmt, row))
-                grid_summary_file.write(row_str + '\n')
-        else:
-            np.savetxt(grid_summary_file, struct_array, delimiter=',', fmt=fmt)
+                f.write(row_str + '\n')
 
-    return grid_summary_file
+    return filepath
 
 
 def _calculate_percentage(gr_metric_bool, grid_info, grid_area=None):

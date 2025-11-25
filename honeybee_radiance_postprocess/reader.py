@@ -1,11 +1,5 @@
 """Post-processing reader functions."""
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
-
+from . import np
 from .util import binary_mtx_dimension
 
 

@@ -1,13 +1,9 @@
 """Type hints for honeybee-radiance-postprocess."""
 from typing import Tuple, List
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
 
 from ladybug.datacollection import HourlyContinuousCollection
+
+from . import np
 
 
 annual_metric = Tuple[List[np.ndarray], List[dict]]

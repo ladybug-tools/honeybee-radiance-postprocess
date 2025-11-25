@@ -1,14 +1,9 @@
 import json
 from pathlib import Path
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
 
 from ladybug.datatype.energyflux import EnergyFlux
 
+from .. import np
 from ..metrics import (average_values_array2d, cumulative_values_array2d,
     peak_values_array2d)
 from ..util import filter_array, hoys_mask

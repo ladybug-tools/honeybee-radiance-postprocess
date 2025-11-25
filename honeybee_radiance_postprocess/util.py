@@ -1,15 +1,9 @@
 """Post-processing utility functions."""
 from typing import Tuple
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
 
 from honeybee_radiance.writer import _filter_by_pattern
 
-is_cpu = not is_gpu
+from . import np
 
 
 def binary_mtx_dimension(filepath: str) -> Tuple[int, int, int, int, str]:

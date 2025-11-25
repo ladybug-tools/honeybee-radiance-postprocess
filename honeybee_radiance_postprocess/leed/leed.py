@@ -4,12 +4,6 @@ from pathlib import Path
 from collections import defaultdict
 import json
 import itertools
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
 
 from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.datatype.generic import GenericType
@@ -24,14 +18,13 @@ from honeybee.units import conversion_factor_to_meters
 from honeybee_radiance.writer import _filter_by_pattern
 from honeybee_radiance.postprocess.annual import filter_schedule_by_hours
 
+from .. import np
 from ..metrics import da_array2d, ase_array2d
 from ..annual import schedule_to_hoys, occupancy_schedule_8_to_6
 from ..results.annual_daylight import AnnualDaylight
 from ..util import recursive_dict_merge, filter_array2d
 from ..dynamic import DynamicSchedule, ApertureGroupSchedule
 from .leed_schedule import shd_trans_schedule_descending, states_schedule_descending
-
-is_cpu = not is_gpu
 
 
 def _create_grid_summary(

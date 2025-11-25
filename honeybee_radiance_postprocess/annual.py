@@ -1,16 +1,10 @@
 """Shared functions for post-processing annual results."""
 from typing import Union
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
 
 from ladybug.analysisperiod import AnalysisPeriod
-from .util import filter_array
 
-is_cpu = not is_gpu
+from . import np
+from .util import filter_array
 
 
 def occupancy_schedule_8_to_6(

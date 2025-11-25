@@ -2,15 +2,10 @@
 from typing import Tuple, Union
 from collections import defaultdict
 import itertools
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
 
 from honeybee_radiance.postprocess.annual import filter_schedule_by_hours
 
+from .. import np
 from ..annual import schedule_to_hoys, occupancy_schedule_8_to_6
 from ..results.annual_daylight import AnnualDaylight
 from ..util import filter_array

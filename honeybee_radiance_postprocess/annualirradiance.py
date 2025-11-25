@@ -1,5 +1,4 @@
 """Functions for post-processing annual irradiance outputs."""
-
 from ladybug.datatype.energyflux import EnergyFlux
 from ladybug.datatype.energyintensity import EnergyIntensity
 from ladybug.legend import LegendParameters

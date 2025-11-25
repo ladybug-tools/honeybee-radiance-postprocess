@@ -4,18 +4,13 @@ import sys
 import logging
 from pathlib import Path
 import click
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
 
 from honeybee.model import Model
 from honeybee.room import Room
 from ladybug_geometry.geometry3d.face import Face3D
 from ladybug_geometry.geometry3d.pointvector import Vector3D
 
+from .. import np
 from ..vis_metadata import _abnt_nbr_15575_daylight_levels_vis_metadata
 
 
