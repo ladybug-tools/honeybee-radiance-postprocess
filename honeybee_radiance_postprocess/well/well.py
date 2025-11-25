@@ -2,7 +2,6 @@
 from typing import Tuple, Union
 from pathlib import Path
 import json
-import numpy as np
 
 from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.datacollection import HourlyContinuousCollection
@@ -12,6 +11,7 @@ from honeybee.model import Model
 from honeybee.units import conversion_factor_to_meters
 from honeybee_radiance.writer import _filter_by_pattern
 
+from .. import np
 from ..metrics import da_array2d
 from ..annual import occupancy_schedule_8_to_6
 from ..results.annual_daylight import AnnualDaylight

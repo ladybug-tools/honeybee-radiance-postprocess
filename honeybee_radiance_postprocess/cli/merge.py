@@ -1,17 +1,13 @@
 """honeybee radiance postprocess merge commands."""
-import click
 import sys
 import logging
 import json
 from pathlib import Path
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
+import click
 
 from honeybee_radiance_postprocess.reader import binary_to_array
+
+from .. import np
 
 _logger = logging.getLogger(__name__)
 

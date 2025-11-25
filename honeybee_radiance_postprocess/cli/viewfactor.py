@@ -1,15 +1,9 @@
 """Commands to compute view factors to geometry."""
-import click
 import os
 import sys
 import logging
 import math
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
+import click
 
 from honeybee_radiance.config import folders
 
@@ -19,6 +13,8 @@ from honeybee_radiance_command._command_util import run_command
 from ladybug.futil import preparedir
 
 from honeybee_radiance_postprocess.reader import binary_to_array
+
+from .. import np
 
 _logger = logging.getLogger(__name__)
 

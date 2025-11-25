@@ -1,12 +1,6 @@
 import json
 from pathlib import Path
 from typing import Tuple, List
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
 
 from collections import defaultdict
 
@@ -16,17 +10,16 @@ from ladybug.datatype.illuminance import Illuminance
 from ladybug.datatype.fraction import Fraction
 from ladybug.header import Header
 
+from .. import np
 from ..annual import occupancy_schedule_8_to_6
 from ..metrics import da_array2d, cda_array2d, udi_array2d, udi_lower_array2d, \
     udi_upper_array2d, ase_array2d
-from ..util import filter_array, filter_array2d
+from ..util import filter_array2d
 from ..annualdaylight import _annual_daylight_vis_metadata
 from ..electriclight import array_to_dimming_fraction
 from .. import type_hints
 from ..dynamic import DynamicSchedule, ApertureGroupSchedule
 from .results import Results
-
-is_cpu = not is_gpu
 
 
 class AnnualDaylight(Results):

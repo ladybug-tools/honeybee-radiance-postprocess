@@ -1,12 +1,7 @@
 """Module for dynamic LM schedules."""
 from typing import Tuple
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
 
+from .. import np
 from ..results.annual_daylight import AnnualDaylight
 from ..util import filter_array
 

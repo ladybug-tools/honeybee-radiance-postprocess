@@ -1,6 +1,7 @@
-from ladybug.analysisperiod import AnalysisPeriod
 from datetime import datetime
 import copy
+
+from ladybug.analysisperiod import AnalysisPeriod
 
 
 def get_hoys(start_date, start_time, end_date, end_time, timestep, leap_year):

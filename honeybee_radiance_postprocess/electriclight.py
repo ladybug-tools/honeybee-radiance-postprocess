@@ -1,11 +1,6 @@
 """Functions for post-processing daylight outputs into electric lighting schedules."""
 from typing import List
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
+from . import np
 
 
 def array_to_dimming_fraction(

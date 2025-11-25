@@ -3,15 +3,10 @@ import sys
 import logging
 from pathlib import Path
 import shutil
-import click
 import json
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
+import click
 
+from .. import np
 from ..reader import binary_to_array
 from ..util import get_delimiter
 

@@ -1,20 +1,16 @@
 """Commands to work with data collections."""
 import sys
 import logging
+import json
 from pathlib import Path
 import click
-import json
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
 
 from ladybug.datacollection import HourlyContinuousCollection, \
     HourlyDiscontinuousCollection
 from ladybug.header import Header
 from ladybug.datautil import collections_to_csv
+
+from .. import np
 
 
 _logger = logging.getLogger(__name__)

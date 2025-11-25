@@ -2,17 +2,12 @@
 from typing import Union
 from pathlib import Path
 import json
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
 
 from ladybug.color import Colorset
 from ladybug.datatype.fraction import Fraction
 from ladybug.legend import LegendParameters
 
+from . import np
 from .results.annual_daylight import AnnualDaylight
 from .dynamic import DynamicSchedule
 from .metrics import da_array2d

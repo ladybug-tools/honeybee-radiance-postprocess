@@ -1,15 +1,6 @@
-"""Functions for post-processing annual daylight outputs.
-
-Note: These functions will most likely be moved to a separate package in the near future.
-"""
+"""Functions for post-processing annual daylight outputs."""
 import json
 import os
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
 
 from ladybug.color import Colorset
 from ladybug.datatype.fraction import Fraction
@@ -17,6 +8,7 @@ from ladybug.legend import LegendParameters
 from honeybee_radiance.postprocess.annual import filter_schedule_by_hours, \
     _process_input_folder
 
+from . import np
 from .metrics import da_array2d, cda_array2d, udi_array2d, \
     udi_lower_array2d, udi_upper_array2d
 from .util import filter_array
