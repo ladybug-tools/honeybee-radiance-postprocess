@@ -14,8 +14,7 @@ except ImportError:
 
 from ladybug.location import Location
 from ladybug.wea import Wea
-from honeybee_radiance_postprocess.results.annual_daylight import AnnualDaylight
-from honeybee_radiance_postprocess.results.annual_irradiance import AnnualIrradiance
+from honeybee_radiance_postprocess.results import AnnualDaylight, AnnualIrradiance
 from honeybee_radiance_postprocess.metrics import da_array2d, cda_array2d, \
     udi_array2d, udi_lower_array2d, udi_upper_array2d
 from honeybee_radiance_postprocess.reader import binary_to_array
@@ -564,7 +563,20 @@ def annual_statistics(
 
         axis = 1 if sensor is True else 0
 
-        results = AnnualDaylight(folder)
+        study_info_file = Path(folder).joinpath('study_info.json')
+        if study_info_file.exists():
+            with open(study_info_file) as file:
+                study_info = json.load(file)
+            study_type = study_info.get('study_type', 'annual-daylight')
+        else:
+            study_type = 'annual-daylight'
+
+        if study_type == 'annual-daylight':
+            results = AnnualDaylight(folder)
+        elif study_type == 'annual-irradiance':
+            results = AnnualIrradiance(folder)
+        else:
+            raise ValueError(f'Unknown study type: {study_type}.')
         results.annual_statistics_to_folder(
             sub_folder, hoys=hoys, states=states, grids_filter=grids_filter,
             res_type=res_type, axis=axis)
