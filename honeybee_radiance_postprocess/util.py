@@ -86,10 +86,10 @@ def filter_array2d(array: np.ndarray, mask: np.ndarray) -> np.ndarray:
     Returns:
         A filtered NumPy array.
     """
-    mask = np.asarray(mask).astype(bool)
-    array_filter = array[:, mask]
-
-    return array_filter
+    if mask is not None:
+        mask = np.asarray(mask).astype(bool)
+        array = array[:, mask]
+    return array
 
 
 def filter_array(array: np.ndarray, mask: np.ndarray) -> np.ndarray:
