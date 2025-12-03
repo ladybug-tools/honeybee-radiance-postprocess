@@ -9,13 +9,18 @@ try:
         device_name = device_props['name'].decode()
     except Exception:
         device_name = 'Unknown GPU'
-    print(f'Using CuPy ({np.__version__}) for GPU ({device_name}) acceleration in honeybee-radiance-postprocess.')
+    msg = (f'Using CuPy ({np.__version__}) for GPU ({device_name}) acceleration in '
+           'honeybee-radiance-postprocess.')
+    print(msg)
 except ModuleNotFoundError:
     import numpy as np
     IS_GPU = False
 except Exception as e:
     import numpy as np
     IS_GPU = False
-    print(f'Falling back to NumPy ({np.__version__}) in honeybee-radiance-postprocess: {e}')
+    msg = (f'Failed to load CuPy successfully. '
+           'Help: https://github.com/ladybug-tools/honeybee-radiance-postprocess/blob/master/CUPY.md. '
+           f'Falling back to NumPy ({np.__version__}) in honeybee-radiance-postprocess: {e}')
+    print(msg)
 
 IS_CPU = not IS_GPU
