@@ -2,16 +2,11 @@
 from typing import Union
 from pathlib import Path
 import json
-try:
-    import cupy as np
-    is_gpu = True
-except ImportError:
-    is_gpu = False
-    import numpy as np
 
 from honeybee.model import Model
 from honeybee_radiance.writer import _filter_by_pattern
 
+from .. import np
 from ..results.annual_daylight import AnnualDaylight
 
 
