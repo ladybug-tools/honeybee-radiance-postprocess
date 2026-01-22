@@ -1,3 +1,3 @@
-honeybee-radiance==1.66.220
+honeybee-radiance==1.66.221
 numpy<2.0.0
 cupy-cuda12x==13.6.0
