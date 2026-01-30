@@ -1,0 +1,6 @@
+merge
+=====
+
+.. click:: honeybee_radiance_postprocess.cli.merge:merge
+   :prog: honeybee-radiance-postprocess merge
+   :show-nested:

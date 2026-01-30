@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Overview: module code &#8212; honeybee-radiance-postprocess  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=0bf093e7" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e6365d57" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<link rel="icon" type="image/x-icon" href="https://github.com/ladybug-tools/artwork/raw/refs/heads/master/icons_bugs/ico/honeybee.ico">
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          honeybee-radiance-postprocess</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../cli/index.html#commands">Commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../cli/main.html">main</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess">honeybee-radiance-postprocess</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-datacollection">datacollection</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-datacollection-folder-to-datacollections">folder-to-datacollections</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-datacollection-npy-to-datacollections">npy-to-datacollections</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-grid">grid</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-grid-merge-folder">merge-folder</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-grid-merge-folder-metrics">merge-folder-metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-merge">merge</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-merge-merge-files">merge-files</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-mtxop">mtxop</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-mtxop-operate-three">operate-three</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-mtxop-operate-two">operate-two</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process">post-process</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-abnt">abnt</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-abnt-abnt-nbr-15575">abnt-nbr-15575</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-annual-daylight">annual-daylight</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-annual-daylight-en17037">annual-daylight-en17037</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-annual-daylight-file">annual-daylight-file</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-annual-irradiance">annual-irradiance</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-annual-statistics">annual-statistics</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-annual-sunlight-exposure">annual-sunlight-exposure</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-annual-to-data">annual-to-data</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-annual-uniformity-ratio">annual-uniformity-ratio</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-average-values">average-values</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-breeam">breeam</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-breeam-breeam-4b">breeam-4b</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-breeam-breeam-4b-vis-metadata">breeam-4b-vis-metadata</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-convert-to-binary">convert-to-binary</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-cumulative-values">cumulative-values</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-direct-sun-hours">direct-sun-hours</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-grid-summary">grid-summary</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-leed">leed</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-leed-daylight-option-one">daylight-option-one</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-leed-leed-daylight-option-one-vis-metadata">leed-daylight-option-one-vis-metadata</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-median-values">median-values</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-peak-values">peak-values</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-point-in-time">point-in-time</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-two-phase">two-phase</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-two-phase-add-remove-sky-matrix">add-remove-sky-matrix</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-two-phase-rgb-to-illuminance">rgb-to-illuminance</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-two-phase-rgb-to-illuminance-file">rgb-to-illuminance-file</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-well">well</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-well-well-annual-daylight">well-annual-daylight</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-post-process-well-well-daylight-vis-metadata">well-daylight-vis-metadata</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-schedule">schedule</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-schedule-control-schedules">control-schedules</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-translate">translate</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-translate-annual-daylight-npy-to-ill">annual-daylight-npy-to-ill</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-translate-binary-to-npy">binary-to-npy</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-translate-npy-to-txt">npy-to-txt</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-translate-txt-to-npy">txt-to-npy</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-view-factor">view-factor</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../cli/main.html#honeybee-radiance-postprocess-view-factor-contrib">contrib</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../cli/translate.html">translate</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../cli/translate.html#honeybee-radiance-postprocess-translate">honeybee-radiance-postprocess translate</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../cli/translate.html#honeybee-radiance-postprocess-translate-annual-daylight-npy-to-ill">annual-daylight-npy-to-ill</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/translate.html#honeybee-radiance-postprocess-translate-binary-to-npy">binary-to-npy</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/translate.html#honeybee-radiance-postprocess-translate-npy-to-txt">npy-to-txt</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/translate.html#honeybee-radiance-postprocess-translate-txt-to-npy">txt-to-npy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../cli/viewfactor.html">viewfactor</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../cli/viewfactor.html#honeybee-radiance-postprocess-view-factor">honeybee-radiance-postprocess view_factor</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../cli/viewfactor.html#honeybee-radiance-postprocess-view-factor-contrib">contrib</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../cli/schedule.html">schedule</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../cli/schedule.html#honeybee-radiance-postprocess-schedule">honeybee-radiance-postprocess schedule</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../cli/schedule.html#honeybee-radiance-postprocess-schedule-control-schedules">control-schedules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../cli/well.html">well</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../cli/well.html#honeybee-radiance-postprocess-well">honeybee-radiance-postprocess well</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../cli/well.html#honeybee-radiance-postprocess-well-well-annual-daylight">well-annual-daylight</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/well.html#honeybee-radiance-postprocess-well-well-daylight-vis-metadata">well-daylight-vis-metadata</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../cli/leed.html">leed</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../cli/leed.html#honeybee-radiance-postprocess-leed">honeybee-radiance-postprocess leed</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../cli/leed.html#honeybee-radiance-postprocess-leed-daylight-option-one">daylight-option-one</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/leed.html#honeybee-radiance-postprocess-leed-leed-daylight-option-one-vis-metadata">leed-daylight-option-one-vis-metadata</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../cli/breeam.html">breeam</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../cli/breeam.html#honeybee-radiance-postprocess-breeam">honeybee-radiance-postprocess breeam</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../cli/breeam.html#honeybee-radiance-postprocess-breeam-breeam-4b">breeam-4b</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/breeam.html#honeybee-radiance-postprocess-breeam-breeam-4b-vis-metadata">breeam-4b-vis-metadata</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../cli/postprocess.html">postprocess</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process">honeybee-radiance-postprocess post-process</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-abnt">abnt</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-abnt-abnt-nbr-15575">abnt-nbr-15575</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-annual-daylight">annual-daylight</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-annual-daylight-en17037">annual-daylight-en17037</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-annual-daylight-file">annual-daylight-file</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-annual-irradiance">annual-irradiance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-annual-statistics">annual-statistics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-annual-sunlight-exposure">annual-sunlight-exposure</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-annual-to-data">annual-to-data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-annual-uniformity-ratio">annual-uniformity-ratio</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-average-values">average-values</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-breeam">breeam</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-breeam-breeam-4b">breeam-4b</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-breeam-breeam-4b-vis-metadata">breeam-4b-vis-metadata</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-convert-to-binary">convert-to-binary</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-cumulative-values">cumulative-values</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-direct-sun-hours">direct-sun-hours</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-grid-summary">grid-summary</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-leed">leed</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-leed-daylight-option-one">daylight-option-one</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-leed-leed-daylight-option-one-vis-metadata">leed-daylight-option-one-vis-metadata</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-median-values">median-values</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-peak-values">peak-values</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-point-in-time">point-in-time</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-two-phase">two-phase</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-two-phase-add-remove-sky-matrix">add-remove-sky-matrix</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-two-phase-rgb-to-illuminance">rgb-to-illuminance</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-two-phase-rgb-to-illuminance-file">rgb-to-illuminance-file</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-well">well</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-well-well-annual-daylight">well-annual-daylight</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../cli/postprocess.html#honeybee-radiance-postprocess-post-process-well-well-daylight-vis-metadata">well-daylight-vis-metadata</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../cli/grid.html">grid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../cli/grid.html#honeybee-radiance-postprocess-grid">honeybee-radiance-postprocess grid</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../cli/grid.html#honeybee-radiance-postprocess-grid-merge-folder">merge-folder</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/grid.html#honeybee-radiance-postprocess-grid-merge-folder-metrics">merge-folder-metrics</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../cli/mtxop.html">mtxop</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../cli/mtxop.html#honeybee-radiance-postprocess-mtxop">honeybee-radiance-postprocess mtxop</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../cli/mtxop.html#honeybee-radiance-postprocess-mtxop-operate-three">operate-three</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/mtxop.html#honeybee-radiance-postprocess-mtxop-operate-two">operate-two</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../cli/merge.html">merge</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../cli/merge.html#honeybee-radiance-postprocess-merge">honeybee-radiance-postprocess merge</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../cli/merge.html#honeybee-radiance-postprocess-merge-merge-files">merge-files</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../cli/two_phase.html">two_phase</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../cli/two_phase.html#honeybee-radiance-postprocess-two-phase">honeybee-radiance-postprocess two_phase</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../cli/two_phase.html#honeybee-radiance-postprocess-two-phase-add-remove-sky-matrix">add-remove-sky-matrix</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/two_phase.html#honeybee-radiance-postprocess-two-phase-rgb-to-illuminance">rgb-to-illuminance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/two_phase.html#honeybee-radiance-postprocess-two-phase-rgb-to-illuminance-file">rgb-to-illuminance-file</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../cli/abnt.html">abnt</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../cli/abnt.html#honeybee-radiance-postprocess-abnt">honeybee-radiance-postprocess abnt</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../cli/abnt.html#honeybee-radiance-postprocess-abnt-abnt-nbr-15575">abnt-nbr-15575</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../cli/datacollection.html">datacollection</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../cli/datacollection.html#honeybee-radiance-postprocess-data-collection">honeybee-radiance-postprocess data-collection</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../cli/datacollection.html#honeybee-radiance-postprocess-data-collection-folder-to-datacollections">folder-to-datacollections</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cli/datacollection.html#honeybee-radiance-postprocess-data-collection-npy-to-datacollections">npy-to-datacollections</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../honeybee_radiance_postprocess.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.breeam.html">honeybee_radiance_postprocess.breeam package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.breeam.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.breeam.breeam.html">honeybee_radiance_postprocess.breeam.breeam module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.breeam.breeam.html#honeybee_radiance_postprocess.breeam.breeam.breeam_daylight_assessment_4b"><code class="docutils literal notranslate"><span class="pre">breeam_daylight_assessment_4b()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.breeam.html#module-honeybee_radiance_postprocess.breeam">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.html">honeybee_radiance_postprocess.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.abnt.html">honeybee_radiance_postprocess.cli.abnt module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.breeam.html">honeybee_radiance_postprocess.cli.breeam module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.datacollection.html">honeybee_radiance_postprocess.cli.datacollection module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.grid.html">honeybee_radiance_postprocess.cli.grid module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.grid.html#honeybee_radiance_postprocess.cli.grid.restore_original_distribution"><code class="docutils literal notranslate"><span class="pre">restore_original_distribution()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.grid.html#honeybee_radiance_postprocess.cli.grid.restore_original_distribution_metrics"><code class="docutils literal notranslate"><span class="pre">restore_original_distribution_metrics()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.leed.html">honeybee_radiance_postprocess.cli.leed module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.merge.html">honeybee_radiance_postprocess.cli.merge module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.mtxop.html">honeybee_radiance_postprocess.cli.mtxop module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.postprocess.html">honeybee_radiance_postprocess.cli.postprocess module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.schedule.html">honeybee_radiance_postprocess.cli.schedule module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.translate.html">honeybee_radiance_postprocess.cli.translate module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.two_phase.html">honeybee_radiance_postprocess.cli.two_phase module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.util.html">honeybee_radiance_postprocess.cli.util module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.util.html#honeybee_radiance_postprocess.cli.util.get_compare_func"><code class="docutils literal notranslate"><span class="pre">get_compare_func()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.util.html#honeybee_radiance_postprocess.cli.util.get_hoys"><code class="docutils literal notranslate"><span class="pre">get_hoys()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.util.html#honeybee_radiance_postprocess.cli.util.handle_operator"><code class="docutils literal notranslate"><span class="pre">handle_operator()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.util.html#honeybee_radiance_postprocess.cli.util.remove_header"><code class="docutils literal notranslate"><span class="pre">remove_header()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.viewfactor.html">honeybee_radiance_postprocess.cli.viewfactor module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.well.html">honeybee_radiance_postprocess.cli.well module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.cli.html#module-honeybee_radiance_postprocess.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.ies.html">honeybee_radiance_postprocess.ies package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.ies.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.ies.lm.html">honeybee_radiance_postprocess.ies.lm module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.ies.lm.html#honeybee_radiance_postprocess.ies.lm.dynamic_schedule_direct_illuminance"><code class="docutils literal notranslate"><span class="pre">dynamic_schedule_direct_illuminance()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.ies.lm.html#honeybee_radiance_postprocess.ies.lm.shade_transmittance_per_light_path"><code class="docutils literal notranslate"><span class="pre">shade_transmittance_per_light_path()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.ies.lm_schedule.html">honeybee_radiance_postprocess.ies.lm_schedule module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.ies.lm_schedule.html#honeybee_radiance_postprocess.ies.lm_schedule.shd_trans_schedule_descending"><code class="docutils literal notranslate"><span class="pre">shd_trans_schedule_descending()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.ies.lm_schedule.html#honeybee_radiance_postprocess.ies.lm_schedule.states_schedule_descending"><code class="docutils literal notranslate"><span class="pre">states_schedule_descending()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.ies.html#module-honeybee_radiance_postprocess.ies">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.leed.html">honeybee_radiance_postprocess.leed package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.leed.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.leed.leed.html">honeybee_radiance_postprocess.leed.leed module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.leed.leed.html#honeybee_radiance_postprocess.leed.leed.leed_option_one"><code class="docutils literal notranslate"><span class="pre">leed_option_one()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.leed.leed.html#honeybee_radiance_postprocess.leed.leed.leed_states_schedule"><code class="docutils literal notranslate"><span class="pre">leed_states_schedule()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.leed.leed.html#honeybee_radiance_postprocess.leed.leed.shade_transmittance_per_light_path"><code class="docutils literal notranslate"><span class="pre">shade_transmittance_per_light_path()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.leed.leed_schedule.html">honeybee_radiance_postprocess.leed.leed_schedule module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.leed.leed_schedule.html#honeybee_radiance_postprocess.leed.leed_schedule.shd_trans_schedule_descending"><code class="docutils literal notranslate"><span class="pre">shd_trans_schedule_descending()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.leed.leed_schedule.html#honeybee_radiance_postprocess.leed.leed_schedule.states_schedule_descending"><code class="docutils literal notranslate"><span class="pre">states_schedule_descending()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.leed.html#module-honeybee_radiance_postprocess.leed">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.results.html">honeybee_radiance_postprocess.results package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.results.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html">honeybee_radiance_postprocess.results.annual_daylight module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight"><code class="docutils literal notranslate"><span class="pre">AnnualDaylight</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.annual_data"><code class="docutils literal notranslate"><span class="pre">annual_data()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.annual_data_to_folder"><code class="docutils literal notranslate"><span class="pre">annual_data_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.annual_metrics"><code class="docutils literal notranslate"><span class="pre">annual_metrics()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.annual_metrics_to_folder"><code class="docutils literal notranslate"><span class="pre">annual_metrics_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.annual_statistics"><code class="docutils literal notranslate"><span class="pre">annual_statistics()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.annual_statistics_to_folder"><code class="docutils literal notranslate"><span class="pre">annual_statistics_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.annual_sunlight_exposure"><code class="docutils literal notranslate"><span class="pre">annual_sunlight_exposure()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.annual_sunlight_exposure_to_folder"><code class="docutils literal notranslate"><span class="pre">annual_sunlight_exposure_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.annual_uniformity_ratio"><code class="docutils literal notranslate"><span class="pre">annual_uniformity_ratio()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.annual_uniformity_ratio_to_folder"><code class="docutils literal notranslate"><span class="pre">annual_uniformity_ratio_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.average_values"><code class="docutils literal notranslate"><span class="pre">average_values()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.average_values_to_folder"><code class="docutils literal notranslate"><span class="pre">average_values_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.clear_cached_arrays"><code class="docutils literal notranslate"><span class="pre">clear_cached_arrays()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.continuous_daylight_autonomy"><code class="docutils literal notranslate"><span class="pre">continuous_daylight_autonomy()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.cumulative_values"><code class="docutils literal notranslate"><span class="pre">cumulative_values()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.cumulative_values_to_folder"><code class="docutils literal notranslate"><span class="pre">cumulative_values_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.daylight_autonomy"><code class="docutils literal notranslate"><span class="pre">daylight_autonomy()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.daylight_control_schedules"><code class="docutils literal notranslate"><span class="pre">daylight_control_schedules()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.daylight_control_schedules_to_folder"><code class="docutils literal notranslate"><span class="pre">daylight_control_schedules_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.dynamic_schedule_from_sensor_maximum"><code class="docutils literal notranslate"><span class="pre">dynamic_schedule_from_sensor_maximum()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.median_values"><code class="docutils literal notranslate"><span class="pre">median_values()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.median_values_to_folder"><code class="docutils literal notranslate"><span class="pre">median_values_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.pad_array_for_median"><code class="docutils literal notranslate"><span class="pre">pad_array_for_median()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.peak_values"><code class="docutils literal notranslate"><span class="pre">peak_values()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.peak_values_to_folder"><code class="docutils literal notranslate"><span class="pre">peak_values_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.point_in_time"><code class="docutils literal notranslate"><span class="pre">point_in_time()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.point_in_time_to_folder"><code class="docutils literal notranslate"><span class="pre">point_in_time_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.spatial_daylight_autonomy"><code class="docutils literal notranslate"><span class="pre">spatial_daylight_autonomy()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.total"><code class="docutils literal notranslate"><span class="pre">total()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.useful_daylight_illuminance"><code class="docutils literal notranslate"><span class="pre">useful_daylight_illuminance()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.useful_daylight_illuminance_lower"><code class="docutils literal notranslate"><span class="pre">useful_daylight_illuminance_lower()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.useful_daylight_illuminance_upper"><code class="docutils literal notranslate"><span class="pre">useful_daylight_illuminance_upper()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.values_to_annual"><code class="docutils literal notranslate"><span class="pre">values_to_annual()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.arrays"><code class="docutils literal notranslate"><span class="pre">arrays</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.cache_arrays"><code class="docutils literal notranslate"><span class="pre">cache_arrays</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.datatype"><code class="docutils literal notranslate"><span class="pre">datatype</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.datetimes"><code class="docutils literal notranslate"><span class="pre">datetimes</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.default_states"><code class="docutils literal notranslate"><span class="pre">default_states</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.folder"><code class="docutils literal notranslate"><span class="pre">folder</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.grid_states"><code class="docutils literal notranslate"><span class="pre">grid_states</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.grids_info"><code class="docutils literal notranslate"><span class="pre">grids_info</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.light_paths"><code class="docutils literal notranslate"><span class="pre">light_paths</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.occ_mask"><code class="docutils literal notranslate"><span class="pre">occ_mask</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.occ_pattern"><code class="docutils literal notranslate"><span class="pre">occ_pattern</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.schedule"><code class="docutils literal notranslate"><span class="pre">schedule</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.study_hours"><code class="docutils literal notranslate"><span class="pre">study_hours</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.sun_down_hours"><code class="docutils literal notranslate"><span class="pre">sun_down_hours</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.sun_down_hours_mask"><code class="docutils literal notranslate"><span class="pre">sun_down_hours_mask</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.sun_down_occ_hours"><code class="docutils literal notranslate"><span class="pre">sun_down_occ_hours</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.sun_up_hours"><code class="docutils literal notranslate"><span class="pre">sun_up_hours</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.sun_up_hours_mask"><code class="docutils literal notranslate"><span class="pre">sun_up_hours_mask</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.timestep"><code class="docutils literal notranslate"><span class="pre">timestep</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.total_occ"><code class="docutils literal notranslate"><span class="pre">total_occ</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.unit"><code class="docutils literal notranslate"><span class="pre">unit</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_daylight.html#honeybee_radiance_postprocess.results.annual_daylight.AnnualDaylight.valid_states"><code class="docutils literal notranslate"><span class="pre">valid_states</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html">honeybee_radiance_postprocess.results.annual_irradiance module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance"><code class="docutils literal notranslate"><span class="pre">AnnualIrradiance</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.annual_data"><code class="docutils literal notranslate"><span class="pre">annual_data()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.annual_data_to_folder"><code class="docutils literal notranslate"><span class="pre">annual_data_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.annual_metrics"><code class="docutils literal notranslate"><span class="pre">annual_metrics()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.annual_metrics_to_folder"><code class="docutils literal notranslate"><span class="pre">annual_metrics_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.annual_statistics"><code class="docutils literal notranslate"><span class="pre">annual_statistics()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.annual_statistics_to_folder"><code class="docutils literal notranslate"><span class="pre">annual_statistics_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.average_values"><code class="docutils literal notranslate"><span class="pre">average_values()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.average_values_to_folder"><code class="docutils literal notranslate"><span class="pre">average_values_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.clear_cached_arrays"><code class="docutils literal notranslate"><span class="pre">clear_cached_arrays()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.cumulative_values"><code class="docutils literal notranslate"><span class="pre">cumulative_values()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.cumulative_values_to_folder"><code class="docutils literal notranslate"><span class="pre">cumulative_values_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.median_values"><code class="docutils literal notranslate"><span class="pre">median_values()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.median_values_to_folder"><code class="docutils literal notranslate"><span class="pre">median_values_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.pad_array_for_median"><code class="docutils literal notranslate"><span class="pre">pad_array_for_median()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.peak_values"><code class="docutils literal notranslate"><span class="pre">peak_values()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.peak_values_to_folder"><code class="docutils literal notranslate"><span class="pre">peak_values_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.point_in_time"><code class="docutils literal notranslate"><span class="pre">point_in_time()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.point_in_time_to_folder"><code class="docutils literal notranslate"><span class="pre">point_in_time_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.total"><code class="docutils literal notranslate"><span class="pre">total()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.values_to_annual"><code class="docutils literal notranslate"><span class="pre">values_to_annual()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.arrays"><code class="docutils literal notranslate"><span class="pre">arrays</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.cache_arrays"><code class="docutils literal notranslate"><span class="pre">cache_arrays</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.datatype"><code class="docutils literal notranslate"><span class="pre">datatype</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.datetimes"><code class="docutils literal notranslate"><span class="pre">datetimes</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.default_states"><code class="docutils literal notranslate"><span class="pre">default_states</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.folder"><code class="docutils literal notranslate"><span class="pre">folder</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.grid_states"><code class="docutils literal notranslate"><span class="pre">grid_states</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.grids_info"><code class="docutils literal notranslate"><span class="pre">grids_info</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.light_paths"><code class="docutils literal notranslate"><span class="pre">light_paths</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.occ_mask"><code class="docutils literal notranslate"><span class="pre">occ_mask</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.occ_pattern"><code class="docutils literal notranslate"><span class="pre">occ_pattern</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.schedule"><code class="docutils literal notranslate"><span class="pre">schedule</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.study_hours"><code class="docutils literal notranslate"><span class="pre">study_hours</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.sun_down_hours"><code class="docutils literal notranslate"><span class="pre">sun_down_hours</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.sun_down_hours_mask"><code class="docutils literal notranslate"><span class="pre">sun_down_hours_mask</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.sun_down_occ_hours"><code class="docutils literal notranslate"><span class="pre">sun_down_occ_hours</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.sun_up_hours"><code class="docutils literal notranslate"><span class="pre">sun_up_hours</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.sun_up_hours_mask"><code class="docutils literal notranslate"><span class="pre">sun_up_hours_mask</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.timestep"><code class="docutils literal notranslate"><span class="pre">timestep</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.total_occ"><code class="docutils literal notranslate"><span class="pre">total_occ</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.unit"><code class="docutils literal notranslate"><span class="pre">unit</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.annual_irradiance.html#honeybee_radiance_postprocess.results.annual_irradiance.AnnualIrradiance.valid_states"><code class="docutils literal notranslate"><span class="pre">valid_states</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html">honeybee_radiance_postprocess.results.results module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results"><code class="docutils literal notranslate"><span class="pre">Results</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.annual_data"><code class="docutils literal notranslate"><span class="pre">annual_data()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.annual_data_to_folder"><code class="docutils literal notranslate"><span class="pre">annual_data_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.annual_statistics"><code class="docutils literal notranslate"><span class="pre">annual_statistics()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.annual_statistics_to_folder"><code class="docutils literal notranslate"><span class="pre">annual_statistics_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.average_values"><code class="docutils literal notranslate"><span class="pre">average_values()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.average_values_to_folder"><code class="docutils literal notranslate"><span class="pre">average_values_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.clear_cached_arrays"><code class="docutils literal notranslate"><span class="pre">clear_cached_arrays()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.cumulative_values"><code class="docutils literal notranslate"><span class="pre">cumulative_values()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.cumulative_values_to_folder"><code class="docutils literal notranslate"><span class="pre">cumulative_values_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.median_values"><code class="docutils literal notranslate"><span class="pre">median_values()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.median_values_to_folder"><code class="docutils literal notranslate"><span class="pre">median_values_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.pad_array_for_median"><code class="docutils literal notranslate"><span class="pre">pad_array_for_median()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.peak_values"><code class="docutils literal notranslate"><span class="pre">peak_values()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.peak_values_to_folder"><code class="docutils literal notranslate"><span class="pre">peak_values_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.point_in_time"><code class="docutils literal notranslate"><span class="pre">point_in_time()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.point_in_time_to_folder"><code class="docutils literal notranslate"><span class="pre">point_in_time_to_folder()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.total"><code class="docutils literal notranslate"><span class="pre">total()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.values_to_annual"><code class="docutils literal notranslate"><span class="pre">values_to_annual()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.arrays"><code class="docutils literal notranslate"><span class="pre">arrays</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.cache_arrays"><code class="docutils literal notranslate"><span class="pre">cache_arrays</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.datatype"><code class="docutils literal notranslate"><span class="pre">datatype</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.datetimes"><code class="docutils literal notranslate"><span class="pre">datetimes</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.default_states"><code class="docutils literal notranslate"><span class="pre">default_states</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.folder"><code class="docutils literal notranslate"><span class="pre">folder</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.grid_states"><code class="docutils literal notranslate"><span class="pre">grid_states</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.grids_info"><code class="docutils literal notranslate"><span class="pre">grids_info</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.light_paths"><code class="docutils literal notranslate"><span class="pre">light_paths</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.occ_mask"><code class="docutils literal notranslate"><span class="pre">occ_mask</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.occ_pattern"><code class="docutils literal notranslate"><span class="pre">occ_pattern</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.schedule"><code class="docutils literal notranslate"><span class="pre">schedule</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.study_hours"><code class="docutils literal notranslate"><span class="pre">study_hours</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.sun_down_hours"><code class="docutils literal notranslate"><span class="pre">sun_down_hours</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.sun_down_hours_mask"><code class="docutils literal notranslate"><span class="pre">sun_down_hours_mask</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.sun_down_occ_hours"><code class="docutils literal notranslate"><span class="pre">sun_down_occ_hours</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.sun_up_hours"><code class="docutils literal notranslate"><span class="pre">sun_up_hours</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.sun_up_hours_mask"><code class="docutils literal notranslate"><span class="pre">sun_up_hours_mask</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.timestep"><code class="docutils literal notranslate"><span class="pre">timestep</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.total_occ"><code class="docutils literal notranslate"><span class="pre">total_occ</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.unit"><code class="docutils literal notranslate"><span class="pre">unit</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../honeybee_radiance_postprocess.results.results.html#honeybee_radiance_postprocess.results.results.Results.valid_states"><code class="docutils literal notranslate"><span class="pre">valid_states</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.results.html#module-honeybee_radiance_postprocess.results">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.well.html">honeybee_radiance_postprocess.well package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.well.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.well.well.html">honeybee_radiance_postprocess.well.well module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../honeybee_radiance_postprocess.well.well.html#honeybee_radiance_postprocess.well.well.well_annual_daylight"><code class="docutils literal notranslate"><span class="pre">well_annual_daylight()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.well.html#module-honeybee_radiance_postprocess.well">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../honeybee_radiance_postprocess.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.annual.html">honeybee_radiance_postprocess.annual module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.annual.html#honeybee_radiance_postprocess.annual.occupancy_schedule_8_to_6"><code class="docutils literal notranslate"><span class="pre">occupancy_schedule_8_to_6()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.annual.html#honeybee_radiance_postprocess.annual.schedule_to_hoys"><code class="docutils literal notranslate"><span class="pre">schedule_to_hoys()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.annualdaylight.html">honeybee_radiance_postprocess.annualdaylight module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.annualdaylight.html#honeybee_radiance_postprocess.annualdaylight.metrics_to_files"><code class="docutils literal notranslate"><span class="pre">metrics_to_files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.annualdaylight.html#honeybee_radiance_postprocess.annualdaylight.metrics_to_folder"><code class="docutils literal notranslate"><span class="pre">metrics_to_folder()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.annualirradiance.html">honeybee_radiance_postprocess.annualirradiance module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.data_type.html">honeybee_radiance_postprocess.data_type module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.data_type.html#honeybee_radiance_postprocess.data_type.set_smallest_dtype"><code class="docutils literal notranslate"><span class="pre">set_smallest_dtype()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.data_type.html#honeybee_radiance_postprocess.data_type.smallest_dtype"><code class="docutils literal notranslate"><span class="pre">smallest_dtype()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.data_type.html#honeybee_radiance_postprocess.data_type.smallest_float_dtype"><code class="docutils literal notranslate"><span class="pre">smallest_float_dtype()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.data_type.html#honeybee_radiance_postprocess.data_type.smallest_integer_dtype"><code class="docutils literal notranslate"><span class="pre">smallest_integer_dtype()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html">honeybee_radiance_postprocess.dynamic module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.ApertureGroupSchedule"><code class="docutils literal notranslate"><span class="pre">ApertureGroupSchedule</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.ApertureGroupSchedule.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.ApertureGroupSchedule.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.ApertureGroupSchedule.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.ApertureGroupSchedule.identifier"><code class="docutils literal notranslate"><span class="pre">identifier</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.ApertureGroupSchedule.is_static"><code class="docutils literal notranslate"><span class="pre">is_static</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.ApertureGroupSchedule.schedule"><code class="docutils literal notranslate"><span class="pre">schedule</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.DynamicSchedule"><code class="docutils literal notranslate"><span class="pre">DynamicSchedule</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.DynamicSchedule.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.DynamicSchedule.add_aperture_group_schedule"><code class="docutils literal notranslate"><span class="pre">add_aperture_group_schedule()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.DynamicSchedule.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.DynamicSchedule.filter_by_identifiers"><code class="docutils literal notranslate"><span class="pre">filter_by_identifiers()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.DynamicSchedule.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.DynamicSchedule.from_group_schedules"><code class="docutils literal notranslate"><span class="pre">from_group_schedules()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.DynamicSchedule.from_json"><code class="docutils literal notranslate"><span class="pre">from_json()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.DynamicSchedule.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.DynamicSchedule.to_json"><code class="docutils literal notranslate"><span class="pre">to_json()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../honeybee_radiance_postprocess.dynamic.html#honeybee_radiance_postprocess.dynamic.DynamicSchedule.dynamic_schedule"><code class="docutils literal notranslate"><span class="pre">dynamic_schedule</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.electriclight.html">honeybee_radiance_postprocess.electriclight module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.electriclight.html#honeybee_radiance_postprocess.electriclight.array_to_dimming_fraction"><code class="docutils literal notranslate"><span class="pre">array_to_dimming_fraction()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.en17037.html">honeybee_radiance_postprocess.en17037 module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.en17037.html#honeybee_radiance_postprocess.en17037.en17037_to_files"><code class="docutils literal notranslate"><span class="pre">en17037_to_files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.en17037.html#honeybee_radiance_postprocess.en17037.en17037_to_folder"><code class="docutils literal notranslate"><span class="pre">en17037_to_folder()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.helper.html">honeybee_radiance_postprocess.helper module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.helper.html#honeybee_radiance_postprocess.helper.grid_summary"><code class="docutils literal notranslate"><span class="pre">grid_summary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.helper.html#honeybee_radiance_postprocess.helper.model_grid_areas"><code class="docutils literal notranslate"><span class="pre">model_grid_areas()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.helper.html#honeybee_radiance_postprocess.helper.write_structured_array_to_file"><code class="docutils literal notranslate"><span class="pre">write_structured_array_to_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html">honeybee_radiance_postprocess.metrics module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.ase_array2d"><code class="docutils literal notranslate"><span class="pre">ase_array2d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.average_values_array1d"><code class="docutils literal notranslate"><span class="pre">average_values_array1d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.average_values_array2d"><code class="docutils literal notranslate"><span class="pre">average_values_array2d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.cda_array1d"><code class="docutils literal notranslate"><span class="pre">cda_array1d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.cda_array2d"><code class="docutils literal notranslate"><span class="pre">cda_array2d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.cda_array2d_wrapper"><code class="docutils literal notranslate"><span class="pre">cda_array2d_wrapper()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.cumulative_values_array1d"><code class="docutils literal notranslate"><span class="pre">cumulative_values_array1d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.cumulative_values_array2d"><code class="docutils literal notranslate"><span class="pre">cumulative_values_array2d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.da_array1d"><code class="docutils literal notranslate"><span class="pre">da_array1d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.da_array2d"><code class="docutils literal notranslate"><span class="pre">da_array2d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.peak_values_array2d"><code class="docutils literal notranslate"><span class="pre">peak_values_array2d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.sda_array2d"><code class="docutils literal notranslate"><span class="pre">sda_array2d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.udi_array1d"><code class="docutils literal notranslate"><span class="pre">udi_array1d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.udi_array2d"><code class="docutils literal notranslate"><span class="pre">udi_array2d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.udi_array2d_wrapper"><code class="docutils literal notranslate"><span class="pre">udi_array2d_wrapper()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.udi_lower_array1d"><code class="docutils literal notranslate"><span class="pre">udi_lower_array1d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.udi_lower_array2d"><code class="docutils literal notranslate"><span class="pre">udi_lower_array2d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.udi_lower_array2d_wrapper"><code class="docutils literal notranslate"><span class="pre">udi_lower_array2d_wrapper()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.udi_upper_array1d"><code class="docutils literal notranslate"><span class="pre">udi_upper_array1d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.udi_upper_array2d"><code class="docutils literal notranslate"><span class="pre">udi_upper_array2d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.metrics.html#honeybee_radiance_postprocess.metrics.udi_upper_array2d_wrapper"><code class="docutils literal notranslate"><span class="pre">udi_upper_array2d_wrapper()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.reader.html">honeybee_radiance_postprocess.reader module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.reader.html#honeybee_radiance_postprocess.reader.ascii_to_array"><code class="docutils literal notranslate"><span class="pre">ascii_to_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.reader.html#honeybee_radiance_postprocess.reader.binary_to_array"><code class="docutils literal notranslate"><span class="pre">binary_to_array()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.type_hints.html">honeybee_radiance_postprocess.type_hints module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.util.html">honeybee_radiance_postprocess.util module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.util.html#honeybee_radiance_postprocess.util.array_memory_size"><code class="docutils literal notranslate"><span class="pre">array_memory_size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.util.html#honeybee_radiance_postprocess.util.binary_mtx_dimension"><code class="docutils literal notranslate"><span class="pre">binary_mtx_dimension()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.util.html#honeybee_radiance_postprocess.util.check_array_dim"><code class="docutils literal notranslate"><span class="pre">check_array_dim()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.util.html#honeybee_radiance_postprocess.util.filter_array"><code class="docutils literal notranslate"><span class="pre">filter_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.util.html#honeybee_radiance_postprocess.util.filter_array2d"><code class="docutils literal notranslate"><span class="pre">filter_array2d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.util.html#honeybee_radiance_postprocess.util.get_delimiter"><code class="docutils literal notranslate"><span class="pre">get_delimiter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.util.html#honeybee_radiance_postprocess.util.hoys_mask"><code class="docutils literal notranslate"><span class="pre">hoys_mask()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../honeybee_radiance_postprocess.util.html#honeybee_radiance_postprocess.util.recursive_dict_merge"><code class="docutils literal notranslate"><span class="pre">recursive_dict_merge()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../honeybee_radiance_postprocess.vis_metadata.html">honeybee_radiance_postprocess.vis_metadata module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../honeybee_radiance_postprocess.html#module-honeybee_radiance_postprocess">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">CLI</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">CLI</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../honeybee_radiance_postprocess.html">honeybee_radiance_postprocess package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>All modules for which code is available</h1>
+<ul><li><a href="honeybee_radiance_postprocess/annual.html">honeybee_radiance_postprocess.annual</a></li>
+<li><a href="honeybee_radiance_postprocess/annualdaylight.html">honeybee_radiance_postprocess.annualdaylight</a></li>
+<li><a href="honeybee_radiance_postprocess/breeam/breeam.html">honeybee_radiance_postprocess.breeam.breeam</a></li>
+<li><a href="honeybee_radiance_postprocess/cli/grid.html">honeybee_radiance_postprocess.cli.grid</a></li>
+<li><a href="honeybee_radiance_postprocess/cli/util.html">honeybee_radiance_postprocess.cli.util</a></li>
+<li><a href="honeybee_radiance_postprocess/data_type.html">honeybee_radiance_postprocess.data_type</a></li>
+<li><a href="honeybee_radiance_postprocess/dynamic.html">honeybee_radiance_postprocess.dynamic</a></li>
+<li><a href="honeybee_radiance_postprocess/electriclight.html">honeybee_radiance_postprocess.electriclight</a></li>
+<li><a href="honeybee_radiance_postprocess/en17037.html">honeybee_radiance_postprocess.en17037</a></li>
+<li><a href="honeybee_radiance_postprocess/helper.html">honeybee_radiance_postprocess.helper</a></li>
+<li><a href="honeybee_radiance_postprocess/ies/lm.html">honeybee_radiance_postprocess.ies.lm</a></li>
+<li><a href="honeybee_radiance_postprocess/ies/lm_schedule.html">honeybee_radiance_postprocess.ies.lm_schedule</a></li>
+<li><a href="honeybee_radiance_postprocess/leed/leed.html">honeybee_radiance_postprocess.leed.leed</a></li>
+<li><a href="honeybee_radiance_postprocess/leed/leed_schedule.html">honeybee_radiance_postprocess.leed.leed_schedule</a></li>
+<li><a href="honeybee_radiance_postprocess/metrics.html">honeybee_radiance_postprocess.metrics</a></li>
+<li><a href="honeybee_radiance_postprocess/reader.html">honeybee_radiance_postprocess.reader</a></li>
+<li><a href="honeybee_radiance_postprocess/results/annual_daylight.html">honeybee_radiance_postprocess.results.annual_daylight</a></li>
+<li><a href="honeybee_radiance_postprocess/results/annual_irradiance.html">honeybee_radiance_postprocess.results.annual_irradiance</a></li>
+<li><a href="honeybee_radiance_postprocess/results/results.html">honeybee_radiance_postprocess.results.results</a></li>
+<li><a href="honeybee_radiance_postprocess/util.html">honeybee_radiance_postprocess.util</a></li>
+<li><a href="honeybee_radiance_postprocess/well/well.html">honeybee_radiance_postprocess.well.well</a></li>
+</ul>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2026, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
