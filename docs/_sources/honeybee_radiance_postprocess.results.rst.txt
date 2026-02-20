@@ -1,0 +1,20 @@
+honeybee\_radiance\_postprocess.results package
+===============================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_radiance_postprocess.results.annual_daylight
+   honeybee_radiance_postprocess.results.annual_irradiance
+   honeybee_radiance_postprocess.results.results
+
+Module contents
+---------------
+
+.. automodule:: honeybee_radiance_postprocess.results
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,6 @@
+mtxop
+=====
+
+.. click:: honeybee_radiance_postprocess.cli.mtxop:mtxop
+   :prog: honeybee-radiance-postprocess mtxop
+   :show-nested:
