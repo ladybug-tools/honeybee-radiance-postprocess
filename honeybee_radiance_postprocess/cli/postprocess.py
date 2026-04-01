@@ -791,23 +791,35 @@ def annual_metrics_file(
         study_hours = \
             Wea.from_annual_values(Location(), [0] * 8760, [0] * 8760).hoys
 
+    study_hours = np.array(study_hours)
+
     # read sun up hours
     sun_up_hours = np.loadtxt(sun_up_hours)
     # optional input - only check if the file exist otherwise ignore
     if schedule and os.path.isfile(schedule):
         with open(schedule) as hourly_schedule:
-            schedule = [int(float(v)) for v in hourly_schedule]
+            schedule = np.array([float(v) for v in hourly_schedule])
+        schedule = (schedule > 0).astype(int)            
     else:
         schedule = occupancy_schedule_8_to_6(timestep=timestep)
 
     if grid_name is None:
         grid_name = file.stem
 
-    sun_up_hours_mask =  np.where(np.isin(np.array(study_hours), np.array(sun_up_hours)))[0]
-    sun_down_hours_mask =  np.where(~np.isin(np.array(study_hours), np.array(sun_up_hours)))[0]
-    occ_mask = np.array(schedule, dtype=int)[sun_up_hours_mask]
-    sun_down_occ_hours =  np.array(schedule, dtype=int)[sun_down_hours_mask].sum()
-    total_hours = sum(schedule)
+    # align schedule to study hours
+    study_schedule = schedule[study_hours.astype(int)]
+
+    # create a mask for the hours when the sun is up
+    sun_up_mask = np.isin(study_hours, sun_up_hours)
+
+    # get occupied hours when the sun is up
+    occ_mask = study_schedule[sun_up_mask]
+
+    # total occupied hours when the sun is down
+    sun_down_occ_hours = study_schedule[~sun_up_mask].sum()
+
+    # total occupied hours
+    total_hours = study_schedule.sum()
 
     array_filter = np.apply_along_axis(
         filter_array, 1, array, mask=occ_mask)

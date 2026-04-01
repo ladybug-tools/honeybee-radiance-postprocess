@@ -268,11 +268,10 @@ class Results(_ResultsFolder):
         * datatype
         * unit
         * cache_arrays
-        * use_gpu
     """
     __slots__ = ('_schedule', '_occ_pattern', '_total_occ', '_sun_down_occ_hours',
                  '_occ_mask', '_arrays', '_valid_states', '_datatype', '_unit',
-                 '_cache_arrays', '_use_gpu')
+                 '_cache_arrays')
 
     def __init__(self, folder, datatype: DataTypeBase = None,
                  schedule: list = None, unit: str = None,
@@ -1525,13 +1524,30 @@ class Results(_ResultsFolder):
 
     def _update_occ(self):
         """Set properties related to occupancy."""
-        occ_mask = np.array(self.schedule, dtype=int)[self.sun_up_hours_mask]
-        sun_down_sch = \
-            np.array(self.schedule, dtype=int)[self.sun_down_hours_mask].sum()
+        schedule = np.array(self.schedule)
+        schedule = (schedule > 0).astype(int)  
+
+        # align schedule to study hours
+        study_schedule = schedule[np.array(self.study_hours, dtype=int)]
+
+        # get a mask for the hours when the sun is up
+        sun_up_mask = self.sun_up_hours_mask
+
+        # get a mask for the hours when the sun is down
+        sun_down_mask = self.sun_down_hours_mask
+
+        # get occupied hours when the sun is up
+        occ_mask = study_schedule[sun_up_mask]
+
+        # total occupied hours when the sun is down
+        sun_down_occ_hours = study_schedule[sun_down_mask].sum()
+
+        # total occupied hours
+        total_occ = study_schedule.sum()
 
         self._occ_mask = occ_mask
-        self._total_occ = sum(self.schedule)
-        self._sun_down_occ_hours = sun_down_sch
+        self._total_occ = total_occ
+        self._sun_down_occ_hours = sun_down_occ_hours
 
     def _filter_grids(self, grids_filter: str = '*') -> list:
         """Return grids information.
