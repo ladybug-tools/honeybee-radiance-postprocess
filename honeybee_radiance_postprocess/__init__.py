@@ -28,7 +28,7 @@ if sys.version_info >= (3, 0):
         import numpy as np
         msg = (
             'Failed to load CuPy successfully. '
-            'Help: https://github.com/ladybug-tools/honeybee-radiance-postprocess/blob/master/CUPY.md. '
+            'Help: https://github.com/ladybug-tools/honeybee-radiance-postprocess/blob/master/CUPY.MD. '
             'Falling back to NumPy ({}) in honeybee-radiance-postprocess: {}'
         ).format(np.__version__, e)
         sys.stderr.write(msg)

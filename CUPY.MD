@@ -83,6 +83,6 @@ If CuPy *is* installed but fails during initialization honeybee-radiance-postpro
 
 ## :warning: Common Errors
 
-`FileNotFoundError: Could not find module 'nvrtc64_130_0.dll' (or one of its dependencies). Try using the full path with constructor syntax.`
+`FileNotFoundError: Could not find module 'nvrtc64_120_0.dll' (or one of its dependencies). Try using the full path with constructor syntax.`
 
-This is possibly caused by a mismatch between the CUDA Toolkit version and the CuPy version, e.g., cupy-cuda13x and CUDA Toolkit 12.9.
+This is possibly caused by a mismatch between the CUDA Toolkit version and the CuPy version, e.g., cupy-cuda12x and CUDA Toolkit 13.0.
