@@ -1,0 +1,7 @@
+honeybee\_radiance\_postprocess.cli.merge module
+================================================
+
+.. automodule:: honeybee_radiance_postprocess.cli.merge
+   :members:
+   :undoc-members:
+   :show-inheritance:

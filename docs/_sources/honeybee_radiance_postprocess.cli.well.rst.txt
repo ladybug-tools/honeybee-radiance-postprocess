@@ -1,0 +1,7 @@
+honeybee\_radiance\_postprocess.cli.well module
+===============================================
+
+.. automodule:: honeybee_radiance_postprocess.cli.well
+   :members:
+   :undoc-members:
+   :show-inheritance:
