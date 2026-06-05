@@ -179,6 +179,7 @@ def dynamic_schedule_direct_illuminance(
             )
             max_indices = array_combinations_filter.argmax(axis=0)
             # select the combination for each hour
+            max_indices = max_indices.tolist()
             combinations = [combinations[idx] for idx in max_indices]
 
             # merge the combinations of dicts
