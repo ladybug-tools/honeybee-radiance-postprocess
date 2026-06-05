@@ -77,7 +77,7 @@ def en17037_to_files(
             sda_file = sda_level_folder.joinpath(f'{grid_id}.sda')
             if not sda_file.parent.is_dir():
                 sda_file.parent.mkdir(parents=True)
-            sda = (da >= 50).mean() * 100
+            sda = float((da >= 50).mean() * 100)
             with open(sda_file, 'w') as sdaf:
                 sdaf.write(str(round(sda, 2)))
 

@@ -103,14 +103,14 @@ def _well_summary(
              pass_sda_blinds_down) in \
             zip(pass_sda_grids, grid_areas, grids_info,
                 pass_sda_blinds_up_grids, pass_sda_blinds_down_grids):
-            total_grid_area = grid_area.sum()
+            total_grid_area = float(grid_area.sum())
 
-            area_pass_sda = grid_area[pass_sda].sum()
+            area_pass_sda = float(grid_area[pass_sda].sum())
             area_pass_sda_blind_up = grid_area[pass_sda_blinds_up].sum()
             area_pass_sda_blinds_down = grid_area[pass_sda_blinds_down].sum()
-            sda_grid = area_pass_sda / total_grid_area * 100
-            sda_blinds_up_grid = area_pass_sda_blind_up / total_grid_area * 100
-            sda_blinds_down_grid = area_pass_sda_blinds_down / total_grid_area * 100
+            sda_grid = float(area_pass_sda / total_grid_area * 100)
+            sda_blinds_up_grid = float(area_pass_sda_blind_up / total_grid_area * 100)
+            sda_blinds_down_grid = float(area_pass_sda_blinds_down / total_grid_area * 100)
 
             # grid summary
             grid_summary = \
@@ -457,8 +457,8 @@ def well_annual_daylight(
         l01_well_summary_ies_lm['sda'] = l01_ies_lm_summary['sda']
         l01_well_summary_ies_lm['note'] = note
 
-    l06_well_summary_ies_lm['total_floor_area'] = sum(np.sum(arr) for arr in grid_areas)
-    l01_well_summary_ies_lm['total_floor_area'] = sum(np.sum(arr) for arr in grid_areas)
+    l06_well_summary_ies_lm['total_floor_area'] = float(sum(np.sum(arr) for arr in grid_areas))
+    l01_well_summary_ies_lm['total_floor_area'] = float(sum(np.sum(arr) for arr in grid_areas))
 
     # convert to datacollection
     def to_datacollection(aperture_group: str, values: np.ndarray):
