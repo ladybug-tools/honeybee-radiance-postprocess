@@ -14,90 +14,152 @@ from .metrics import da_array2d
 from .util import filter_array
 
 
-def en17037_to_files(
-        array: np.ndarray, metrics_folder: Path, grid_info: dict) -> list:
-    """Compute annual EN 17037 metrics for a NumPy array and write the results
-    to a folder.
+EN17037_RECOMMENDATIONS = {
+    'minimum_illuminance': {
+        'minimum': 100,
+        'medium': 300,
+        'high': 500,
+    },
+    'target_illuminance': {
+        'minimum': 300,
+        'medium': 500,
+        'high': 750,
+    },
+}
 
-    This function generates 6 different files for daylight autonomy based on
-    the varying level of recommendation in EN 17037.
+EN17037_COMPLIANCE_VALUE = {
+    'minimum': 1,
+    'medium': 2,
+    'high': 3,
+}
+
+EN17037_SPACE_TARGET = {
+    'minimum_illuminance': 95,
+    'target_illuminance': 50,
+}
+
+EN17037_CRITERION_LABELS = {
+    ('minimum_illuminance', 'minimum'): 'Minimum Illuminance 100',
+    ('minimum_illuminance', 'medium'): 'Minimum Illuminance 300',
+    ('minimum_illuminance', 'high'): 'Minimum Illuminance 500',
+    ('target_illuminance', 'minimum'): 'Target Illuminance 300',
+    ('target_illuminance', 'medium'): 'Target Illuminance 500',
+    ('target_illuminance', 'high'): 'Target Illuminance 750',
+}
+
+
+def en17037_compute(array: np.ndarray, grid_info: dict) -> dict:
+    """Compute EN 17037 metrics for a 2D NumPy array.
 
     Args:
-        array: A 2D NumPy array.
-        metrics_folder: An output folder where the results will be written to.
-            The folder will be created if it does not exist.
-        grid_info: A grid information dictionary.
+        array: A 2D NumPy array (sensors x occupied hours).
+        grid_info: A grid information dictionary that must contain at least
+            full_id and count.
 
     Returns:
-        tuple -- Tuple of lists of paths for da, sda, and compliance folders.
-    """
-    recommendations = {
-        'minimum_illuminance': {
-            'minimum': 100,
-            'medium': 300,
-            'high': 500
-        },
-        'target_illuminance': {
-            'minimum': 300,
-            'medium': 500,
-            'high': 750
-        }
-    }
-    compliance_value = {
-        'minimum': 1,
-        'medium': 2,
-        'high': 3
-    }
+        dict -- Nested result dictionary with the following structure::
 
+            {
+                'grid_id': str,
+                'grid_count': int,
+                'target_types': {
+                    '<target_type>': {
+                        'compliance_level': np.ndarray,
+                        'levels': {
+                            '<level>': {
+                                'threshold': int,
+                                'da': np.ndarray,
+                                'sda': float,
+                                'passes': bool,
+                            },
+                        },
+                    },
+                },
+            }
+    """
     grid_id = grid_info['full_id']
     grid_count = grid_info['count']
 
-    da_folders = []
-    sda_folders = []
-    compliance_folders = []
-    da_folder = metrics_folder.joinpath('da')
-    sda_folder = metrics_folder.joinpath('sda')
-    compliance_folder = metrics_folder.joinpath('compliance_level')
+    result = {
+        'grid_id': grid_id,
+        'grid_count': grid_count,
+        'target_types': {},
+    }
 
-    for target_type, thresholds in recommendations.items():
+    for target_type, thresholds in EN17037_RECOMMENDATIONS.items():
+        space_target = EN17037_SPACE_TARGET[target_type]
         compliance_level = None
+        levels = {}
+
         for level, threshold in thresholds.items():
-            # da
-            da_level_folder = \
-                da_folder.joinpath('_'.join([target_type, str(threshold)]))
-            da_file = da_level_folder.joinpath(f'{grid_id}.da')
-            if not da_file.parent.is_dir():
-                da_file.parent.mkdir(parents=True)
             da = da_array2d(array, total_occ=4380, threshold=threshold)
-            np.savetxt(da_file, da, fmt='%.2f')
-
-            # sda
-            sda_level_folder = \
-                sda_folder.joinpath('_'.join([target_type, str(threshold)]))
-            sda_file = sda_level_folder.joinpath(f'{grid_id}.sda')
-            if not sda_file.parent.is_dir():
-                sda_file.parent.mkdir(parents=True)
             sda = float((da >= 50).mean() * 100)
-            with open(sda_file, 'w') as sdaf:
-                sdaf.write(str(round(sda, 2)))
+            passes = sda >= space_target
 
-            space_target = 50 if target_type == 'target_illuminance' else 95
-            if sda >= space_target:
-                compliance_level = np.full((grid_count), compliance_value[level], dtype=int)
+            if passes:
+                compliance_level = np.full(
+                    (grid_count,), EN17037_COMPLIANCE_VALUE[level], dtype=int)
 
-            da_folders.append(da_file.parent)
-            sda_folders.append(sda_file.parent)
+            levels[level] = {
+                'threshold': threshold,
+                'da': da,
+                'sda': sda,
+                'passes': passes,
+            }
 
         if compliance_level is None:
             compliance_level = np.zeros(grid_count, dtype=int)
-        compliance_level_folder = compliance_folder.joinpath(target_type)
-        compliance_level_file = compliance_level_folder.joinpath(f'{grid_id}.pf')
-        if not compliance_level_file.parent.is_dir():
-            compliance_level_file.parent.mkdir(parents=True)
-        np.savetxt(compliance_level_file, compliance_level, fmt='%i')
-        compliance_folders.append(compliance_level_file.parent)
 
-    return da_folders, sda_folders, compliance_folders
+        result['target_types'][target_type] = {
+            'compliance_level': compliance_level,
+            'levels': levels,
+        }
+
+    return result
+
+
+def en17037_to_files(
+        array: np.ndarray, metrics_folder: Path, grid_info: dict) -> dict:
+    """Compute EN 17037 metrics and write the results to metrics_folder.
+
+    Args:
+        array: A 2D NumPy array.
+        metrics_folder: Output folder. Created if it does not exist.
+        grid_info: A grid information dictionary.
+
+    Returns:
+        dict -- The result dictionary.
+    """
+    metrics_folder = Path(metrics_folder)
+    results = en17037_compute(array, grid_info)
+
+    grid_id = results['grid_id']
+
+    da_folder = metrics_folder / 'da'
+    sda_folder = metrics_folder / 'sda'
+    compliance_folder = metrics_folder / 'compliance_level'
+
+    for target_type, target_data in results['target_types'].items():
+        for level, level_data in target_data['levels'].items():
+            threshold = level_data['threshold']
+            folder_name = f'{target_type}_{threshold}'
+
+            da_level_folder = da_folder / folder_name
+            da_level_folder.mkdir(parents=True, exist_ok=True)
+            da_file = da_level_folder / f'{grid_id}.da'
+            np.savetxt(da_file, level_data['da'], fmt='%.2f')
+
+            sda_level_folder = sda_folder / folder_name
+            sda_level_folder.mkdir(parents=True, exist_ok=True)
+            sda_file = sda_level_folder / f'{grid_id}.sda'
+            sda_file.write_text(str(round(level_data['sda'], 2)))
+
+        compliance_level_folder = compliance_folder / target_type
+        compliance_level_folder.mkdir(parents=True, exist_ok=True)
+        compliance_level_file = compliance_level_folder / f'{grid_id}.pf'
+        np.savetxt(compliance_level_file, target_data['compliance_level'], fmt='%i')
+
+    return results
 
 
 def en17037_to_folder(
@@ -112,14 +174,14 @@ def en17037_to_folder(
         results: Results folder.
         schedule: An annual schedule for 8760 hours of the year as a list of
             values. This should be a daylight hours schedule.
+        states: A dictionary of states. Defaults to None.
         grids_filter: A pattern to filter the grids. By default all the grids
             will be processed.
-        states: A dictionary of states. Defaults to None.
-        sub_folder: An optional relative path for subfolder to copy results
-            files. Default: en17037.
+        sub_folder: An optional relative path for the subfolder where results
+            are written. Default: en17037.
 
     Returns:
-        str -- Path to results folder.
+        Path -- Path to the results folder.
     """
     if not isinstance(results, AnnualDaylight):
         results = AnnualDaylight(results, schedule=schedule)
@@ -128,7 +190,6 @@ def en17037_to_folder(
 
     total_occ = results.total_occ
     occ_mask = results.occ_mask
-
     grids_info = results._filter_grids(grids_filter=grids_filter)
 
     sub_folder = Path(sub_folder)
@@ -138,31 +199,104 @@ def en17037_to_folder(
             f'There are {total_occ} occupied hours in the schedule. According '
             'to EN 17037 the schedule must consist of the daylight hours '
             'which is defined as the half of the year with the largest '
-            'quantity of daylight')
+            'quantity of daylight'
+        )
+
+    all_grid_results: list[dict] = []
+    all_output_folders: list[Path] = []
 
     for grid_info in grids_info:
         array = results._array_from_states(
             grid_info, states=states, res_type='total', zero_array=True)
         if np.any(array):
-            array = np.apply_along_axis(
-                filter_array, 1, array, occ_mask)
-        da_folders, sda_folders, compliance_folders = en17037_to_files(
-            array, sub_folder, grid_info)
+            array = np.apply_along_axis(filter_array, 1, array, occ_mask)
 
-    # copy grids_info.json to all results folders
-    for folder in da_folders + sda_folders + compliance_folders:
-        grids_info_file = Path(folder, 'grids_info.json')
+        grid_results = en17037_to_files(array, sub_folder, grid_info)
+        all_grid_results.append((grid_info, grid_results))
+
+        for target_type, target_data in grid_results['target_types'].items():
+            for level, level_data in target_data['levels'].items():
+                threshold = level_data['threshold']
+                folder_name = f'{target_type}_{threshold}'
+                all_output_folders.append(sub_folder / 'da' / folder_name)
+                all_output_folders.append(sub_folder / 'sda' / folder_name)
+            all_output_folders.append(
+                sub_folder / 'compliance_level' / target_type)
+
+    seen = set()
+    for folder in all_output_folders:
+        if folder in seen:
+            continue
+        seen.add(folder)
+        grids_info_file = folder / 'grids_info.json'
         with open(grids_info_file, 'w') as outf:
             json.dump(grids_info, outf, indent=2)
 
     metric_info_dict = _annual_daylight_en17037_vis_metadata()
-    da_folder = sub_folder.joinpath('da')
+    da_folder = sub_folder / 'da'
     for metric, data in metric_info_dict.items():
-        file_path = da_folder.joinpath(metric, 'vis_metadata.json')
+        file_path = da_folder / metric / 'vis_metadata.json'
         with open(file_path, 'w') as fp:
             json.dump(data, fp, indent=4)
 
+    _write_en17037_summary(all_grid_results, sub_folder)
+
     return sub_folder
+
+
+def _build_grid_summary(grid_info: dict, grid_results: dict) -> dict:
+    """Build the summary dict for a single grid.
+
+    Args:
+        grid_info: The grid information dictionary for this grid.
+        grid_results: The result dict returned by en17037_compute for
+            the same grid.
+
+    Returns:
+        dict -- Summary with the grid's display_name and a boolean
+        passes entry for every EN 17037 criterion.
+    """
+    data = {
+        'Sensor Grid': grid_info.get('display_name', grid_results['grid_id'])
+    }
+    for target_type, target_data in grid_results['target_types'].items():
+        for level, level_data in target_data['levels'].items():
+            label = EN17037_CRITERION_LABELS[(target_type, level)]
+            data[label] = {
+                'sDA': round(level_data['sda'], 2),
+                'passes': level_data['passes'],
+            }
+
+
+    return data
+
+
+def _write_en17037_summary(
+        all_grid_results: list, sub_folder: Path) -> Path:
+    """Write summary.json to sub_folder.
+
+    The file contains one object per grid with the grid's display_name
+    and a pass/fail boolean for each EN 17037 criterion.
+
+    Args:
+        all_grid_results: A list of (grid_info, grid_results) tuples as
+            collected by en17037_to_folder.
+        sub_folder: The root output folder.
+
+    Returns:
+        Path -- Path to the written summary.json file.
+    """
+    summary = [
+        _build_grid_summary(grid_info, grid_results)
+        for grid_info, grid_results in all_grid_results
+    ]
+
+    summary_file = sub_folder / 'summary.json'
+    sub_folder.mkdir(parents=True, exist_ok=True)
+    with open(summary_file, 'w') as fp:
+        json.dump(summary, fp, indent=2)
+
+    return summary_file
 
 
 def _annual_daylight_en17037_vis_metadata():
@@ -212,7 +346,7 @@ def _annual_daylight_en17037_vis_metadata():
 
 
 def _annual_daylight_en17037_config():
-    """Return vtk-config for annual daylight EN 17037. """
+    """Return vtk-config for annual daylight EN 17037."""
     cfg = {
         "data": [
             {
