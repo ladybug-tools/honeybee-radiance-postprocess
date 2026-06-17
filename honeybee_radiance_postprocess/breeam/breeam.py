@@ -348,6 +348,8 @@ def breeam_daylight_assessment_4b(
         except AttributeError as e:
             raise ImportError('honeybee_energy library must be installed to use '
                               'breeam_daylight_assessment method. {}'.format(e))
+        if program_type_id not in program_type_metrics:  # default program type
+            program_type_id = 'BREEAM::Office_buildings::Occupied_spaces'
         if program_type_id in program_type_metrics:
             grid_program_types[s_grid.identifier] = program_type_id
 
