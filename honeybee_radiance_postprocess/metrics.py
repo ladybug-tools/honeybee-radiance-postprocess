@@ -373,7 +373,7 @@ def average_values_array2d(
     """
     check_array_dim(array, 2)
 
-    avg_values = array.sum(axis=axis) / full_length
+    avg_values = array.sum(axis=axis, dtype=np.float32) / full_length
 
     return avg_values
 
@@ -412,9 +412,9 @@ def cumulative_values_array2d(
     check_array_dim(array, 2)
 
     if axis == 1:
-        cumulative_values = array.sum(axis=axis) / (timestep * t_step_multiplier)
+        cumulative_values = array.sum(axis=axis, dtype=np.float32) / (timestep * t_step_multiplier)
     else:
-        cumulative_values = array.sum(axis=axis)
+        cumulative_values = array.sum(axis=axis, dtype=np.float32)
 
     return cumulative_values
 
