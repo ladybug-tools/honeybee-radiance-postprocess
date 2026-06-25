@@ -5,6 +5,7 @@ import sys
 from itertools import islice, cycle
 
 from honeybee.config import folders
+from ladybug.datacollection import BaseCollection
 
 
 class ApertureGroupSchedule(object):
@@ -31,7 +32,7 @@ class ApertureGroupSchedule(object):
 
     @classmethod
     def from_dict(cls, data):
-        """Initialize a ApertureGroupSchedule from a dictionary.
+        """Initialize an ApertureGroupSchedule from a dictionary.
 
         Args:
             data: A dictionary representation of an ApertureGroupSchedule
@@ -41,6 +42,28 @@ class ApertureGroupSchedule(object):
         schedule = data['schedule']
         is_static = data['is_static'] if 'is_static' in data else None
         return cls(identifier, schedule, is_static)
+
+    @classmethod
+    def from_data_collection(cls, data):
+        """Initialize an ApertureGroupSchedule from a Ladybug Data Collection.
+
+        The Data Collection must be annual, i.e., contain 8760 values representing
+        the state for each hours of the year.
+
+        The metadata in the header must have an `identifier` key, with the value
+        being the aperture group identifier. If the key is not found, it will use
+        the name of the data type as the identifier.
+
+        Args:
+            data: A Ladybug Data Collection representation of an ApertureGroupSchedule.
+        """
+        if 'identifier' in data.header.metadata:
+            identifier = data.header.metadata['identifier']
+        else:
+            identifier = data.header.data_type.name
+        schedule = data.values
+        assert len(schedule) == 8760, 'Expected 8760 values. Got {}.'.format(len(schedule))
+        return cls(identifier, schedule)
 
     @property
     def identifier(self):
@@ -133,12 +156,16 @@ class DynamicSchedule(object):
         """
         dyn_sch = cls()
         dyn_sch_ids = set()
-        for _ap_group in group_schedules:
-            assert isinstance(_ap_group, ApertureGroupSchedule), \
-                'Expected Aperture Group Schedule. Got {}'.format(type(_ap_group))
-            if _ap_group.identifier not in dyn_sch_ids:
-                dyn_sch_ids.add(_ap_group.identifier)
-                dyn_sch.add_aperture_group_schedule(_ap_group)
+        for ap_group in group_schedules:
+            if isinstance(ap_group, BaseCollection):
+                ap_group = ApertureGroupSchedule.from_data_collection(ap_group)
+            assert isinstance(ap_group, ApertureGroupSchedule), \
+                'Expected ApertureGroupSchedule or Ladybug Data Collection. Got {}'.format(
+                    type(ap_group)
+                )
+            if ap_group.identifier not in dyn_sch_ids:
+                dyn_sch_ids.add(ap_group.identifier)
+                dyn_sch.add_aperture_group_schedule(ap_group)
         return dyn_sch
 
     @classmethod

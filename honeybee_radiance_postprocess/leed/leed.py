@@ -681,12 +681,13 @@ def leed_option_one(
         )
         summary['note'] = note
 
-    # convert to datacollection
-    def to_datacollection(aperture_group: str, values: np.ndarray):
+    # convert to data collection
+    def to_data_collection(aperture_group: str, values: np.ndarray):
         # convert values to 0 and 1 (0 = no shading, 1 = shading)
         if use_states:
             header = Header(data_type=GenericType(aperture_group, ''), unit='',
-                            analysis_period=AnalysisPeriod())
+                            analysis_period=AnalysisPeriod(),
+                            metadata={'identifier': aperture_group})
             hourly_data = HourlyContinuousCollection(header=header, values=values)
         else:
             values[values == 1] = 0
@@ -699,10 +700,10 @@ def leed_option_one(
 
     if use_states:
         states_schedule = {
-            k: to_datacollection(k, v['schedule']) for k,
+            k: to_data_collection(k, v['schedule']) for k,
             v in states_schedule.to_dict().items()}
     else:
-        states_schedule = {k:to_datacollection(k, v) for k, v in states_schedule.items()}
+        states_schedule = {k:to_data_collection(k, v) for k, v in states_schedule.items()}
 
     if sub_folder:
         folder = Path(sub_folder)
