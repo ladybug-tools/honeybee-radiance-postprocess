@@ -381,8 +381,8 @@ def well_annual_daylight(
     l06_combined_da_minimum = []
     l01_combined_da_target = []
     for grid_info in grids_info:
-        l06_grid_da_target = np.loadtxt(en17037_folder.joinpath('da', 'target_illuminance_300', f'{grid_info["full_id"]}.da'))
-        l06_grid_da_minimum = np.loadtxt(en17037_folder.joinpath('da', 'minimum_illuminance_100', f'{grid_info["full_id"]}.da'))
+        l06_grid_da_target = np.loadtxt(en17037_folder.joinpath('da', 'Target Illuminance 300', f'{grid_info["full_id"]}.da'))
+        l06_grid_da_minimum = np.loadtxt(en17037_folder.joinpath('da', 'Minimum Illuminance 100', f'{grid_info["full_id"]}.da'))
         l06_combined_da_target.append(l06_grid_da_target >= 50)
         l06_combined_da_minimum.append(l06_grid_da_minimum >= 50)
 
