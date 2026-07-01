@@ -167,12 +167,11 @@ def _leed_summary(
             zip(pass_ase_grids, pass_sda_grids, grids_info,
                 pass_sda_blinds_up_grids, pass_sda_blinds_down_grids):
             grid_count = grid_info['count']
-            sensor_count_pass_ase = pass_ase.sum()
+            sensor_count_pass_ase = pass_ase.sum().item()
             ase_grid = (grid_count - sensor_count_pass_ase) / grid_count * 100
-
-            sensor_count_pass_sda = pass_sda.sum()
-            sensor_count_pass_sda_blinds_up = pass_sda_blinds_up.sum()
-            sensor_count_pass_sda_blinds_down = pass_sda_blinds_down.sum()
+            sensor_count_pass_sda = pass_sda.sum().item()
+            sensor_count_pass_sda_blinds_up = pass_sda_blinds_up.sum().item()
+            sensor_count_pass_sda_blinds_down = pass_sda_blinds_down.sum().item()
             sda_grid = sensor_count_pass_sda / grid_count * 100
             sda_blinds_up_grid = sensor_count_pass_sda_blinds_up / grid_count * 100
             sda_blinds_down_grid = sensor_count_pass_sda_blinds_down / grid_count * 100
