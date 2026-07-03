@@ -1,0 +1,26 @@
+{
+  "TestRoom_1": {
+    "TestRoom_1_ApertureGroup_0": [
+      "0_TestRoom_1_ApertureGroup_0",
+      "1_TestRoom_1_ApertureGroup_0"
+    ],
+    "TestRoom_1_ApertureGroup_1": [
+      "0_TestRoom_1_ApertureGroup_1",
+      "1_TestRoom_1_ApertureGroup_1"
+    ],
+    "TestRoom_1_ApertureGroup_2": [
+      "0_TestRoom_1_ApertureGroup_2",
+      "1_TestRoom_1_ApertureGroup_2"
+    ]
+  },
+  "TestRoom_2": {
+    "TestRoom_2_ApertureGroup_0": [
+      "0_TestRoom_2_ApertureGroup_0",
+      "1_TestRoom_2_ApertureGroup_0"
+    ],
+    "TestRoom_2_ApertureGroup_1": [
+      "0_TestRoom_2_ApertureGroup_1",
+      "1_TestRoom_2_ApertureGroup_1"
+    ]
+  }
+}

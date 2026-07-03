@@ -1,0 +1,35 @@
+[
+  {
+    "count": 416,
+    "name": "Room_1",
+    "identifier": "Room_1",
+    "group": "",
+    "full_id": "Room_1",
+    "light_path": [
+      [
+        "Room_1_South"
+      ],
+      [
+        "Room_1_North"
+      ],
+      [
+        "Room_1_Skylight"
+      ]
+    ]
+  },
+  {
+    "count": 468,
+    "name": "Room_2",
+    "identifier": "Room_2",
+    "group": "",
+    "full_id": "Room_2",
+    "light_path": [
+      [
+        "Room_2_North"
+      ],
+      [
+        "Room_2_Skylight"
+      ]
+    ]
+  }
+]
