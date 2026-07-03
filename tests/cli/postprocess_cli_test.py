@@ -8,7 +8,7 @@ from ladybug.futil import nukedir
 from honeybee_radiance_postprocess.dynamic import DynamicSchedule, \
     ApertureGroupSchedule
 from honeybee_radiance_postprocess.cli.postprocess import annual_metrics, \
-    annual_metrics_file, peak_values, grid_summary_metric
+    annual_metrics_file, peak_values, grid_summary_metric, annual_en17037_metrics
 
 
 def test_annual_metrics():

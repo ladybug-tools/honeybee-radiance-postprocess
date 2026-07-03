@@ -1,0 +1,21 @@
+{
+  "Room_1": {
+    "Room_1_South": [
+      "0_Room_1_South"
+    ],
+    "Room_1_North": [
+      "0_Room_1_North"
+    ],
+    "Room_1_Skylight": [
+      "0_Room_1_Skylight"
+    ]
+  },
+  "Room_2": {
+    "Room_2_North": [
+      "0_Room_2_North"
+    ],
+    "Room_2_Skylight": [
+      "0_Room_2_Skylight"
+    ]
+  }
+}

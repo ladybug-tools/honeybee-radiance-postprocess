@@ -1,0 +1,57 @@
+{
+    "type": "VisualizationMetaData",
+    "data_type": {
+        "name": "Useful Daylight Illuminance",
+        "data_type": "Fraction",
+        "type": "DataType"
+    },
+    "unit": "%",
+    "legend_parameters": {
+        "continuous_legend": false,
+        "decimal_count": 2,
+        "include_larger_smaller": false,
+        "vertical": true,
+        "font": "Arial",
+        "colors": [
+            {
+                "r": 0,
+                "g": 0,
+                "b": 0,
+                "a": 255,
+                "type": "Color"
+            },
+            {
+                "r": 110,
+                "g": 0,
+                "b": 153,
+                "a": 255,
+                "type": "Color"
+            },
+            {
+                "r": 255,
+                "g": 0,
+                "b": 0,
+                "a": 255,
+                "type": "Color"
+            },
+            {
+                "r": 255,
+                "g": 255,
+                "b": 102,
+                "a": 255,
+                "type": "Color"
+            },
+            {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 255,
+                "type": "Color"
+            }
+        ],
+        "min": 0,
+        "max": 100,
+        "ordinal_dictionary": null,
+        "type": "LegendParameters"
+    }
+}
