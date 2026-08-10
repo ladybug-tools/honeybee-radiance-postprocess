@@ -250,8 +250,12 @@ class AnnualDaylight(Results):
                 udi_upper_results = udi_upper_array2d(
                     array_filter, total_occ=self.total_occ, max_t=max_t)
             else:
-                da_results = cda_results = udi_results = udi_lower_results = \
-                    udi_upper_results = np.zeros(grid_info['count'])
+                da_results = np.zeros(grid_info['count'])
+                cda_results = np.zeros(grid_info['count'])
+                udi_results = np.zeros(grid_info['count'])
+                udi_lower_results = np.full(grid_info['count'], 100.0)
+                udi_upper_results = np.zeros(grid_info['count'])
+
             da.append(da_results)
             cda.append(cda_results)
             udi.append(udi_results)
