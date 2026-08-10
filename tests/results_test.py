@@ -76,10 +76,12 @@ def test_results_sample_annual_metrics_dynamic_states_off():
         assert ap_gr_sch.is_static == True
     da, cda, udi, udi_lower, udi_upper, grids_info = results.annual_metrics(states=states)
     # length should be two because there are two grids
-    elements = [da, cda, udi, udi_lower, udi_upper, grids_info]
+    elements = [da, cda, udi, udi_upper, grids_info]
     assert all(len(elem) == 2 for elem in elements)
     # all results should be zero
     assert all(np.all(array == 0) for elem in elements[:-1] for array in elem)
+    # udi_lower should be 100
+    assert all(np.all(array == 100) for elem in udi_lower for array in elem)
 
 
 def test_results_sample_annual_metrics_to_folder():
