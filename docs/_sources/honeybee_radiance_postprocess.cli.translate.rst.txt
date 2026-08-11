@@ -1,0 +1,7 @@
+honeybee\_radiance\_postprocess.cli.translate module
+====================================================
+
+.. automodule:: honeybee_radiance_postprocess.cli.translate
+   :members:
+   :undoc-members:
+   :show-inheritance:

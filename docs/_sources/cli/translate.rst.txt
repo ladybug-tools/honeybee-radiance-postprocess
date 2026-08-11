@@ -1,0 +1,6 @@
+translate
+=========
+
+.. click:: honeybee_radiance_postprocess.cli.translate:translate
+   :prog: honeybee-radiance-postprocess translate
+   :show-nested:
