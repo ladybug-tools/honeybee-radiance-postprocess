@@ -1,0 +1,6 @@
+viewfactor
+==========
+
+.. click:: honeybee_radiance_postprocess.cli.viewfactor:view_factor
+   :prog: honeybee-radiance-postprocess view_factor
+   :show-nested:

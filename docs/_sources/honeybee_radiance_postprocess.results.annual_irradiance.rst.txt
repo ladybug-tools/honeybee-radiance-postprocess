@@ -1,0 +1,7 @@
+honeybee\_radiance\_postprocess.results.annual\_irradiance module
+=================================================================
+
+.. automodule:: honeybee_radiance_postprocess.results.annual_irradiance
+   :members:
+   :undoc-members:
+   :show-inheritance:

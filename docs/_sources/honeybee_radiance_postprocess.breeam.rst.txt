@@ -1,0 +1,18 @@
+honeybee\_radiance\_postprocess.breeam package
+==============================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_radiance_postprocess.breeam.breeam
+
+Module contents
+---------------
+
+.. automodule:: honeybee_radiance_postprocess.breeam
+   :members:
+   :undoc-members:
+   :show-inheritance:
