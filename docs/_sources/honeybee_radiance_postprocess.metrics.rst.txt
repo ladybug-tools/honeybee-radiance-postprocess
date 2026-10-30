@@ -1,0 +1,7 @@
+honeybee\_radiance\_postprocess.metrics module
+==============================================
+
+.. automodule:: honeybee_radiance_postprocess.metrics
+   :members:
+   :undoc-members:
+   :show-inheritance:
