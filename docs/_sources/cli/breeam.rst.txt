@@ -1,0 +1,6 @@
+breeam
+======
+
+.. click:: honeybee_radiance_postprocess.cli.breeam:breeam
+   :prog: honeybee-radiance-postprocess breeam
+   :show-nested:
