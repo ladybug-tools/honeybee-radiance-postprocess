@@ -1,0 +1,6 @@
+leed
+====
+
+.. click:: honeybee_radiance_postprocess.cli.leed:leed
+   :prog: honeybee-radiance-postprocess leed
+   :show-nested:

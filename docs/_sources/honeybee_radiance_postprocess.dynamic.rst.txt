@@ -1,0 +1,7 @@
+honeybee\_radiance\_postprocess.dynamic module
+==============================================
+
+.. automodule:: honeybee_radiance_postprocess.dynamic
+   :members:
+   :undoc-members:
+   :show-inheritance:
