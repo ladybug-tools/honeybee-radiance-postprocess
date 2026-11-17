@@ -1,0 +1,7 @@
+honeybee\_radiance\_postprocess.vis\_metadata module
+====================================================
+
+.. automodule:: honeybee_radiance_postprocess.vis_metadata
+   :members:
+   :undoc-members:
+   :show-inheritance:
