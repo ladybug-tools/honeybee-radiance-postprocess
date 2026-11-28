@@ -1,0 +1,23 @@
+CLI
+===
+
+
+Commands
+--------
+.. toctree::
+   :maxdepth: 1
+
+   main
+   breeam
+   two_phase
+   viewfactor
+   leed
+   abnt
+   mtxop
+   grid
+   translate
+   schedule
+   datacollection
+   merge
+   postprocess
+   well
